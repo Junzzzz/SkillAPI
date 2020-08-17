@@ -6,8 +6,7 @@
 !mcmod.info
 !pack.mcmeta
 !assets/*
-!genericskill/*
-!skillapi/*
+!src/
 !/api_info/
 !/pack_info/
 !*update.xml
