@@ -6,11 +6,6 @@ import net.minecraft.world.WorldServer;
 
 public class SkillLevitate extends SkillGeneric {
     @Override
-    public String getDescription() {
-        return "Projects your mana downward\ncausing you to levitate.";
-    }
-
-    @Override
     public int getManaCost(EntityPlayer player) {
         return 1;
     }

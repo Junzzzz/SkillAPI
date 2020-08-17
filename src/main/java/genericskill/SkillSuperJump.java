@@ -8,11 +8,6 @@ import net.minecraft.world.WorldServer;
 
 public class SkillSuperJump extends SkillGeneric {
     @Override
-    public String getDescription() {
-        return "Gives you the ability to jump\ntwice as high. No exhaustion;\naffected by potions and\nsprinting.";
-    }
-
-    @Override
     public int getManaCost(EntityPlayer player) {
         return 4;
     }

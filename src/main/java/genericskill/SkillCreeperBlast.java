@@ -4,11 +4,6 @@ import net.minecraft.entity.player.EntityPlayer;
 
 public class SkillCreeperBlast extends SkillGeneric {
     @Override
-    public String getDescription() {
-        return "Channels your inner creeper\noutwards into an explosive\nforce.";
-    }
-
-    @Override
     public int getManaCost(EntityPlayer player) {
         return 20;
     }

@@ -16,6 +16,10 @@ public abstract class Skill {
     public abstract String getName();
 
     /**
+     * Translation
+     */
+    public abstract String getI18nName();
+    /**
      * First part of the description tool tip for this skill. Preferably short.
      */
     public abstract String getType();

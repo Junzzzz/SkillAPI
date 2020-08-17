@@ -99,7 +99,7 @@ public final class GuiKnownSkills extends GuiScreen {
             GL11.glScalef(0.0625F, 0.0625F, 1F);
             drawTexturedModalRect(x * 16, y * 16, 0, 0, 256, 256);
             GL11.glScalef(16F, 16F, 1F);
-            fontRendererObj.drawStringWithShadow(skill.getName(), x + 20, y, skill.getNameColour());
+            fontRendererObj.drawStringWithShadow(skill.getI18nName(), x + 20, y, skill.getNameColour());
             drawSkillStats(skill, x + 20, y + 9);
         }
     }
@@ -137,7 +137,7 @@ public final class GuiKnownSkills extends GuiScreen {
     private void drawToolTip(Skill skill, int mouseX, int mouseY) {
         if (skill != null) {
             mouseX += 9;
-            String[] desc = skill.getDescription().split("\n");
+            String[] desc = skill.getDescription().split("\\n");
             GL11.glEnable(3042 /* GL_BLEND */);
             GL11.glColor4f(1.0F, 1.0F, 1.0F, 0.8F);
             mc.renderEngine.bindTexture(GUI);

@@ -26,17 +26,16 @@ public final class GenericSkills {
     @EventHandler
     public void load(FMLInitializationEvent event) {
         SkillRegistry.registerSkill(new SkillCreeperBlast().setName(skills[0]).setTexture("creeperblast"));
-        SkillRegistry.registerSkill(new SkillLevitate().setName(skills[1]).setTexture(skills[1].toLowerCase()));
+        SkillRegistry.registerSkill(new SkillLevitate().setName(skills[1]).setTexture("levitate"));
         SkillRegistry.registerSkill(new SkillSummonWolf().setName(skills[2]).setTexture("summonwolf"));
         SkillRegistry.registerSkill(new SkillSuperJump().setName(skills[3]).setTexture("superjump"));
         SkillRegistry.registerSkill(new SkillHealingBreeze().setName(skills[4]).setTexture("healingbreeze"));
         SkillRegistry.registerSkill(new SkillBindingSignet().setName(skills[5]).setTexture("bindingsignet"));
         SkillRegistry.registerSkill(new SkillUnrelentingForce().setName(skills[6]).setTexture("unrelentingforce"));
-        SkillRegistry.registerSkill(new SkillBarrage().setName(skills[7]).setTexture(skills[7].toLowerCase()));
+        SkillRegistry.registerSkill(new SkillBarrage().setName(skills[7]).setTexture("barrage"));
         EntityRegistry.registerModEntity(EntityShockWave.class, "FusRoDah", 0, this, 20, 4, true);
         GameRegistry.addShapelessRecipe(new ItemStack(genSkillBook), Items.gold_ingot, Items.book);
-        GameRegistry.addRecipe(new ItemStack(heritageAmulet), " S ", "S S", "GDG", 'S', Items.string, 'G', Items.gold_ingot, 'D',
-                Items.diamond);
+        GameRegistry.addRecipe(new ItemStack(heritageAmulet), " S ", "S S", "GDG", 'S', Items.string, 'G', Items.gold_ingot, 'D', Items.diamond);
         GameRegistry.addShapelessRecipe(new ItemStack(manaPotion), Items.glass_bottle, new ItemStack(Items.dye, 1, 4));
     }
 

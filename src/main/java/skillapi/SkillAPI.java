@@ -23,7 +23,7 @@ public final class SkillAPI {
 
     @EventHandler
     public void pre(FMLPreInitializationEvent event) {
-        channels = new HashMap<String, FMLEventChannel>();
+        channels = new HashMap<String, FMLEventChannel>(16);
         FMLEventChannel channel;
         for (int i = 0; i < SkillPacketHandler.CHANNELS.length; i++) {
             channel = NetworkRegistry.INSTANCE.newEventDrivenChannel(SkillPacketHandler.CHANNELS[i]);

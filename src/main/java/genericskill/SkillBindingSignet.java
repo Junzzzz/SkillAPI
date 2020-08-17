@@ -5,11 +5,6 @@ import net.minecraft.util.ChunkCoordinates;
 
 public class SkillBindingSignet extends SkillGeneric {
     @Override
-    public String getDescription() {
-        return "Teleports you back to your\nroots.\n(requires a Heritage Amulet)";
-    }
-
-    @Override
     public int getManaCost(EntityPlayer player) {
         return 0;
     }

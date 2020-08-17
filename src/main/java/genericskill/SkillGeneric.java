@@ -1,5 +1,7 @@
 package genericskill;
 
+import genericskill.utils.SkillUtils;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import skillapi.Skill;
@@ -11,6 +13,8 @@ import skillapi.Skill;
  */
 public abstract class SkillGeneric extends Skill {
     public String name;
+    private String trimName;
+    public String i18nName;
     public ResourceLocation texture;
 
     @Override
@@ -20,7 +24,19 @@ public abstract class SkillGeneric extends Skill {
 
     public SkillGeneric setName(String name) {
         this.name = name;
+        this.trimName = name.toLowerCase().replaceAll(" ","");
+        this.i18nName = SkillUtils.getSkillI18nName(trimName);
         return this;
+    }
+
+    @Override
+    public String getI18nName() {
+        return i18nName;
+    }
+
+    @Override
+    public String getDescription() {
+        return SkillUtils.getSkillDescription(trimName);
     }
 
     @Override
@@ -45,7 +61,7 @@ public abstract class SkillGeneric extends Skill {
 
     @Override
     public String getType() {
-        return "Generic Skill";
+        return I18n.format("skill.type.name.genericsskill");
     }
 
     @Override

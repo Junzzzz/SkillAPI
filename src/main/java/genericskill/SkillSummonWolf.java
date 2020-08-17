@@ -21,11 +21,6 @@ public class SkillSummonWolf extends SkillGeneric {
     }
 
     @Override
-    public String getDescription() {
-        return "Injects your life force\ninto a bone thereby summoning\na trusty canine companion.\n(requires a bone)";
-    }
-
-    @Override
     public int getManaCost(EntityPlayer player) {
         return 10;
     }

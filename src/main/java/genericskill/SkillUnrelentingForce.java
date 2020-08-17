@@ -8,11 +8,6 @@ import net.minecraft.util.Vec3;
 
 public class SkillUnrelentingForce extends SkillGeneric {
     @Override
-    public String getDescription() {
-        return "Blows anything in front of you\nclear away (including walls).";
-    }
-
-    @Override
     public int getManaCost(EntityPlayer player) {
         return 10;
     }

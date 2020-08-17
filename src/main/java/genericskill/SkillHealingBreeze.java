@@ -4,11 +4,6 @@ import net.minecraft.entity.player.EntityPlayer;
 
 public class SkillHealingBreeze extends SkillGeneric {
     @Override
-    public String getDescription() {
-        return "If your health is less than 2\nhearts, you're instantly healed 2\nhearts. Then for 10 seconds,\nyou're randomly healed half a\nheart at a time.";
-    }
-
-    @Override
     public int getManaCost(EntityPlayer player) {
         return 5;
     }

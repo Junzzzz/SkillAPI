@@ -1,5 +1,7 @@
 package genericskill;
 
+import genericskill.utils.SkillUtils;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.init.Items;
@@ -7,18 +9,13 @@ import net.minecraft.world.World;
 
 public class SkillBarrage extends SkillGeneric {
     @Override
-    public String getDescription() {
-        return "Fires a shower of up to 5\narrows all at once. Its strength\nand spread is affected by your\nlevel.\n(requires a bow and at least 2\narrows)";
-    }
-
-    @Override
     public int getManaCost(EntityPlayer player) {
         return 10;
     }
 
     @Override
     public float getChargeupTime(EntityPlayer player) {
-        return 2F;
+        return 2;
     }
 
     @Override
