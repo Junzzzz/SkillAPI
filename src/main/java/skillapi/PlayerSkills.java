@@ -16,8 +16,8 @@ import java.util.List;
 import java.util.Map;
 
 public final class PlayerSkills implements IExtendedEntityProperties {
-    public List<String> knownSkills = new ArrayList<>();
-    public List<String> activeSkills = new LinkedList<>();
+    public List<String> knownSkills = new ArrayList<String>();
+    public List<String> activeSkills = new LinkedList<String>();
     public Skill[] skillBar = new Skill[5];
     public Skill skillJustLearnt;
     public Skill chargingSkill;

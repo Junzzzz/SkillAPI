@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public final class SkillRegistry {
-    private static Map<String, Skill> skillMap = new HashMap<>();
+    private static Map<String, Skill> skillMap = new HashMap<String, Skill>();
 
     /**
      * @return an immutable map of the currently registered skills

@@ -12,7 +12,7 @@ import java.util.Map;
 
 public class SkillPacketHandler {
     public static final String[] CHANNELS = {"APISKILLINIT", "APISKILLGET", "APISKILLUPDATE", "APISKILLTRIGGER", "APISKILLACTIVATE", "APISKILLTICK", "APISKILLMANA"};
-    public static Map<String, SkillPacket> packets = new HashMap<>();
+    public static Map<String, SkillPacket> packets = new HashMap<String, SkillPacket>();
 
     static {
         packets.put(CHANNELS[0], new InitSkillPacket());

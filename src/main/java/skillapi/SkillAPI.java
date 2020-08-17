@@ -37,7 +37,7 @@ public final class SkillAPI {
                         "https://raw.github.com/GotoLink/SkillAPI/master/API_update.xml",
                         "https://raw.github.com/GotoLink/SkillAPI/master/API_changelog.md"
                 );
-            } catch (Throwable e) {
+            } catch (Throwable ignored) {
             }
         }
     }

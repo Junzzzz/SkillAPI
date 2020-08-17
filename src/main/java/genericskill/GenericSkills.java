@@ -62,18 +62,16 @@ public final class GenericSkills {
                         "https://raw.github.com/GotoLink/SkillAPI/master/Pack_update.xml",
                         "https://raw.github.com/GotoLink/SkillAPI/master/Pack_changelog.md"
                 );
-            } catch (Throwable e) {
+            } catch (Throwable ignored) {
             }
         }
     }
 
     @EventHandler
-    public void remap(FMLMissingMappingsEvent event){
-        for(FMLMissingMappingsEvent.MissingMapping missingMapping:event.get()){
-            switch(missingMapping.type){
-                case ITEM:
-                    missingMapping.remap(GameData.getItemRegistry().getObject(missingMapping.name.replace(" ", "")));
-                    break;
+    public void remap(FMLMissingMappingsEvent event) {
+        for (FMLMissingMappingsEvent.MissingMapping missingMapping : event.get()) {
+            if (missingMapping.type == GameRegistry.Type.ITEM) {
+                missingMapping.remap(GameData.getItemRegistry().getObject(missingMapping.name.replace(" ", "")));
             }
         }
     }

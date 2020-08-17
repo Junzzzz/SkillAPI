@@ -20,14 +20,14 @@ public final class SkillTickHandler {
     public static final SkillTickHandler INSTANCE = new SkillTickHandler();
     public final static int MULT = 10;
     // username->skill->charge, cooldown, duration timers
-    public static Map<UUID, Map<String, int[]>> timers = new ConcurrentHashMap<>();
+    public static Map<UUID, Map<String, int[]>> timers = new ConcurrentHashMap<UUID, Map<String, int[]>>();
 
     private SkillTickHandler() {
     }
 
     public static Map<String, int[]> get(EntityPlayer player) {
         if (!timers.containsKey(player.getUniqueID())) {
-            timers.put(player.getUniqueID(), new HashMap<>(16));
+            timers.put(player.getUniqueID(), new HashMap<String, int[]>(16));
         }
         return timers.get(player.getUniqueID());
     }

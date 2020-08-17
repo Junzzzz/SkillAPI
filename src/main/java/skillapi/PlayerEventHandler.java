@@ -20,8 +20,8 @@ import java.util.UUID;
 
 public final class PlayerEventHandler {
     public static final PlayerEventHandler INSTANCE = new PlayerEventHandler();
-    public Map<UUID, List<String>> knownSkillsBackup = new HashMap<>();
-    public Map<UUID, Skill[]> skillBarBackup = new HashMap<>();
+    public Map<UUID, List<String>> knownSkillsBackup = new HashMap<UUID, List<String>>();
+    public Map<UUID, Skill[]> skillBarBackup = new HashMap<UUID, Skill[]>();
 
     private PlayerEventHandler() {
     }

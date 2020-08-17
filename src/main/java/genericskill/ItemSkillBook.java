@@ -11,7 +11,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 public class ItemSkillBook extends Item {
-    private Collection<String> skills = new ArrayList<>();
+    private Collection<String> skills = new ArrayList<String>();
 
     /**
      * Generic item with already set unlocalized name and texture.
