@@ -5,7 +5,7 @@
 !gradle*
 !mcmod.info
 !pack.mcmeta
-!assets/*
+!assets/
 !src/
 !/api_info/
 !/pack_info/
