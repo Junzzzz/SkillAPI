@@ -1,5 +1,6 @@
-package genericskill;
+package genericskill.skills;
 
+import genericskill.GenericSkills;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ChunkCoordinates;
 

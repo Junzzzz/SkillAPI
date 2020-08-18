@@ -26,7 +26,8 @@ public final class PlayerSkills implements IExtendedEntityProperties {
 
     public PlayerSkills(EntityPlayer player, int mana) {
         this.player = player;
-        this.mana = this.prevMana = mana;
+        this.mana = mana;
+        this.prevMana = mana;
     }
 
     public static PlayerSkills get(EntityPlayer player) {

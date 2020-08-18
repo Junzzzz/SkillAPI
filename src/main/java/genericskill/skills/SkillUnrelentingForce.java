@@ -1,5 +1,6 @@
-package genericskill;
+package genericskill.skills;
 
+import genericskill.entity.EntityShockWave;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.MathHelper;

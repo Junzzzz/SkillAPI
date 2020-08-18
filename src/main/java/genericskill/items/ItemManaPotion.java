@@ -1,4 +1,4 @@
-package genericskill;
+package genericskill.items;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;

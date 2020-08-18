@@ -1,4 +1,4 @@
-package genericskill;
+package genericskill.skills;
 
 import net.minecraft.entity.passive.EntityWolf;
 import net.minecraft.entity.player.EntityPlayer;

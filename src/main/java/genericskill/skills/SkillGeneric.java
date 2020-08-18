@@ -1,4 +1,4 @@
-package genericskill;
+package genericskill.skills;
 
 import genericskill.utils.SkillUtils;
 import net.minecraft.client.resources.I18n;
@@ -12,26 +12,27 @@ import skillapi.Skill;
  * chaining convenience
  */
 public abstract class SkillGeneric extends Skill {
-    public String name;
-    private String trimName;
-    public String i18nName;
+    public String unlocalizedName;
+    public String localizedName;
     public ResourceLocation texture;
+
+    private String trimName;
 
     @Override
     public String getName() {
-        return name;
+        return unlocalizedName;
     }
 
     public SkillGeneric setName(String name) {
-        this.name = name;
-        this.trimName = name.toLowerCase().replaceAll(" ","");
-        this.i18nName = SkillUtils.getSkillI18nName(trimName);
+        this.unlocalizedName = name;
+        this.trimName = name.toLowerCase().replaceAll(" ", "");
+        this.localizedName = SkillUtils.getSkillI18nName(trimName);
         return this;
     }
 
     @Override
-    public String getI18nName() {
-        return i18nName;
+    public String getLocalizedName() {
+        return localizedName;
     }
 
     @Override

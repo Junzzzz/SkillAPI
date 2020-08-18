@@ -1,4 +1,4 @@
-package genericskill;
+package genericskill.skills;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.play.server.S12PacketEntityVelocity;

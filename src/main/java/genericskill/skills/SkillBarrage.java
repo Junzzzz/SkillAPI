@@ -1,7 +1,5 @@
-package genericskill;
+package genericskill.skills;
 
-import genericskill.utils.SkillUtils;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.init.Items;
