@@ -1,9 +1,0 @@
-
-key.skillGui=Интерфейс навыков
-key.skill1=1-ый навык
-key.skill2=2-ой навык
-key.skill3=3-ий навык
-key.skill4=4-ый навык
-key.skill5=5-ый навык
-
-commands.teach.usage=/teach <имя пользователя> <навык>

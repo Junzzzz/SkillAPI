@@ -4,32 +4,34 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.ModContainer;
+import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLMissingMappingsEvent;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import genericskill.common.CommonProxy;
 import genericskill.entity.EntityShockWave;
-import genericskill.items.ItemHeritageAmulet;
-import genericskill.items.ItemManaPotion;
-import genericskill.items.ItemSkillBook;
-import genericskill.skills.*;
-import net.minecraft.creativetab.CreativeTabs;
+import genericskill.skill.*;
 import net.minecraft.init.Items;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import skillapi.SkillRegistry;
+
+import static genericskill.item.ItemLoader.*;
 
 @Mod(modid = "genericskills", name = "Generic Skills Pack", useMetadata = true, dependencies = "required-after:skillapi")
 public final class GenericSkills {
     public static final String[] skills = {"Creeper Blast", "Levitate", "Summon Wolf", "Super Jump", "Healing Breeze", "Binding Signet", "Unrelenting Force", "Barrage"};
-    public static Item genSkillBook, heritageAmulet, manaPotion;
+
+    @SidedProxy(clientSide = "genericskill.client.ClientProxy", serverSide = "genericskill.common.CommonProxy")
+    public static CommonProxy proxy;
 
     @EventHandler
-    public void load(FMLInitializationEvent event) {
+    public void init(FMLInitializationEvent event) {
+        proxy.init(event);
+
         SkillRegistry.registerSkill(new SkillCreeperBlast().setName(skills[0]).setTexture("creeperblast"));
         SkillRegistry.registerSkill(new SkillLevitate().setName(skills[1]).setTexture("levitate"));
         SkillRegistry.registerSkill(new SkillSummonWolf().setName(skills[2]).setTexture("summonwolf"));
@@ -45,20 +47,11 @@ public final class GenericSkills {
     }
 
     @EventHandler
-    public void pre(FMLPreInitializationEvent event) {
-        CreativeTabs customTab = new CreativeTabs("GenericSkillPack") {
-            @Override
-            @SideOnly(Side.CLIENT)
-            public Item getTabIconItem() {
-                return GenericSkills.heritageAmulet;
-            }
-        };
-        genSkillBook = new ItemSkillBook().addSkills(skills).setCreativeTab(customTab);
-        GameRegistry.registerItem(genSkillBook, "GenericSkillBook");
-        heritageAmulet = new ItemHeritageAmulet().setCreativeTab(customTab);
-        GameRegistry.registerItem(heritageAmulet, "HeritageAmulet");
-        manaPotion = (new ItemManaPotion(5)).setCreativeTab(customTab);
-        GameRegistry.registerItem(manaPotion, "ManaPotion");
+    public void preInit(FMLPreInitializationEvent event) {
+        proxy.preInit(event);
+
+
+        // Update
         if (event.getSourceFile().getName().endsWith(".jar") && event.getSide().isClient()) {
             try {
                 Class.forName("mods.mud.ModUpdateDetector").getDeclaredMethod("registerMod", ModContainer.class, String.class, String.class).invoke(null,
@@ -69,6 +62,11 @@ public final class GenericSkills {
             } catch (Throwable ignored) {
             }
         }
+    }
+
+    @EventHandler
+    public void postInit(FMLPostInitializationEvent event) {
+        proxy.postInit(event);
     }
 
     @EventHandler

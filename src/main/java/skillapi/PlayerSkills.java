@@ -154,7 +154,6 @@ public final class PlayerSkills implements IExtendedEntityProperties {
                 compound.setString("SkillBarSlot" + i, skillBar[i].getName());
             }
         }
-        System.out.println("saveNBT!");
     }
 
     /**

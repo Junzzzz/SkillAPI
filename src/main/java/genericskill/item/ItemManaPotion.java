@@ -1,4 +1,4 @@
-package genericskill.items;
+package genericskill.item;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -13,7 +13,7 @@ public class ItemManaPotion extends Item {
     public ItemManaPotion(int restoreAmount) {
         super();
         setUnlocalizedName("manaPotion");
-        setTextureName("genericskill:manapotion");
+        setTextureName("genericskills:mana_potion");
         setMaxStackSize(16);
         this.restoreAmount = restoreAmount;
     }

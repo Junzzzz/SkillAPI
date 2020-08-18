@@ -1,4 +1,4 @@
-package genericskill.items;
+package genericskill.item;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -20,7 +20,7 @@ public class ItemSkillBook extends Item {
     public ItemSkillBook() {
         super();
         setUnlocalizedName("genSkillBook");
-        setTextureName("genericskill:genskillbook");
+        setTextureName("genericskills:genskillbook");
         setMaxStackSize(1);
     }
 

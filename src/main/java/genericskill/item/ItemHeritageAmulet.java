@@ -1,4 +1,4 @@
-package genericskill.items;
+package genericskill.item;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -10,7 +10,7 @@ public class ItemHeritageAmulet extends Item {
     public ItemHeritageAmulet() {
         super();
         setUnlocalizedName("heritageAmulet");
-        setTextureName("genericskill:heritageAmulet");
+        setTextureName("genericskills:heritage_amulet");
         setMaxStackSize(1);
     }
 

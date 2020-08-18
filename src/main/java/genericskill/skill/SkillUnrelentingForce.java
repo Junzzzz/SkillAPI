@@ -1,4 +1,4 @@
-package genericskill.skills;
+package genericskill.skill;
 
 import genericskill.entity.EntityShockWave;
 import net.minecraft.entity.player.EntityPlayer;

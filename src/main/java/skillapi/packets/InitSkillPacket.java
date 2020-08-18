@@ -115,7 +115,6 @@ public class InitSkillPacket extends SkillPacket {
             skills.setMana(mana);
             skills.knownSkills.clear();
             skills.knownSkills.addAll(known);
-            System.out.println("loadAllSkill: length=" + known.size());
 
             skills.activeSkills.clear();
             skills.activeSkills.addAll(active);

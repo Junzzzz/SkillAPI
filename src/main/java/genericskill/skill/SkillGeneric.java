@@ -1,4 +1,4 @@
-package genericskill.skills;
+package genericskill.skill;
 
 import genericskill.utils.SkillUtils;
 import net.minecraft.client.resources.I18n;
@@ -25,7 +25,7 @@ public abstract class SkillGeneric extends Skill {
 
     public SkillGeneric setName(String name) {
         this.unlocalizedName = name;
-        this.trimName = name.toLowerCase().replaceAll(" ", "");
+        this.trimName = name.toLowerCase().replace(" ", "");
         this.localizedName = SkillUtils.getSkillI18nName(trimName);
         return this;
     }
@@ -46,7 +46,7 @@ public abstract class SkillGeneric extends Skill {
     }
 
     public SkillGeneric setTexture(String name) {
-        this.texture = new ResourceLocation("genericskill", "textures/" + name + ".png");
+        this.texture = new ResourceLocation("genericskills", "textures/skills/" + name + ".png");
         return this;
     }
 
