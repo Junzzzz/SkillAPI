@@ -71,6 +71,11 @@ public final class PlayerSkills implements IExtendedEntityProperties {
         }
     }
 
+    /**
+     * 学习技能
+     *
+     * @param skill 技能名
+     */
     public void skillGet(Skill skill) {
         knownSkills.add(skill.getName());
         player.worldObj.playSoundAtEntity(player, "note.snare", 0.2F, 1.0F);
@@ -149,10 +154,17 @@ public final class PlayerSkills implements IExtendedEntityProperties {
                 compound.setString("SkillBarSlot" + i, skillBar[i].getName());
             }
         }
+        System.out.println("saveNBT!");
     }
 
+    /**
+     * 服务端读取实体NBT内技能
+     *
+     * @param compound NBT
+     */
     @Override
     public void loadNBTData(NBTTagCompound compound) {
+        knownSkills.clear();
         int i = 0;
         String skillName;
         while (true) {

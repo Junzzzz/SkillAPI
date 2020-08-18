@@ -45,6 +45,7 @@ public final class PlayerEventHandler {
 
     @SubscribeEvent
     public void onLivingUpdate(LivingUpdateEvent event) {
+        // TODO 改为非实时计算
         if (event.entityLiving instanceof EntityPlayer) {
             PlayerSkills sk = PlayerSkills.get((EntityPlayer) event.entityLiving);
             sk.setPrevMana(sk.getMana());

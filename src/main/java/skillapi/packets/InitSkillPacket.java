@@ -70,6 +70,10 @@ public class InitSkillPacket extends SkillPacket {
 
     @Override
     public void fromBytes(ByteBuf in) {
+        // init
+        known.clear();
+        active.clear();
+
         id = in.readInt();
         mana = in.readInt();
         int size = in.readInt();
@@ -111,6 +115,7 @@ public class InitSkillPacket extends SkillPacket {
             skills.setMana(mana);
             skills.knownSkills.clear();
             skills.knownSkills.addAll(known);
+            System.out.println("loadAllSkill: length=" + known.size());
 
             skills.activeSkills.clear();
             skills.activeSkills.addAll(active);
