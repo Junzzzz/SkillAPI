@@ -1,9 +1,11 @@
 package skillapi.client;
 
 import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -15,8 +17,9 @@ import skillapi.SkillRegistry;
 import skillapi.packets.SkillPacket;
 import skillapi.packets.UpdateSkillPacket;
 
+@SideOnly(Side.CLIENT)
 public final class GuiKnownSkills extends GuiScreen {
-    public static final ResourceLocation GUI = new ResourceLocation("skillapi", "skillsgui.png");
+    public static final ResourceLocation GUI = new ResourceLocation("skillapi", "skills-gui.png");
     private final PlayerSkills skills;
     private EntityClientPlayerMP player = Minecraft.getMinecraft().thePlayer;
     private String[] skillKeys = new String[5];
@@ -40,21 +43,21 @@ public final class GuiKnownSkills extends GuiScreen {
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-        GL11.glEnable(3042 /* GL_BLEND */);
+        GL11.glEnable(GL11.GL_BLEND);
         drawDefaultBackground();
         drawGUIBackground();
         drawScroll(mouseY);
         drawSkillBar(mouseX, mouseY);
         drawSkillList(mouseX, mouseY);
         drawHeldSkill(mouseX, mouseY);
-        GL11.glDisable(3042 /* GL_BLEND */);
+        GL11.glDisable(GL11.GL_BLEND);
     }
 
     private void drawGUIBackground() {
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         mc.renderEngine.bindTexture(GUI);
         drawTexturedModalRect((width - 206) / 2, (height - 134) / 2, 0, 0, 206, 134);
-        fontRendererObj.drawStringWithShadow("Known Skills", width / 2 - 73, height / 2 - 61, 0xFCFC80);
+        fontRendererObj.drawStringWithShadow(I18n.format("skill.gui.title"), width / 2 - 73, height / 2 - 61, 0xFCFC80);
         for (int i = 0; i < skillKeys.length; i++) {
             fontRendererObj.drawString(skillKeys[i], width / 2 - 90, (height / 2 - 40) + (21 * i), 0xE2E2E9);
         }
@@ -99,7 +102,7 @@ public final class GuiKnownSkills extends GuiScreen {
             GL11.glScalef(0.0625F, 0.0625F, 1F);
             drawTexturedModalRect(x * 16, y * 16, 0, 0, 256, 256);
             GL11.glScalef(16F, 16F, 1F);
-            fontRendererObj.drawStringWithShadow(skill.getI18nName(), x + 20, y, skill.getNameColour());
+            fontRendererObj.drawStringWithShadow(skill.getLocalizedName(), x + 20, y, skill.getNameColour());
             drawSkillStats(skill, x + 20, y + 9);
         }
     }
@@ -134,11 +137,18 @@ public final class GuiKnownSkills extends GuiScreen {
         }
     }
 
+    /**
+     * 绘制技能提示 （中文括号不能绘制？）
+     *
+     * @param skill  技能
+     * @param mouseX 鼠标坐标X
+     * @param mouseY 鼠标坐标Y
+     */
     private void drawToolTip(Skill skill, int mouseX, int mouseY) {
         if (skill != null) {
             mouseX += 9;
-            String[] desc = skill.getDescription().split("\\n");
-            GL11.glEnable(3042 /* GL_BLEND */);
+            String[] desc = skill.getDescription().split("\\\\n");
+            GL11.glEnable(GL11.GL_BLEND);
             GL11.glColor4f(1.0F, 1.0F, 1.0F, 0.8F);
             mc.renderEngine.bindTexture(GUI);
             drawTexturedModalRect(mouseX, mouseY, 0, 184, 175, 15);
@@ -146,7 +156,7 @@ public final class GuiKnownSkills extends GuiScreen {
                 drawTexturedModalRect(mouseX, mouseY + 15 + (9 * i), 0, 188, 175, 9);
             }
             drawTexturedModalRect(mouseX, mouseY + 15 + (9 * desc.length), 0, 198, 175, 3);
-            GL11.glDisable(3042 /* GL_BLEND */);
+            GL11.glDisable(GL11.GL_BLEND);
             fontRendererObj.drawStringWithShadow(skill.getType(), mouseX + 5, mouseY + 5, 0xE0BC38);
             for (int i = 0; i < desc.length; i++) {
                 fontRendererObj.drawString(desc[i], mouseX + 5, mouseY + 15 + (9 * i), 0x8FA8FF);
@@ -247,7 +257,7 @@ public final class GuiKnownSkills extends GuiScreen {
 
     @Override
     protected void keyTyped(char key, int keyCode) {
-        if (keyCode == 1 || keyCode == mc.gameSettings.keyBindUseItem.getKeyCode()) {
+        if (keyCode == 1 || keyCode == SkillAPIClientProxy.skillGuiKeyBinding.getKeyCode()) {
             mc.thePlayer.closeScreen();
         }
     }

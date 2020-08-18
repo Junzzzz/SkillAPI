@@ -18,7 +18,7 @@ public abstract class Skill {
     /**
      * Translation
      */
-    public abstract String getI18nName();
+    public abstract String getLocalizedName();
     /**
      * First part of the description tool tip for this skill. Preferably short.
      */

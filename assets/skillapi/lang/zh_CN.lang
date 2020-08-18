@@ -12,3 +12,5 @@ commands.teach.skill=%1$s 学习了 %2$s
 commands.teach.skill.known=%1$s 已学会 %2$s
 commands.teach.skill.invalidPlayer=%1$s 无法学习 %2$s
 commands.teach.skill.notFound=找不到技能"%1$s"
+
+skill.gui.title=已学技能

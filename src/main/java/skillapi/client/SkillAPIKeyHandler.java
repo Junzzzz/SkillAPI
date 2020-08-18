@@ -6,16 +6,27 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.settings.KeyBinding;
 import skillapi.PlayerSkills;
 import skillapi.SkillAPI;
 import skillapi.packets.SkillPacket;
 import skillapi.packets.TriggerSkillPacket;
 
+/**
+ * 按键交互（技能面板和技能释放）
+ *
+ * @author GotoLink, Junzzzz
+ */
+@SideOnly(Side.CLIENT)
 public class SkillAPIKeyHandler {
     public static final SkillAPIKeyHandler INSTANCE = new SkillAPIKeyHandler();
     public KeyBinding[] keyBindings = new KeyBinding[0];
+    /**
+     * 是否可以按住后持续触发
+     */
     private boolean[] repeatings = new boolean[0];
     private boolean[] active = new boolean[0];
 
@@ -40,29 +51,31 @@ public class SkillAPIKeyHandler {
     }
 
     private void fireKey(KeyBinding kb) {
-        if (Minecraft.getMinecraft().thePlayer != null) {
+        final EntityClientPlayerMP player = Minecraft.getMinecraft().thePlayer;
+
+        if (player != null) {
+            // 释放技能
             if (Minecraft.getMinecraft().currentScreen == null) {
                 for (int i = 0; i < SkillAPIClientProxy.skillKeyBindings.length; i++) {
-                    if (SkillAPIClientProxy.skillKeyBindings[i] == kb && PlayerSkills.get(Minecraft.getMinecraft().thePlayer).skillBar[i] != null) {
-                        SkillPacket pkt = new TriggerSkillPacket(Minecraft.getMinecraft().thePlayer.getEntityId(), i, PlayerSkills.get(Minecraft.getMinecraft().thePlayer).skillBar[i].getName());
+                    if (SkillAPIClientProxy.skillKeyBindings[i] == kb && PlayerSkills.get(player).skillBar[i] != null) {
+                        SkillPacket pkt = new TriggerSkillPacket(player.getEntityId(), i, PlayerSkills.get(player).skillBar[i].getName());
                         SkillAPI.channels.get(pkt.getChannel()).sendToServer(pkt.getPacket(Side.SERVER));
                         return;
                     }
                 }
             }
+            // 打开技能面板
             if (kb == SkillAPIClientProxy.skillGuiKeyBinding) {
                 if (Minecraft.getMinecraft().currentScreen == null) {
-                    Minecraft.getMinecraft().displayGuiScreen(new GuiKnownSkills(PlayerSkills.get(Minecraft.getMinecraft().thePlayer)));
-                } else if (Minecraft.getMinecraft().currentScreen instanceof GuiKnownSkills) {
-                    Minecraft.getMinecraft().thePlayer.closeScreen();
+                    Minecraft.getMinecraft().displayGuiScreen(new GuiKnownSkills(PlayerSkills.get(player)));
                 }
             }
         }
     }
 
-    void addKeyBinding(KeyBinding binding, boolean repeats) {
+    void addKeyBinding(KeyBinding binding, boolean repeat) {
         this.keyBindings = ObjectArrays.concat(this.keyBindings, binding);
-        this.repeatings = Booleans.concat(this.repeatings, new boolean[]{repeats});
+        this.repeatings = Booleans.concat(this.repeatings, new boolean[]{repeat});
         this.active = new boolean[this.keyBindings.length];
     }
 
