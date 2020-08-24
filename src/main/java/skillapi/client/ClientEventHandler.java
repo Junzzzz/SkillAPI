@@ -15,7 +15,7 @@ public class ClientEventHandler {
 
     @SubscribeEvent
     public void renderHUD(RenderGameOverlayEvent.Post event) {
-        if (event.type == ElementType.AIR) {
+        if (event.type == ElementType.FOOD) {
             skillsHUD.drawHUD(event.resolution.getScaledWidth(), event.resolution.getScaledHeight(), event.partialTicks);
             Minecraft.getMinecraft().getTextureManager().bindTexture(Gui.icons);
         }

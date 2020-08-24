@@ -2,6 +2,7 @@ package skillapi.client;
 
 import cpw.mods.fml.relauncher.Side;
 import net.minecraft.client.Minecraft;
+import net.minecraftforge.client.GuiIngameForge;
 import org.lwjgl.opengl.GL11;
 import skillapi.*;
 import skillapi.packets.LearnSkillPacket;
@@ -38,7 +39,7 @@ public final class HudSkills {
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         game.renderEngine.bindTexture(GuiKnownSkills.GUI);
         for (int manaPip = 0; manaPip < 10; manaPip++) {
-            int posY = scaledHeight - 39 - 10;
+            int posY = scaledHeight - GuiIngameForge.right_height;
             int posX = (scaledWidth / 2 + 10) + manaPip * 8;
             game.ingameGUI.drawTexturedModalRect(posX, posY, 104, 143, 9, 9); //BG
             if (player.getMana() < player.getPrevMana()) {
@@ -56,6 +57,7 @@ public final class HudSkills {
                 game.ingameGUI.drawTexturedModalRect(posX, posY, 122, 143, 9, 9); //Half pip
             }
         }
+        GuiIngameForge.right_height += 10;
     }
 
     private void drawSkillBar(int scaledWidth, int scaledHeight) {
