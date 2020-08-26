@@ -10,9 +10,9 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
+import skillapi.Application;
 import skillapi.PlayerSkills;
 import skillapi.Skill;
-import skillapi.SkillAPI;
 import skillapi.SkillRegistry;
 import skillapi.packets.SkillPacket;
 import skillapi.packets.UpdateSkillPacket;
@@ -252,7 +252,7 @@ public final class GuiKnownSkills extends GuiScreen {
 
     private void sendSkillUpdate(int i, String skill) {
         SkillPacket pkt = new UpdateSkillPacket(player.getEntityId(), i, skill);
-        SkillAPI.channels.get(pkt.getChannel()).sendToServer(pkt.getPacket(Side.SERVER));
+        Application.channels.get(pkt.getChannel()).sendToServer(pkt.getPacket(Side.SERVER));
     }
 
     @Override

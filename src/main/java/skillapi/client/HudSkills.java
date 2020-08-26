@@ -139,7 +139,7 @@ public final class HudSkills {
             } else {
                 player.skillJustLearnt = null;
                 SkillPacket pkt = new LearnSkillPacket(game.thePlayer.getEntityId(), null);
-                SkillAPI.channels.get(pkt.getChannel()).sendToServer(pkt.getPacket(Side.SERVER));
+                Application.channels.get(pkt.getChannel()).sendToServer(pkt.getPacket(Side.SERVER));
                 skillGetTimer = 50;
             }
         }

@@ -3,8 +3,7 @@ package skillapi.client;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import skillapi.SkillAPI;
-import skillapi.common.SkillProxy;
+import skillapi.Application;
 import skillapi.server.SkillServerProxy;
 
 /**
@@ -14,14 +13,14 @@ import skillapi.server.SkillServerProxy;
 public class SkillClientProxy extends SkillServerProxy {
     @Override
     public void preInit(FMLPreInitializationEvent event) {
-        if (SkillAPI.isLogicalServer) {
+        if (Application.isLogicalServer) {
             super.preInit(event);
         }
     }
 
     @Override
     public void init(FMLInitializationEvent event) {
-        if (SkillAPI.isLogicalServer) {
+        if (Application.isLogicalServer) {
             super.init(event);
         }
         System.out.println("Client init!");
@@ -29,7 +28,7 @@ public class SkillClientProxy extends SkillServerProxy {
 
     @Override
     public void postInit(FMLPostInitializationEvent event) {
-        if (SkillAPI.isLogicalServer) {
+        if (Application.isLogicalServer) {
             super.postInit(event);
         }
     }

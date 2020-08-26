@@ -5,7 +5,7 @@ import cpw.mods.fml.common.network.FMLNetworkEvent;
 import cpw.mods.fml.common.network.internal.FMLProxyPacket;
 import cpw.mods.fml.relauncher.Side;
 import net.minecraft.network.NetHandlerPlayServer;
-import skillapi.SkillAPI;
+import skillapi.Application;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -42,7 +42,7 @@ public class SkillPacketHandler {
         SkillPacket skpacket = packets.get(event.packet.channel());
         if (skpacket != null) {
             skpacket.fromBytes(event.packet.payload());
-            skpacket.run(SkillAPI.proxy.getPlayer());
+            skpacket.run(Application.oldProxy.getPlayer());
         }
     }
 }

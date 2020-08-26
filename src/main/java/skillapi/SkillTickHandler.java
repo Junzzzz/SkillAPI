@@ -42,7 +42,7 @@ public final class SkillTickHandler {
 
     @SubscribeEvent
     public void tickEnd(TickEvent.PlayerTickEvent event) {
-        if (event.phase == TickEvent.Phase.END && event.side.isServer()) {
+        if (!event.player.worldObj.isRemote && event.phase == TickEvent.Phase.END) {
             List<String> actives = PlayerSkills.get(event.player).activeSkills;
             for (String skill : actives) {
                 SkillRegistry.get(skill).onTickWhileActive(event.player);
@@ -66,12 +66,12 @@ public final class SkillTickHandler {
                         if (skill.onSkillTrigger(event.player)) {
                             PlayerSkills.get(event.player).spendMana(skill.getManaCost(event.player));
                             pkt = new ManaSpentPacket(event.player.getEntityId(), skill.getManaCost(event.player));
-                            SkillAPI.channels.get(pkt.getChannel()).sendTo(pkt.getPacket(Side.CLIENT), (EntityPlayerMP) event.player);
+                            Application.channels.get(pkt.getChannel()).sendTo(pkt.getPacket(Side.CLIENT), (EntityPlayerMP) event.player);
                             if (skill.getDuration(event.player) > 0) {
                                 if (!actives.contains(skillName)) {
                                     actives.add(skillName);
                                     pkt = new ActiveSkillPacket(event.player.getEntityId(), skillName, true);
-                                    SkillAPI.channels.get(pkt.getChannel()).sendTo(pkt.getPacket(Side.CLIENT), (EntityPlayerMP) event.player);
+                                    Application.channels.get(pkt.getChannel()).sendTo(pkt.getPacket(Side.CLIENT), (EntityPlayerMP) event.player);
                                 }
                                 data[2] = 1;//start skill timer
                             }
@@ -87,14 +87,14 @@ public final class SkillTickHandler {
                         data[2] = 0;//stop skill timer
                         actives.remove(skillName);
                         pkt = new ActiveSkillPacket(event.player.getEntityId(), skillName, false);
-                        SkillAPI.channels.get(pkt.getChannel()).sendTo(pkt.getPacket(Side.CLIENT), (EntityPlayerMP) event.player);
+                        Application.channels.get(pkt.getChannel()).sendTo(pkt.getPacket(Side.CLIENT), (EntityPlayerMP) event.player);
                         skill.onSkillEnd(event.player);
                     }
                     skill.charge = data[0];
                     skill.cooldownFrame = data[1];
                     skill.timeLeft = skill.getDuration(event.player) <= 0 ? 0 : (skill.getDuration(event.player) - data[2] / MULT);
                     pkt = new TickDataSkillPacket(event.player.getEntityId(), skill);
-                    SkillAPI.channels.get(pkt.getChannel()).sendTo(pkt.getPacket(Side.CLIENT), (EntityPlayerMP) event.player);
+                    Application.channels.get(pkt.getChannel()).sendTo(pkt.getPacket(Side.CLIENT), (EntityPlayerMP) event.player);
                     map.put(skillName, data);
                 }
             }

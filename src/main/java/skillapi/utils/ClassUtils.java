@@ -2,12 +2,14 @@ package skillapi.utils;
 
 import cpw.mods.fml.common.FMLLog;
 import org.apache.logging.log4j.Level;
+import skillapi.skill.SkillRuntimeException;
 
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.JarURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.Enumeration;
@@ -21,34 +23,88 @@ import java.util.jar.JarFile;
  * @date 2020/8/21.
  */
 public class ClassUtils {
+    public static List<Class<?>> scanLocalClasses(URL classUrl) {
+        return scanLocalClasses(classUrl, null, false);
+    }
 
+    public static List<Class<?>> scanLocalClasses(File codeFile) {
+        return scanLocalClasses(codeFile, null, false);
+    }
 
-    public static List<Class<?>> scanLocalPackageClasses(Class<?> loadClass, String packageName) {
+    public static List<Class<?>> scanLocalClasses(URL classUrl, boolean annotation) {
+        return scanLocalClasses(classUrl, null, annotation);
+    }
+
+    public static List<Class<?>> scanLocalClasses(File codeFile, boolean annotation) {
+        return scanLocalClasses(codeFile, null, annotation);
+    }
+
+    public static List<Class<?>> scanLocalClasses(File codeFile, String packageName, boolean annotation) {
+        if (codeFile.getName().endsWith(".jar")) {
+            final JarFile jarFile;
+            try {
+                jarFile = new JarFile(codeFile);
+            } catch (IOException e) {
+                throw new SkillRuntimeException(e, "Can not open file: %s", codeFile.getAbsolutePath());
+            }
+            return scanLocalClasses(jarFile, packageName, annotation);
+        }
+
+        URL codeUrl;
+        try {
+            codeUrl = codeFile.toURI().toURL();
+        } catch (MalformedURLException e) {
+            throw new SkillRuntimeException("File is not absolute", e);
+        }
+        return scanLocalClasses(codeUrl, packageName, annotation);
+    }
+
+    public static List<Class<?>> scanLocalClasses(Class<?> anyLocalClass, String packageName, boolean annotation) {
+        final URL codeUrl = anyLocalClass.getProtectionDomain().getCodeSource().getLocation();
+        return scanLocalClasses(codeUrl, packageName, annotation);
+    }
+
+    public static List<Class<?>> scanLocalClasses(JarFile jar, String packageName, boolean annotation) {
+        final List<Class<?>> classes = new LinkedList<Class<?>>();
+        List<String> classNames = new LinkedList<String>();
+        scanClassByJar(jar, classNames);
+        return getClasses(packageName, annotation, classes, classNames);
+    }
+
+    public static List<Class<?>> scanLocalClasses(URL classUrl, String packageName, boolean annotation) {
         final List<Class<?>> classes = new LinkedList<Class<?>>();
 
-        final URL codeURL = loadClass.getProtectionDomain().getCodeSource().getLocation();
-        System.out.println();
         final String path;
         try {
-            path = URLDecoder.decode(codeURL.getPath(), "UTF-8");
+            path = URLDecoder.decode(classUrl.getPath(), "UTF-8");
         } catch (UnsupportedEncodingException e) {
             // Never happen
             return classes;
         }
 
-        final List<String> classNames = new LinkedList<String>();
+        List<String> classNames = new LinkedList<String>();
 
-        final boolean isJar = "jar".equalsIgnoreCase(codeURL.getProtocol());
+        final boolean isJar = "jar".equalsIgnoreCase(classUrl.getProtocol());
         if (!isJar) {
-            scanClassByFile(packageName, path, true, classNames);
+            scanClassByFile("", path, true, classNames);
         } else {
-            scanClassByJar(packageName, codeURL, classNames);
+            scanClassByJar(classUrl, classNames);
+        }
+
+        return getClasses(packageName, annotation, classes, classNames);
+    }
+
+    private static List<Class<?>> getClasses(String packageName, boolean annotation, List<Class<?>> classes, List<String> classNames) {
+        if (packageName != null) {
+            classNames = filterClassName(classNames, packageName);
         }
 
         for (String className : classNames) {
             try {
-                final Class<?> cls = Class.forName(className, true, loadClass.getClassLoader());
-                classes.add(cls);
+                final Class<?> cls = Class.forName(className);
+                if (!annotation || cls.getAnnotations().length > 0) {
+                    classes.add(cls);
+                }
             } catch (ClassNotFoundException e) {
                 FMLLog.log(Level.WARN, e, "Failed to load class: %s", className);
             }
@@ -57,7 +113,28 @@ public class ClassUtils {
         return classes;
     }
 
-    private static void scanClassByJar(String packageName, URL url, List<String> classes) {
+    private static List<String> filterClassName(List<String> list, String packageName) {
+        final List<String> result = new LinkedList<String>();
+        for (String s : list) {
+            if (s.startsWith(packageName)) {
+                result.add(s);
+            }
+        }
+        return result;
+    }
+    private static void scanClassByJar(JarFile jarFile, List<String> classes) {
+        final Enumeration<JarEntry> entries = jarFile.entries();
+        while (entries.hasMoreElements()) {
+            JarEntry entry = entries.nextElement();
+            String jarEntryName = entry.getName().replace('/', '.');
+            if (jarEntryName.endsWith(".class")) {
+                String className = jarEntryName.substring(0, jarEntryName.lastIndexOf(".class"));
+                classes.add(className);
+            }
+        }
+    }
+
+    private static void scanClassByJar(URL url, List<String> classes) {
         try {
             final JarURLConnection connection = (JarURLConnection) url.openConnection();
             if (connection == null) {
@@ -68,15 +145,7 @@ public class ClassUtils {
                 return;
             }
 
-            final Enumeration<JarEntry> entries = jarFile.entries();
-            while (entries.hasMoreElements()) {
-                JarEntry entry = entries.nextElement();
-                String jarEntryName = entry.getName().replace('/', '.');
-                if (jarEntryName.endsWith(".class") && jarEntryName.startsWith(packageName)) {
-                    String className = jarEntryName.substring(0, jarEntryName.lastIndexOf(".class"));
-                    classes.add(className);
-                }
-            }
+            scanClassByJar(jarFile, classes);
         } catch (IOException ignore) {
             // ignore
         }

@@ -2,8 +2,8 @@ package skillapi.packets;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
+import skillapi.Application;
 import skillapi.PlayerSkills;
-import skillapi.SkillAPI;
 import skillapi.SkillRegistry;
 
 public class UpdateSkillPacket extends LearnSkillPacket {
@@ -42,7 +42,7 @@ public class UpdateSkillPacket extends LearnSkillPacket {
             } else {
                 PlayerSkills.get(player).chargingSkill = SkillRegistry.get(skill);
             }
-            SkillAPI.proxy.updateKeyBindingTypes(player);
+            Application.oldProxy.updateKeyBindingTypes(player);
             //Send back checked info to client
             return !player.worldObj.isRemote;
         }

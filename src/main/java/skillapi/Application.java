@@ -1,30 +1,24 @@
 package skillapi;
 
-import cpw.mods.fml.common.*;
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
+import cpw.mods.fml.common.ModContainer;
+import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.network.FMLEventChannel;
 import cpw.mods.fml.common.network.NetworkRegistry;
-import org.apache.logging.log4j.Level;
-import skillapi.common.SkillEvent;
+import skillapi.api.SkillApi;
 import skillapi.common.SkillProxy;
-import skillapi.event.BaseSkillEvent;
 import skillapi.packets.SkillPacketHandler;
-import skillapi.utils.ClassUtils;
-import skillapi.utils.EventBusUtils;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Mod(modid = "skillapi", name = "Skill API", useMetadata = true)
-public final class SkillAPI {
+public final class Application {
     public static boolean isLogicalServer = false;
     public static boolean isPhysicalServer = false;
 
@@ -37,6 +31,7 @@ public final class SkillAPI {
 
     @EventHandler
     public void pre(FMLPreInitializationEvent event) {
+        SkillApi.init(event);
         channels = new HashMap<String, FMLEventChannel>(16);
         FMLEventChannel channel;
         for (int i = 0; i < SkillPacketHandler.CHANNELS.length; i++) {
@@ -58,7 +53,6 @@ public final class SkillAPI {
 
     @EventHandler
     public void init(FMLInitializationEvent event) {
-        BaseSkillEvent.loadSkillEvent(this.getClass(),"skillapi.event");
         proxy.init(event);
 
         oldProxy.loadSkillKeyBindings();

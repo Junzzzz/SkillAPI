@@ -1,4 +1,4 @@
-package skillapi;
+package skillapi.event;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent;
@@ -10,6 +10,9 @@ import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
+import skillapi.Application;
+import skillapi.PlayerSkills;
+import skillapi.Skill;
 import skillapi.packets.InitSkillPacket;
 import skillapi.packets.SkillPacket;
 
@@ -39,7 +42,7 @@ public final class PlayerEventHandler {
     public void onSpawn(EntityJoinWorldEvent event) {
         if (event.entity instanceof EntityPlayerMP) {
             SkillPacket pkt = new InitSkillPacket(PlayerSkills.get((EntityPlayer) event.entity));
-            SkillAPI.channels.get(pkt.getChannel()).sendTo(pkt.getPacket(Side.CLIENT), (EntityPlayerMP) event.entity);
+            Application.channels.get(pkt.getChannel()).sendTo(pkt.getPacket(Side.CLIENT), (EntityPlayerMP) event.entity);
         }
     }
 
@@ -79,13 +82,13 @@ public final class PlayerEventHandler {
     @SubscribeEvent
     public void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
         SkillPacket pkt = new InitSkillPacket(PlayerSkills.get(event.player));
-        SkillAPI.channels.get(pkt.getChannel()).sendTo(pkt.getPacket(Side.CLIENT), (EntityPlayerMP) event.player);
+        Application.channels.get(pkt.getChannel()).sendTo(pkt.getPacket(Side.CLIENT), (EntityPlayerMP) event.player);
     }
 
     @SubscribeEvent
     public void onPlayerChangedDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
         SkillPacket pkt = new InitSkillPacket(PlayerSkills.get(event.player));
-        SkillAPI.channels.get(pkt.getChannel()).sendTo(pkt.getPacket(Side.CLIENT), (EntityPlayerMP) event.player);
+        Application.channels.get(pkt.getChannel()).sendTo(pkt.getPacket(Side.CLIENT), (EntityPlayerMP) event.player);
     }
 
     @SubscribeEvent
@@ -96,6 +99,6 @@ public final class PlayerEventHandler {
             PlayerSkills.get(event.player).skillBar = skillBarBackup.remove(event.player.getUniqueID());
         }
         SkillPacket pkt = new InitSkillPacket(PlayerSkills.get(event.player));
-        SkillAPI.channels.get(pkt.getChannel()).sendTo(pkt.getPacket(Side.CLIENT), (EntityPlayerMP) event.player);
+        Application.channels.get(pkt.getChannel()).sendTo(pkt.getPacket(Side.CLIENT), (EntityPlayerMP) event.player);
     }
 }

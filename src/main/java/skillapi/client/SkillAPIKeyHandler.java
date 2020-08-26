@@ -11,7 +11,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.settings.KeyBinding;
 import skillapi.PlayerSkills;
-import skillapi.SkillAPI;
+import skillapi.Application;
 import skillapi.packets.SkillPacket;
 import skillapi.packets.TriggerSkillPacket;
 
@@ -59,7 +59,7 @@ public class SkillAPIKeyHandler {
                 for (int i = 0; i < SkillAPIClientProxy.skillKeyBindings.length; i++) {
                     if (SkillAPIClientProxy.skillKeyBindings[i] == kb && PlayerSkills.get(player).skillBar[i] != null) {
                         SkillPacket pkt = new TriggerSkillPacket(player.getEntityId(), i, PlayerSkills.get(player).skillBar[i].getName());
-                        SkillAPI.channels.get(pkt.getChannel()).sendToServer(pkt.getPacket(Side.SERVER));
+                        Application.channels.get(pkt.getChannel()).sendToServer(pkt.getPacket(Side.SERVER));
                         return;
                     }
                 }

@@ -8,6 +8,7 @@ import cpw.mods.fml.common.eventhandler.Event;
 import cpw.mods.fml.common.eventhandler.EventBus;
 import net.minecraftforge.common.MinecraftForge;
 import org.apache.logging.log4j.Level;
+import skillapi.skill.SkillRuntimeException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -33,7 +34,7 @@ public class EventBusUtils {
             MC_REGISTER = MC_EVENT_BUS.getClass().getDeclaredMethod("register", Class.class, Object.class, Method.class, ModContainer.class);
             MC_REGISTER.setAccessible(true);
         } catch (NoSuchMethodException e) {
-            e.printStackTrace();
+            throw new SkillRuntimeException("Can't find Forge event class");
         }
     }
 
@@ -57,13 +58,13 @@ public class EventBusUtils {
         try {
             busMethod.invoke(bus, eventType, target.newInstance(), method, activeModContainer);
         } catch (IllegalAccessException e) {
-            e.printStackTrace();
+            FMLLog.log(Level.ERROR, e, "Unable to determine registrant mod for %s. This is a critical error and should be impossible", target);
             return false;
         } catch (InvocationTargetException e) {
-            e.printStackTrace();
+            FMLLog.log(Level.ERROR, e, "Unable to determine registrant mod for %s. This is a critical error and should be impossible", target);
             return false;
         } catch (InstantiationException e) {
-            e.printStackTrace();
+            FMLLog.log(Level.ERROR, e, "Unable to determine registrant mod for %s. This is a critical error and should be impossible", target);
             return false;
         }
         return true;

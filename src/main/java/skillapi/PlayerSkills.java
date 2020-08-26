@@ -82,7 +82,7 @@ public final class PlayerSkills implements IExtendedEntityProperties {
         skillJustLearnt = skill;
         if (player instanceof EntityPlayerMP) {
             SkillPacket pkt = new LearnSkillPacket(player.getEntityId(), skill.getName());
-            SkillAPI.channels.get(pkt.getChannel()).sendTo(pkt.getPacket(Side.CLIENT), (EntityPlayerMP) player);
+            Application.channels.get(pkt.getChannel()).sendTo(pkt.getPacket(Side.CLIENT), (EntityPlayerMP) player);
         }
     }
 

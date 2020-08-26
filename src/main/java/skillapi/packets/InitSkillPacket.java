@@ -3,9 +3,9 @@ package skillapi.packets;
 import com.google.common.base.Charsets;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
+import skillapi.Application;
 import skillapi.PlayerSkills;
 import skillapi.Skill;
-import skillapi.SkillAPI;
 import skillapi.SkillRegistry;
 
 import java.util.ArrayList;
@@ -119,7 +119,7 @@ public class InitSkillPacket extends SkillPacket {
             skills.activeSkills.clear();
             skills.activeSkills.addAll(active);
             System.arraycopy(bar, 0, skills.skillBar, 0, bar.length);
-            SkillAPI.proxy.updateKeyBindingTypes(player);
+            Application.oldProxy.updateKeyBindingTypes(player);
         }
         return false;
     }
