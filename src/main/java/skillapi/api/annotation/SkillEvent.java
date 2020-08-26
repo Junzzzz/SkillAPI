@@ -1,4 +1,4 @@
-package skillapi.common;
+package skillapi.api.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -9,7 +9,6 @@ import java.lang.annotation.Target;
  * @author Jun
  * @date 2020/8/20.
  */
-
 @Target(value = ElementType.TYPE)
 @Retention(value = RetentionPolicy.RUNTIME)
 public @interface SkillEvent {
