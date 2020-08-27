@@ -38,42 +38,40 @@ public class EventBusUtils {
         }
     }
 
-    private static boolean check(Method method, Class<?> eventType) {
-        if (!Event.class.isAssignableFrom(eventType)) {
-            FMLLog.log(Level.ERROR, new Throwable(), "Method %s has @SubscribeEvent annotation, but takes a argument that is not an Event %s", method, eventType);
+    private static boolean check(Method method, Class<?> eventClass) {
+        if (!Event.class.isAssignableFrom(eventClass)) {
+            FMLLog.log(Level.ERROR, new Throwable(), "Method %s has @SubscribeEvent annotation, but takes a argument that is not an Event %s", method, eventClass);
             return false;
         }
         return true;
     }
 
-    private static boolean register(EventBus bus, Method busMethod, Class<?> target, Method method, Class<?> eventType) {
+    private static boolean register(EventBus bus, Method busMethod, Object targetInstance, Method method, Class<?> eventClass) {
         ModContainer activeModContainer = Loader.instance().activeModContainer();
         if (activeModContainer == null) {
-            FMLLog.log(Level.ERROR, new Throwable(), "Unable to determine registrant mod for %s. This is a critical error and should be impossible", target);
+            FMLLog.log(Level.ERROR, new Throwable(), "Unable to determine registrant mod for %s. This is a critical error and should be impossible", targetInstance);
             activeModContainer = Loader.instance().getMinecraftModContainer();
         }
-        if (!check(method, eventType)) {
+        if (!check(method, eventClass)) {
             return false;
         }
         try {
-            busMethod.invoke(bus, eventType, target.newInstance(), method, activeModContainer);
+            busMethod.invoke(bus, eventClass, targetInstance, method, activeModContainer);
         } catch (IllegalAccessException e) {
-            FMLLog.log(Level.ERROR, e, "Unable to determine registrant mod for %s. This is a critical error and should be impossible", target);
+            FMLLog.log(Level.ERROR, e, "Unable to determine registrant mod for %s. This is a critical error and should be impossible", targetInstance);
             return false;
         } catch (InvocationTargetException e) {
-            FMLLog.log(Level.ERROR, e, "Unable to determine registrant mod for %s. This is a critical error and should be impossible", target);
-            return false;
-        } catch (InstantiationException e) {
-            FMLLog.log(Level.ERROR, e, "Unable to determine registrant mod for %s. This is a critical error and should be impossible", target);
+            FMLLog.log(Level.ERROR, e, "Unable to determine registrant mod for %s. This is a critical error and should be impossible", targetInstance);
             return false;
         }
         return true;
     }
 
-    public static boolean forceRegisterFMLEvent(Class<?> target, Method method, Class<?> eventType) {
-        return register(FML_EVENT_BUS, FML_REGISTER, target, method, eventType);
+    public static boolean forceRegisterFMLEvent(Object targetInstance, Method method, Class<?> eventClass) {
+        return register(FML_EVENT_BUS, FML_REGISTER, targetInstance, method, eventClass);
     }
-    public static boolean forceRegisterMCEvent(Class<?> target, Method method, Class<?> eventType) {
-        return register(MC_EVENT_BUS, MC_REGISTER, target, method, eventType);
+
+    public static boolean forceRegisterMCEvent(Object targetInstance, Method method, Class<?> eventClass) {
+        return register(MC_EVENT_BUS, MC_REGISTER, targetInstance, method, eventClass);
     }
 }

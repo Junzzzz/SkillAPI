@@ -8,6 +8,9 @@ import skillapi.Application;
  * @date 2020/8/20.
  */
 public abstract class BaseSkillEvent<T> {
+    private boolean onServer;
+    private boolean onClient;
+
     @SubscribeEvent
     public final void run(T event) {
         if (Application.isLogicalServer) {
@@ -20,17 +23,29 @@ public abstract class BaseSkillEvent<T> {
         }
     }
 
+    private void doServer(T e) {
+        if (onServer) {
+            onServer(e);
+        }
+    }
+
+    private void doClient(T e) {
+        if (onClient) {
+            onClient(e);
+        }
+    }
+
     /**
      * 服务端事件
      *
      * @param event 目标事件
      */
-    public abstract void doServer(T event);
+    protected abstract void onServer(T event);
 
     /**
      * 客户端事件
      *
      * @param event 目标事件
      */
-    public abstract void doClient(T event);
+    protected abstract void onClient(T event);
 }

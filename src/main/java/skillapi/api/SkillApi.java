@@ -8,6 +8,8 @@ import skillapi.utils.ListUtils;
 import skillapi.utils.ListUtils.Function;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -18,8 +20,8 @@ import java.util.Map;
  * @date 2020/8/26.
  */
 public final class SkillApi {
-    private static Map<Class<? extends Annotation>, SkillAnnotationRegister> annotationMap =
-            new HashMap<Class<? extends Annotation>, SkillAnnotationRegister>(16);
+    private static Map<Class<? extends Annotation>, SkillAnnotationRegister<Annotation>> annotationMap =
+            new HashMap<Class<? extends Annotation>, SkillAnnotationRegister<Annotation>>(16);
 
 
     public static void init(FMLPreInitializationEvent event) {
@@ -42,9 +44,9 @@ public final class SkillApi {
     private static void registerAll(List<Class<?>> classes) {
         for (Class<?> clz : classes) {
             for (Annotation annotation : clz.getAnnotations()) {
-                final SkillAnnotationRegister function = annotationMap.get(annotation.annotationType());
+                final SkillAnnotationRegister<Annotation> function = annotationMap.get(annotation.annotationType());
                 if (function != null) {
-                    function.register(clz);
+                    function.register(clz, annotation);
                 }
             }
         }
@@ -56,15 +58,34 @@ public final class SkillApi {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private static void registerAnnotation(Class<?> clz) {
-        final SkillAnnotation annotation = clz.getAnnotation(SkillAnnotation.class);
+        if (!SkillAnnotationRegister.class.isAssignableFrom(clz)) {
+            return;
+        }
 
-        try {
-            annotationMap.put(annotation.value(), (SkillAnnotationRegister) clz.newInstance());
-        } catch (InstantiationException e) {
-            FMLLog.log(Level.ERROR, e, "Unable to register %s class", clz.getName());
-        } catch (IllegalAccessException e) {
-            FMLLog.log(Level.ERROR, e, "Unable to register %s class", clz.getName());
+        final Type[] genericInterfaces = clz.getGenericInterfaces();
+        for (Type genericInterface : genericInterfaces) {
+            if (!(genericInterface instanceof ParameterizedType)) {
+                continue;
+            }
+
+            final Type[] generics = ((ParameterizedType) genericInterface).getActualTypeArguments();
+            if (generics.length != 1) {
+                continue;
+            }
+
+            final Class<?> generic = (Class<?>) generics[0];
+            if (Annotation.class.isAssignableFrom(generic)) {
+                try {
+                    annotationMap.put((Class<? extends Annotation>) generic, (SkillAnnotationRegister<Annotation>) clz.newInstance());
+                    break;
+                } catch (InstantiationException e) {
+                    FMLLog.log(Level.ERROR, e, "Unable to register %s class", clz.getName());
+                } catch (IllegalAccessException e) {
+                    FMLLog.log(Level.ERROR, e, "Unable to register %s class", clz.getName());
+                }
+            }
         }
     }
 }

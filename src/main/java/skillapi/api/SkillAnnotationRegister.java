@@ -1,14 +1,17 @@
 package skillapi.api;
 
+import java.lang.annotation.Annotation;
+
 /**
  * @author Jun
  * @date 2020/8/26.
  */
-public interface SkillAnnotationRegister {
+public interface SkillAnnotationRegister<T extends Annotation> {
     /**
-     * 为含有注解的类提供加载方法
+     * Provide loading methods for classes containing annotations
      *
-     * @param target 目标类
+     * @param target Target class
+     * @param annotation Annotation on the target class
      */
-    void register(Class<?> target);
+    void register(Class<?> target, T annotation);
 }
