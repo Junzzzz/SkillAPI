@@ -28,7 +28,6 @@ public final class SkillApi {
 
     public static void init(FMLPreInitializationEvent event, String packageName) {
         List<Class<?>> classes = ClassUtils.scanLocalClasses(event.getSourceFile(), packageName, true);
-        System.out.println("All Class:" + classes.size());
         final List<Class<?>> remainClass = new LinkedList<Class<?>>();
         classes = ListUtils.filter(classes, new Function<Class<?>, Boolean>() {
             @Override
@@ -36,9 +35,7 @@ public final class SkillApi {
                 return clz.isAnnotationPresent(SkillAnnotation.class);
             }
         }, remainClass);
-        System.out.println("Annotation Class:" + classes.size());
         registerAnnotation(classes);
-        System.out.println("Remain Class:" + remainClass.size());
         registerAll(remainClass);
     }
 

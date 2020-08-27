@@ -6,6 +6,7 @@ import org.apache.logging.log4j.Level;
 import skillapi.api.SkillAnnotation;
 import skillapi.api.SkillAnnotationRegister;
 import skillapi.api.annotation.SkillEvent;
+import skillapi.base.BaseSkillEvent;
 import skillapi.utils.ClassUtils;
 import skillapi.utils.EventBusUtils;
 
@@ -21,7 +22,16 @@ import java.lang.reflect.Type;
 public final class SkillEventAnnotationImpl implements SkillAnnotationRegister {
     @Override
     public void register(Class<?> target) {
+        if (!BaseSkillEvent.class.isAssignableFrom(target)) {
+            return;
+        }
+
         final Type superClass = target.getGenericSuperclass();
+
+        if (superClass == null) {
+            return;
+        }
+
         if (!(superClass instanceof ParameterizedType)) {
             return;
         }
@@ -33,7 +43,6 @@ public final class SkillEventAnnotationImpl implements SkillAnnotationRegister {
         final Class<?> eventClass = (Class<?>) genericTypes[0];
         final String eventName = eventClass.getName();
         final String eventPackage = ClassUtils.getClassPackage(eventName);
-
 
         for (Method method : target.getMethods()) {
             if (!method.isAnnotationPresent(SubscribeEvent.class)) {
@@ -47,6 +56,8 @@ public final class SkillEventAnnotationImpl implements SkillAnnotationRegister {
                 if (!EventBusUtils.forceRegisterMCEvent(target, method, eventClass)) {
                     FMLLog.log(Level.ERROR, "Minecraft event registration failed From: %s.%s", target.getName(), method.getName());
                 }
+            } else {
+                FMLLog.log(Level.ERROR, "Unable to register event: %s", eventName);
             }
         }
     }

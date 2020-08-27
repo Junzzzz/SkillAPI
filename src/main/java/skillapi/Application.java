@@ -31,6 +31,9 @@ public final class Application {
 
     @EventHandler
     public void pre(FMLPreInitializationEvent event) {
+        isPhysicalServer = false;
+        isLogicalServer = false;
+
         SkillApi.init(event);
         channels = new HashMap<String, FMLEventChannel>(16);
         FMLEventChannel channel;
