@@ -12,21 +12,33 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '1.2-SNAPSHOT', changing: false
     }
 }
 apply plugin: 'forge'
-sourceCompatibility = 1.6
-targetCompatibility = 1.6
-minecraft {
-    version = "1.7.10-10.13.4.1558-1.7.10"
-    runDir = "eclipse"
-}
+
 version = "0.1"
 archivesBaseName = "SkillAPI+GenericPack"
-group = "com.github.skillapi"
-sourceSets.main.java{srcDirs project.projectDir.getPath() include("skillapi/**" , "genericskill/**")}
-sourceSets.main.resources{srcDirs project.projectDir.getPath() include("assets/**")}
+group = "com.github.junzzzz"
+
+sourceCompatibility = targetCompatibility = 1.6
+compileJava.sourceCompatibility = compileJava.targetCompatibility = 1.6
+
+minecraft {
+    version = "1.7.10-10.13.4.1558-1.7.10"
+    runDir = "minecraft"
+}
+
+ext {
+    jacksonVersion = '2.6.7'
+}
+
+dependencies {
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: jacksonVersion
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: jacksonVersion
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: jacksonVersion
+}
+
 processResources {
     // this will ensure that this task is redone when the versions change.
     inputs.property "version", project.version
@@ -36,35 +48,39 @@ processResources {
         include("*.png", "*.lang")
     }
 }
+
 jar {
-    //Keep the jar as clean as possible
+    // Keep the jar as clean as possible
     includeEmptyDirs = false
 }
+
 task unJar(type:Copy, dependsOn:'build')
-unJar{
+unJar {
     from zipTree(jar.archivePath)
     into 'build/unjar'
 }
+
 task buildAPI(type:Jar, dependsOn:'unJar')
-buildAPI{
-    archiveName = "SkillAPI" + "-" + version + "("+minecraft.version+")."+extension
+buildAPI {
+    archiveName = "SkillAPI" + "-" + version + "(" + minecraft.version + ")." + extension
     from 'build/unjar'
     include('assets/skillapi/**', 'skillapi/**')
-    from('api_info'){
-    include('mcmod.info', 'pack.mcmeta')
-    // replace version and mcversion
-    expand([version:version, mcversion:minecraft.version])
+    from('api_info') {
+        include('mcmod.info', 'pack.mcmeta')
+        // replace version and mcversion
+        expand([version: version, mcversion: minecraft.version])
     }
 }
+
 task buildPack(type:Jar, dependsOn:'unJar')
-buildPack{
-    archiveName = "GenericSkill Pack" + "-" + version + "("+minecraft.version+")."+extension
+buildPack {
+    archiveName = "GenericSkill Pack" + "-" + version + "(" + minecraft.version + ")." + extension
     from 'build/unjar'
     include('assets/genericskill/**', 'genericskill/**')
-    from('pack_info'){
+    from('pack_info') {
         include('mcmod.info')
         // replace version and mcversion
-        expand([version:version, mcversion:minecraft.version])
+        expand([version: version, mcversion: minecraft.version])
     }
 }
 task buildBoth(dependsOn:['buildAPI','buildPack'])
