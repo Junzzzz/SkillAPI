@@ -178,4 +178,16 @@ public class ClassUtils {
     public static String getClassPackage(String className) {
         return className.substring(0, className.lastIndexOf("."));
     }
+
+    public static Object newInstance(Class<?> target, String msgFormat, Object... args) {
+        try {
+            return target.newInstance();
+        } catch (InstantiationException e) {
+            FMLLog.log(Level.ERROR, e, msgFormat, args);
+            return null;
+        } catch (IllegalAccessException e) {
+            FMLLog.log(Level.ERROR, e, msgFormat, args);
+            return null;
+        }
+    }
 }
