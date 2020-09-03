@@ -2,6 +2,7 @@ package skillapi.api.impl;
 
 import skillapi.api.SkillAnnotation;
 import skillapi.api.SkillAnnotationRegister;
+import skillapi.api.annotation.SkillPacket;
 import skillapi.newpacket.base.BaseSkillPacket;
 import skillapi.newpacket.base.SkillPacketHandler;
 import skillapi.newpacket.base.SkillPacketStructure;
@@ -12,10 +13,10 @@ import skillapi.skill.SkillRuntimeException;
  * @date 2020/8/26.
  */
 @SkillAnnotation
-public final class SkillPacketAnnotationImpl implements SkillAnnotationRegister<skillapi.api.annotation.SkillPacket> {
+public final class SkillPacketAnnotationImpl implements SkillAnnotationRegister<SkillPacket> {
     @Override
     @SuppressWarnings("unchecked")
-    public void register(Class<?> target, skillapi.api.annotation.SkillPacket annotation) {
+    public void register(Class<?> target, SkillPacket annotation) {
         if (!BaseSkillPacket.class.isAssignableFrom(target)) {
             throw new SkillRuntimeException("Skill packet registration failed. Class: %s", target.getName());
         }

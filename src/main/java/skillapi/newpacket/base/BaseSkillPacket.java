@@ -16,6 +16,7 @@ import skillapi.utils.JsonUtils;
  * @date 2020/8/25.
  */
 public abstract class BaseSkillPacket {
+    private String test;
     public final void sendToClient(EntityPlayerMP player) {
         final FMLProxyPacket packet = processPacket();
         if (packet == null) {
