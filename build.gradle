@@ -22,7 +22,6 @@ archivesBaseName = "SkillAPI+GenericPack"
 group = "com.github.junzzzz"
 
 sourceCompatibility = targetCompatibility = 1.6
-compileJava.sourceCompatibility = compileJava.targetCompatibility = 1.6
 
 minecraft {
     version = "1.7.10-10.13.4.1558-1.7.10"
@@ -34,6 +33,8 @@ ext {
 }
 
 dependencies {
+    compile project(':skill-processor')
+
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: jacksonVersion
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: jacksonVersion
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: jacksonVersion
