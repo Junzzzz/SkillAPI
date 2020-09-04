@@ -5,8 +5,9 @@
 !gradle*
 !mcmod.info
 !pack.mcmeta
-!src/resources/assets/
+!src/main/resources/assets/
 !src/
+!skill-processor/src/
 !/api_info/
 !/pack_info/
 !*update.xml
