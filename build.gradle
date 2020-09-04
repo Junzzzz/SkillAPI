@@ -40,6 +40,10 @@ dependencies {
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: jacksonVersion
 }
 
+sourceSets.main.java {
+    srcDirs project(':skill-processor').projectDir.getPath()
+}
+
 processResources {
     // this will ensure that this task is redone when the versions change.
     inputs.property "version", project.version

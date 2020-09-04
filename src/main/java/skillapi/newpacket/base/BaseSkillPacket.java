@@ -24,7 +24,6 @@ public abstract class BaseSkillPacket {
         }
         packet.setTarget(Side.CLIENT);
         SkillPacketHandler.CHANNEL.sendTo(packet, player);
-        System.out.println("send");
     }
 
     public final void sendToServer() {

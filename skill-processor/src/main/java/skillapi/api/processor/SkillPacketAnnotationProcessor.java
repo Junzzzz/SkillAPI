@@ -15,6 +15,7 @@ import skillapi.api.annotation.SkillPacket;
 import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
 import javax.tools.Diagnostic;
 import java.util.Set;
@@ -32,6 +33,8 @@ public class SkillPacketAnnotationProcessor extends AbstractProcessor {
     private TreeMaker treeMaker;
     private Names names;
 
+    private Name constructorName;
+
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {
         super.init(processingEnv);
@@ -40,31 +43,48 @@ public class SkillPacketAnnotationProcessor extends AbstractProcessor {
         Context context = ((JavacProcessingEnvironment) processingEnv).getContext();
         this.treeMaker = TreeMaker.instance(context);
         this.names = Names.instance(context);
+        this.constructorName = names.fromString("<init>");
     }
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
         Set<? extends Element> set = roundEnv.getElementsAnnotatedWith(SkillPacket.class);
         for (Element element : set) {
+            if (element.getKind() != ElementKind.CLASS) {
+                error(element, "Only classes can be annotated with @%s", SkillPacket.class.getSimpleName());
+                // exit
+                return true;
+            }
+
             JCTree jcTree = trees.getTree(element);
             jcTree.accept(new TreeTranslator() {
                 @Override
                 public void visitClassDef(JCTree.JCClassDecl jcClassDecl) {
                     List<JCTree.JCVariableDecl> jcVariableDeclList = List.nil();
-
+                    boolean hasConstructor = false;
                     // Get class fields
                     for (JCTree tree : jcClassDecl.defs) {
                         if (tree.getKind().equals(Tree.Kind.VARIABLE)) {
                             JCTree.JCVariableDecl jcVariableDecl = (JCTree.JCVariableDecl) tree;
                             jcVariableDeclList = jcVariableDeclList.append(jcVariableDecl);
                         }
+                        if (tree.getKind().equals(Tree.Kind.METHOD)) {
+                            JCTree.JCMethodDecl jcMethodDecl = (JCTree.JCMethodDecl) tree;
+                            if (jcMethodDecl.name.equals(constructorName) && jcMethodDecl.params.length() == 0) {
+                                hasConstructor = true;
+                            }
+                        }
                     }
 
                     // Inject getter & setter
                     for (JCTree.JCVariableDecl jcVariableDecl : jcVariableDeclList) {
                         jcClassDecl.defs = jcClassDecl.defs
-                                .prepend(makeGetterMethodDecl(jcVariableDecl))
-                                .prepend(makeSetterMethodDecl(jcVariableDecl));
+                                .prepend(createGetter(jcVariableDecl))
+                                .prepend(createSetter(jcVariableDecl));
+                    }
+
+                    if (!hasConstructor) {
+                        jcClassDecl.defs = jcClassDecl.defs.prepend(createNoArgsConstructor());
                     }
                     super.visitClassDef(jcClassDecl);
                 }
@@ -73,7 +93,21 @@ public class SkillPacketAnnotationProcessor extends AbstractProcessor {
         return true;
     }
 
-    private JCTree.JCMethodDecl makeGetterMethodDecl(JCTree.JCVariableDecl jcVariableDecl) {
+    private JCTree.JCMethodDecl createNoArgsConstructor() {
+        JCTree.JCBlock body = treeMaker.Block(0, List.<JCTree.JCStatement>nil());
+        return treeMaker.MethodDef(
+                treeMaker.Modifiers(Flags.PRIVATE),
+                constructorName,
+                null,
+                List.<JCTree.JCTypeParameter>nil(),
+                List.<JCTree.JCVariableDecl>nil(),
+                List.<JCTree.JCExpression>nil(),
+                body,
+                null
+        );
+    }
+
+    private JCTree.JCMethodDecl createGetter(JCTree.JCVariableDecl jcVariableDecl) {
         ListBuffer<JCTree.JCStatement> statements = new ListBuffer<JCTree.JCStatement>();
         statements.append(treeMaker.Return(treeMaker.Select(treeMaker.Ident(names.fromString("this")), jcVariableDecl.getName())));
         JCTree.JCBlock body = treeMaker.Block(0, statements.toList());
@@ -89,7 +123,7 @@ public class SkillPacketAnnotationProcessor extends AbstractProcessor {
         );
     }
 
-    private JCTree.JCMethodDecl makeSetterMethodDecl(JCTree.JCVariableDecl jcVariableDecl) {
+    private JCTree.JCMethodDecl createSetter(JCTree.JCVariableDecl jcVariableDecl) {
         ListBuffer<JCTree.JCStatement> statements = new ListBuffer<JCTree.JCStatement>();
 
         statements.append(treeMaker.Exec(
@@ -122,5 +156,9 @@ public class SkillPacketAnnotationProcessor extends AbstractProcessor {
     private Name getNewMethodName(String prefix, Name name) {
         String s = name.toString();
         return names.fromString(prefix + s.substring(0, 1).toUpperCase() + s.substring(1, name.length()));
+    }
+
+    private void error(Element e, String msg, Object... args) {
+        messager.printMessage(Diagnostic.Kind.ERROR, String.format(msg, args), e);
     }
 }

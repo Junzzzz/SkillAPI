@@ -19,7 +19,6 @@ public final class PacketReceiveEvent {
     @SubscribeEvent
     @SideOnly(Side.CLIENT)
     public void onClientPacketEvent(ClientCustomPacketEvent event) {
-        System.out.println("process");
         process(event.packet.payload(), FMLClientHandler.instance().getClient().thePlayer);
     }
 

@@ -2,12 +2,12 @@ package skillapi.api.impl;
 
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.relauncher.Side;
 import org.apache.logging.log4j.Level;
 import skillapi.api.SkillAnnotation;
 import skillapi.api.SkillAnnotationRegister;
 import skillapi.api.annotation.SkillEvent;
-import skillapi.api.common.EffectSide;
-import skillapi.base.BaseSkillEvent;
+import skillapi.event.base.BaseSkillEvent;
 import skillapi.skill.SkillRuntimeException;
 import skillapi.utils.ClassUtils;
 import skillapi.utils.EventBusUtils;
@@ -40,10 +40,14 @@ public final class SkillEventAnnotationImpl implements SkillAnnotationRegister<S
 
     @Override
     public void register(Class<?> target, SkillEvent annotation) {
-        if (!BaseSkillEvent.class.isAssignableFrom(target)) {
-            return;
+        if (BaseSkillEvent.class.isAssignableFrom(target)) {
+            registerClass(target, annotation);
+        } else {
+            registerMethod(target, annotation);
         }
+    }
 
+    private void registerClass(Class<?> target, SkillEvent annotation) {
         final Type superClass = target.getGenericSuperclass();
 
         if (superClass == null) {
@@ -69,43 +73,58 @@ public final class SkillEventAnnotationImpl implements SkillAnnotationRegister<S
                 return;
             }
 
-            final Object instance = newInstance(target);
+            final Object instance = ClassUtils.newInstance(target, "Minecraft event registration failed From: %s", target.getName());
 
             injection(instance, annotation);
 
-            if (eventPackage.startsWith("cpw.mods.fml.common.gameevent")) {
-                if (!EventBusUtils.forceRegisterFMLEvent(instance, method, eventClass)) {
-                    FMLLog.log(Level.ERROR, "FML event registration failed. From: %s", target.getName());
-                }
-            } else if (eventPackage.startsWith("net.minecraftforge.event")) {
-                if (!EventBusUtils.forceRegisterMCEvent(instance, method, eventClass)) {
-                    FMLLog.log(Level.ERROR, "Minecraft event registration failed From: %s", target.getName());
-                }
-            } else {
-                FMLLog.log(Level.ERROR, "Unable to register event: %s", eventName);
-            }
+            registerEvent(target, method, eventClass, eventName, eventPackage, instance);
         } catch (NoSuchMethodException e) {
             throw new SkillRuntimeException("Impossible error", e);
         }
     }
 
-    private Object newInstance(Class<?> target) {
-        try {
-            return target.newInstance();
-        } catch (InstantiationException e) {
-            FMLLog.log(Level.ERROR, e, "Minecraft event registration failed From: %s", target.getName());
-            return null;
-        } catch (IllegalAccessException e) {
-            FMLLog.log(Level.ERROR, e, "Minecraft event registration failed From: %s", target.getName());
-            return null;
+    private void registerMethod(Class<?> target, SkillEvent annotation) {
+        for (Method method : target.getMethods()) {
+            if (!method.isAnnotationPresent(SubscribeEvent.class)) {
+                continue;
+            }
+
+            final Class<?>[] parameterTypes = method.getParameterTypes();
+
+            // Single parameter event method
+            if (parameterTypes.length != 1) {
+                continue;
+            }
+            final Class<?> eventClass = parameterTypes[0];
+            final String eventName = eventClass.getName();
+            final String eventPackage = ClassUtils.getClassPackage(eventName);
+
+            final Object instance = ClassUtils.newInstance(target, "Minecraft event registration failed From: %s", target.getName());
+
+            registerEvent(target, method, eventClass, eventName, eventPackage, instance);
         }
     }
+
+    private void registerEvent(Class<?> target, Method method, Class<?> eventClass, String eventName, String eventPackage, Object instance) {
+        if (eventPackage.startsWith("cpw.mods.fml.common.gameevent")) {
+            if (!EventBusUtils.forceRegisterFMLEvent(instance, method, eventClass)) {
+                FMLLog.log(Level.ERROR, "FML event registration failed. From: %s", target.getName());
+            }
+        } else if (eventPackage.startsWith("net.minecraftforge.event")) {
+            if (!EventBusUtils.forceRegisterMCEvent(instance, method, eventClass)) {
+                FMLLog.log(Level.ERROR, "Minecraft event registration failed From: %s", target.getName());
+            }
+        } else {
+            FMLLog.log(Level.ERROR, "Unable to register event: %s", eventName);
+        }
+    }
+
 
     private void injection(Object instance, SkillEvent annotation) {
         boolean server = false, client = false;
 
-        for (EffectSide effectSide : annotation.value()) {
-            if (effectSide == EffectSide.CLIENT) {
+        for (Side effectSide : annotation.value()) {
+            if (effectSide == Side.CLIENT) {
                 client = true;
             } else {
                 server = true;

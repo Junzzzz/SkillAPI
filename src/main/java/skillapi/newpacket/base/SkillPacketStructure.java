@@ -18,7 +18,6 @@ public final class SkillPacketStructure {
 
     public BaseSkillPacket newInstance(byte[] data) {
         try {
-            System.out.println(new String(data, "UTF-8"));
             return JsonUtils.getMapper().readValue(data, this.clz);
         } catch (IOException e) {
             SkillLog.error("Packet conversion failed", e);
