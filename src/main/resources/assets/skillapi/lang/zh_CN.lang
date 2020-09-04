@@ -1,0 +1,16 @@
+﻿
+key.categories.gui=通用技能
+key.skillGui=查看技能列表
+key.skill1=技能 1
+key.skill2=技能 2
+key.skill3=技能 3
+key.skill4=技能 4
+key.skill5=技能 5
+
+commands.teach.usage=/teach <玩家名> <技能>
+commands.teach.skill=%1$s 学习了 %2$s
+commands.teach.skill.known=%1$s 已学会 %2$s
+commands.teach.skill.invalidPlayer=%1$s 无法学习 %2$s
+commands.teach.skill.notFound=找不到技能"%1$s"
+
+skill.gui.title=已学技能

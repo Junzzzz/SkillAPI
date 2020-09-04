@@ -1,0 +1,16 @@
+﻿
+key.categories.gui=Generics Skill
+key.skillGui=Skill GUI
+key.skill1=Skill 1
+key.skill2=Skill 2
+key.skill3=Skill 3
+key.skill4=Skill 4
+key.skill5=Skill 5
+
+commands.teach.usage=/teach <username> <skill>
+commands.teach.skill=%1$s learned %2$s
+commands.teach.skill.known=%1$s already know %2$s
+commands.teach.skill.invalidPlayer=%1$s can't learn %2$s
+commands.teach.skill.notFound=Couldn't found skill named %1$s
+
+skill.gui.title=Known Skills
