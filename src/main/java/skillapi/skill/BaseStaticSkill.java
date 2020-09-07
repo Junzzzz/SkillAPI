@@ -1,19 +1,19 @@
 package skillapi.skill;
 
+import skillapi.utils.StringUtils;
+
 /**
  * @author Jun
  * @date 2020/8/23.
  */
 public abstract class BaseStaticSkill extends BaseSkill {
-    private final static String REGEX_NAME = "^[a-zA-z]+$";
-
-    public final void init() {
+    public BaseStaticSkill() {
         final String skillName = initName();
-        if (!skillName.matches(REGEX_NAME)) {
-            throw new InvalidSkillNameException("Invalid skill name: %s", skillName);
+        if (!skillName.matches(StringUtils.DEFAULT_REGEX_NAME)) {
+            throw new SkillRuntimeException("Invalid skill name: %s", skillName);
         }
-        if (SkillRegister.containsSkill(skillName)) {
-            throw new DuplicateNameException("Duplicate skill name: %s", skillName);
+        if (SkillHandler.containsSkill(skillName)) {
+            throw new SkillRuntimeException("Duplicate skill name: %s", skillName);
         }
         super.setName(skillName);
         super.setMana(initMana());
@@ -48,24 +48,4 @@ public abstract class BaseStaticSkill extends BaseSkill {
      * @return 属性-蓄力时间
      */
     protected abstract int initChargeTime();
-
-    private static class InvalidSkillNameException extends RuntimeException {
-        public InvalidSkillNameException(String message) {
-            super(message);
-        }
-
-        public InvalidSkillNameException(String format, Object... args) {
-            this(String.format(format, args));
-        }
-    }
-
-    private static class DuplicateNameException extends RuntimeException {
-        public DuplicateNameException(String message) {
-            super(message);
-        }
-
-        public DuplicateNameException(String format, Object... args) {
-            this(String.format(format, args));
-        }
-    }
 }

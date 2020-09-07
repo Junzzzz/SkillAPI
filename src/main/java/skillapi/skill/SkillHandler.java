@@ -1,5 +1,7 @@
 package skillapi.skill;
 
+import skillapi.utils.ListUtils;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,7 +11,7 @@ import java.util.Map;
  * @author Jun
  * @date 2020/8/23.
  */
-public class SkillRegister {
+public final class SkillHandler {
     private static List<BaseSkill> skills = new ArrayList<BaseSkill>(16);
     private static Map<String, Integer> skillMap = new HashMap<String, Integer>(16);
     private static int size = 0;
@@ -17,6 +19,19 @@ public class SkillRegister {
     private static int lastRemovedId = -1;
 
     private static final Object MUTEX = new Object();
+
+    public static void register(SkillConfig config) {
+        for (SkillConfig.DynamicSkillConfig dynamicSkillConfig : config.getCustoms()) {
+            final List<BaseSkillEffect> skillEffects = ListUtils.mapTo(dynamicSkillConfig.getEffects(), new ListUtils.Function<SkillConfig.SkillEffectConfig, BaseSkillEffect>() {
+                @Override
+                public BaseSkillEffect apply(SkillConfig.SkillEffectConfig skillEffectConfig) {
+                    return SkillEffectHandler.getEffect(skillEffectConfig.getName(), skillEffectConfig.getPrams());
+                }
+            });
+
+            register(new DynamicSkill(dynamicSkillConfig.getName(), skillEffects));
+        }
+    }
 
     public static boolean register(BaseSkill skill) {
         if (!skillMap.containsKey(skill.getName())) {

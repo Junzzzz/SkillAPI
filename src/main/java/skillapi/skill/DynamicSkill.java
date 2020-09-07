@@ -10,16 +10,16 @@ import java.util.List;
  * @author Jun
  * @date 2020/8/23.
  */
-public final class BaseDynamicSkill extends BaseSkill {
-    private List<SkillEffect> skillEffects;
+public final class DynamicSkill extends BaseSkill {
+    private List<BaseSkillEffect> skillEffects;
 
-    public BaseDynamicSkill(String name, Collection<SkillEffect> effects) {
+    public DynamicSkill(String name, Collection<BaseSkillEffect> effects) {
         super.setName(name);
-        this.skillEffects = new LinkedList<SkillEffect>(effects);
+        this.skillEffects = new LinkedList<BaseSkillEffect>(effects);
     }
 
-    public void setEffects(Collection<SkillEffect> effects) {
-        this.skillEffects = new LinkedList<SkillEffect>(effects);
+    public void setEffects(Collection<BaseSkillEffect> effects) {
+        this.skillEffects = new LinkedList<BaseSkillEffect>(effects);
     }
 
     @Override
@@ -29,7 +29,7 @@ public final class BaseDynamicSkill extends BaseSkill {
 
     @Override
     public void doSkill(EntityPlayer player) {
-        for (SkillEffect effect : skillEffects) {
+        for (BaseSkillEffect effect : skillEffects) {
             effect.effect(player);
         }
     }

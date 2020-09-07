@@ -13,6 +13,8 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import skillapi.api.SkillApi;
 import skillapi.common.SkillProxy;
 import skillapi.packets.SkillPacketHandler;
+import skillapi.skill.SkillConfig;
+import skillapi.skill.SkillHandler;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,6 +35,8 @@ public final class Application {
     public void pre(FMLPreInitializationEvent event) {
         isPhysicalServer = false;
         isLogicalServer = false;
+
+        SkillHandler.register(SkillConfig.load(event));
 
         SkillApi.init(event);
         channels = new HashMap<String, FMLEventChannel>(16);
