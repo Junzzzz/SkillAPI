@@ -85,6 +85,8 @@ public final class SkillEventAnnotationImpl implements SkillAnnotationRegister<S
     }
 
     private void registerMethod(Class<?> target) {
+        final Object instance = ClassUtils.newEmptyInstance(target, "Minecraft event registration failed From: %s", target.getName());
+
         for (Method method : target.getMethods()) {
             if (!method.isAnnotationPresent(SubscribeEvent.class)) {
                 continue;
@@ -99,8 +101,6 @@ public final class SkillEventAnnotationImpl implements SkillAnnotationRegister<S
             final Class<?> eventClass = parameterTypes[0];
             final String eventName = eventClass.getName();
             final String eventPackage = ClassUtils.getClassPackage(eventName);
-
-            final Object instance = ClassUtils.newEmptyInstance(target, "Minecraft event registration failed From: %s", target.getName());
 
             registerEvent(target, method, eventClass, eventName, eventPackage, instance);
         }
