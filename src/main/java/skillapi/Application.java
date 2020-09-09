@@ -1,15 +1,14 @@
 package skillapi;
 
-import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
-import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.network.FMLEventChannel;
 import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.relauncher.FMLLaunchHandler;
 import skillapi.api.SkillApi;
 import skillapi.common.SkillProxy;
 import skillapi.packets.SkillPacketHandler;
@@ -21,8 +20,7 @@ import java.util.Map;
 
 @Mod(modid = "skillapi", name = "Skill API", useMetadata = true)
 public final class Application {
-    public static boolean isLogicalServer = false;
-    public static boolean isPhysicalServer = false;
+    public static boolean isPhysicalServer = FMLLaunchHandler.side().isServer();
 
     @SidedProxy(modId = "skillapi", clientSide = "skillapi.client.SkillClientProxy", serverSide = "skillapi.server.SkillServerProxy")
     public static SkillProxy proxy;
@@ -33,8 +31,7 @@ public final class Application {
 
     @EventHandler
     public void pre(FMLPreInitializationEvent event) {
-        isPhysicalServer = false;
-        isLogicalServer = false;
+        proxy.preInit(event);
 
         SkillHandler.register(SkillConfig.load(event));
 
@@ -68,9 +65,6 @@ public final class Application {
 
     @EventHandler
     public void serverStart(FMLServerStartingEvent event) {
-        isPhysicalServer = event.getSide().isServer();
-        isLogicalServer = !isPhysicalServer;
-
         event.registerServerCommand(new SkillCommand());
     }
 }

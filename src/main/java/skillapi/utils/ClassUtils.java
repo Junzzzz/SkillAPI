@@ -1,13 +1,20 @@
 package skillapi.utils;
 
 import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.relauncher.FMLLaunchHandler;
+import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.launchwrapper.Launch;
+import net.minecraft.launchwrapper.LaunchClassLoader;
+import org.apache.commons.compress.utils.IOUtils;
 import org.apache.logging.log4j.Level;
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.Type;
+import org.objectweb.asm.tree.AnnotationNode;
+import org.objectweb.asm.tree.ClassNode;
+import skillapi.common.SkillLog;
 import skillapi.skill.SkillRuntimeException;
 
-import java.io.File;
-import java.io.FileFilter;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.net.JarURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -17,12 +24,16 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.zip.ZipEntry;
 
 /**
  * @author Jun
  * @date 2020/8/21.
  */
 public class ClassUtils {
+    private static final LaunchClassLoader LOADER = Launch.classLoader;
+    private static final String SIDE = FMLLaunchHandler.side().name();
+
     public static List<Class<?>> scanLocalClasses(URL classUrl) {
         return scanLocalClasses(classUrl, null, false);
     }
@@ -67,7 +78,7 @@ public class ClassUtils {
     public static List<Class<?>> scanLocalClasses(JarFile jar, String packageName, boolean annotation) {
         final List<Class<?>> classes = new LinkedList<Class<?>>();
         List<String> classNames = new LinkedList<String>();
-        scanClassByJar(jar, classNames);
+        scanClassByJar(jar, classNames, annotation);
         return getClasses(packageName, annotation, classes, classNames);
     }
 
@@ -86,9 +97,9 @@ public class ClassUtils {
 
         final boolean isJar = "jar".equalsIgnoreCase(classUrl.getProtocol());
         if (!isJar) {
-            scanClassByFile("", path, true, classNames);
+            scanClassByFile("", path, true, classNames, annotation);
         } else {
-            scanClassByJar(classUrl, classNames);
+            scanClassByJar(classUrl, classNames, annotation);
         }
 
         return getClasses(packageName, annotation, classes, classNames);
@@ -101,7 +112,7 @@ public class ClassUtils {
 
         for (String className : classNames) {
             try {
-                final Class<?> cls = Class.forName(className);
+                final Class<?> cls = LOADER.findClass(className);
                 if (!annotation || cls.getAnnotations().length > 0) {
                     classes.add(cls);
                 }
@@ -122,19 +133,123 @@ public class ClassUtils {
         }
         return result;
     }
-    private static void scanClassByJar(JarFile jarFile, List<String> classes) {
+
+    private static void scanClassByJar(JarFile jarFile, List<String> classes, boolean annotation) {
         final Enumeration<JarEntry> entries = jarFile.entries();
         while (entries.hasMoreElements()) {
             JarEntry entry = entries.nextElement();
             String jarEntryName = entry.getName().replace('/', '.');
-            if (jarEntryName.endsWith(".class")) {
-                String className = jarEntryName.substring(0, jarEntryName.lastIndexOf(".class"));
-                classes.add(className);
+
+            if (!jarEntryName.endsWith(".class")) {
+                continue;
             }
+
+            // read class file
+            final byte[] bytes;
+            try {
+                bytes = getBytes(jarFile, entry);
+            } catch (IOException e) {
+                SkillLog.error("Read class file failed!", e);
+                continue;
+            }
+
+            // Remove classes that do not need to be analyzed & check side annotation to avoid ClassNotFoundException
+            if (checkClass(bytes, annotation)) {
+                continue;
+            }
+
+            String className = jarEntryName.substring(0, jarEntryName.lastIndexOf(".class"));
+            classes.add(className);
         }
     }
 
-    private static void scanClassByJar(URL url, List<String> classes) {
+    private static byte[] getBytes(JarFile jarFile, ZipEntry entry) throws IOException {
+        final InputStream is = jarFile.getInputStream(entry);
+        final byte[] bytes = new byte[(int) entry.getSize()];
+        IOUtils.readFully(is, bytes);
+        is.close();
+        return bytes;
+    }
+
+    private static byte[] getBytes(File classFile) throws IOException {
+        FileInputStream fis = new FileInputStream(classFile);
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        IOUtils.copy(fis, output);
+        fis.close();
+        return output.toByteArray();
+    }
+
+    /**
+     * @param classBytes Class binary data
+     * @param annotation {@code true} to remove classes without annotation
+     * @return If you need to skip this class, output {@code true} otherwise output {@code false}
+     */
+    private static boolean checkClass(byte[] classBytes, boolean annotation) {
+        ClassNode classNode = new ClassNode();
+        ClassReader classReader = new ClassReader(classBytes);
+        classReader.accept(classNode, 0);
+
+        if (checkAnnotation(classNode)) {
+            if (annotation) {
+                return true;
+            }
+
+            return checkSideAnnotation(classNode);
+        }
+        return false;
+    }
+
+    /**
+     * Check whether there are annotations, so as to filter out classes that do not need to be dynamically loaded
+     *
+     * @param classNode Class node read from class binary data
+     * @return If it is need to be loaded return {@code true} otherwise return {@code false}
+     */
+    private static boolean checkAnnotation(ClassNode classNode) {
+        return classNode.visibleAnnotations == null;
+    }
+
+    /**
+     * Verify the {@link SideOnly} annotation of the class file, check whether the file needs to be ignored
+     *
+     * @param classNode Class node read from class binary data
+     * @return If it is different from the current side, return {@code true} otherwise return {@code false}
+     */
+    private static boolean checkSideAnnotation(ClassNode classNode) {
+        for (AnnotationNode visibleAnnotation : classNode.visibleAnnotations) {
+            if (visibleAnnotation.desc.equals(Type.getDescriptor(SideOnly.class))) {
+                if (visibleAnnotation.values == null) {
+                    continue;
+                }
+                for (int x = 0; x < visibleAnnotation.values.size() - 1; x += 2) {
+                    Object key = visibleAnnotation.values.get(x);
+                    Object value = visibleAnnotation.values.get(x + 1);
+
+                    if (!(key instanceof String && "value".equals(key))) {
+                        continue;
+                    }
+
+                    if (!(value instanceof String[])) {
+                        continue;
+                    }
+
+                    String[] side = (String[]) value;
+
+                    if (side.length != 2) {
+                        continue;
+                    }
+
+                    if ("Lcpw/mods/fml/relauncher/Side;".equals(side[0]) && !(side[1].equals(SIDE))) {
+                        return true;
+                    }
+                }
+
+            }
+        }
+        return false;
+    }
+
+    private static void scanClassByJar(URL url, List<String> classes, boolean annotation) {
         try {
             final JarURLConnection connection = (JarURLConnection) url.openConnection();
             if (connection == null) {
@@ -145,13 +260,13 @@ public class ClassUtils {
                 return;
             }
 
-            scanClassByJar(jarFile, classes);
+            scanClassByJar(jarFile, classes, annotation);
         } catch (IOException ignore) {
             // ignore
         }
     }
 
-    private static void scanClassByFile(String packageName, String filePath, final boolean recursive, List<String> classes) {
+    private static void scanClassByFile(String packageName, String filePath, final boolean recursive, List<String> classes, boolean annotation) {
         File dir = new File(filePath);
         if (!dir.exists() || !dir.isDirectory()) {
             return;
@@ -167,8 +282,22 @@ public class ClassUtils {
         }
         for (File file : dirFiles) {
             if (recursive && file.isDirectory()) {
-                scanClassByFile(packageName + "." + file.getName(), file.getAbsolutePath(), recursive, classes);
+                scanClassByFile(packageName + "." + file.getName(), file.getAbsolutePath(), recursive, classes, annotation);
             } else {
+                // read class file
+                final byte[] bytes;
+                try {
+                    bytes = getBytes(file);
+                } catch (IOException e) {
+                    SkillLog.error("Read class file failed!", e);
+                    continue;
+                }
+
+                // Remove classes that do not need to be analyzed & check side annotation to avoid ClassNotFoundException
+                if (checkClass(bytes, annotation)) {
+                    continue;
+                }
+
                 String className = file.getName().substring(0, file.getName().length() - 6);
                 classes.add(packageName + "." + className);
             }

@@ -1,6 +1,7 @@
 package skillapi.api.impl;
 
 import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.common.eventhandler.Event;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
 import org.apache.logging.log4j.Level;
@@ -43,7 +44,7 @@ public final class SkillEventAnnotationImpl implements SkillAnnotationRegister<S
         if (BaseSkillEvent.class.isAssignableFrom(target)) {
             registerClass(target, annotation);
         } else {
-            registerMethod(target, annotation);
+            registerMethod(target);
         }
     }
 
@@ -67,13 +68,13 @@ public final class SkillEventAnnotationImpl implements SkillAnnotationRegister<S
         final String eventPackage = ClassUtils.getClassPackage(eventName);
 
         try {
-            final Method method = target.getMethod("run", Object.class);
+            final Method method = target.getMethod("run", Event.class);
 
             if (!method.isAnnotationPresent(SubscribeEvent.class)) {
                 return;
             }
 
-            final Object instance = ClassUtils.newInstance(target, "Minecraft event registration failed From: %s", target.getName());
+            final Object instance = ClassUtils.newEmptyInstance(target, "Minecraft event registration failed From: %s", target.getName());
 
             injection(instance, annotation);
 
@@ -83,7 +84,7 @@ public final class SkillEventAnnotationImpl implements SkillAnnotationRegister<S
         }
     }
 
-    private void registerMethod(Class<?> target, SkillEvent annotation) {
+    private void registerMethod(Class<?> target) {
         for (Method method : target.getMethods()) {
             if (!method.isAnnotationPresent(SubscribeEvent.class)) {
                 continue;
@@ -99,7 +100,7 @@ public final class SkillEventAnnotationImpl implements SkillAnnotationRegister<S
             final String eventName = eventClass.getName();
             final String eventPackage = ClassUtils.getClassPackage(eventName);
 
-            final Object instance = ClassUtils.newInstance(target, "Minecraft event registration failed From: %s", target.getName());
+            final Object instance = ClassUtils.newEmptyInstance(target, "Minecraft event registration failed From: %s", target.getName());
 
             registerEvent(target, method, eventClass, eventName, eventPackage, instance);
         }
