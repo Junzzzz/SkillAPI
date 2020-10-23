@@ -4,6 +4,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
+import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
@@ -14,12 +15,13 @@ import skillapi.Application;
 import skillapi.PlayerSkills;
 import skillapi.Skill;
 import skillapi.SkillRegistry;
+import skillapi.client.gui.SkillConfigGui;
 import skillapi.packets.SkillPacket;
 import skillapi.packets.UpdateSkillPacket;
 
 @SideOnly(Side.CLIENT)
 public final class GuiKnownSkills extends GuiScreen {
-    public static final ResourceLocation GUI = new ResourceLocation("skillapi", "skills-gui.png");
+    public static final ResourceLocation GUI = new ResourceLocation(Application.MOD_ID, "skills-gui.png");
     private final PlayerSkills skills;
     private EntityClientPlayerMP player = Minecraft.getMinecraft().thePlayer;
     private String[] skillKeys = new String[5];
@@ -39,6 +41,7 @@ public final class GuiKnownSkills extends GuiScreen {
     @Override
     public void initGui() {
         buttonList.clear();
+        this.buttonList.add(new GuiButton(1, (width - 206) / 2 - 20, (height - 134) / 2, 20, 20, "</>"));
     }
 
     @Override
@@ -46,6 +49,7 @@ public final class GuiKnownSkills extends GuiScreen {
         GL11.glEnable(GL11.GL_BLEND);
         drawDefaultBackground();
         drawGUIBackground();
+        super.drawScreen(mouseX, mouseY, partialTicks);
         drawScroll(mouseY);
         drawSkillBar(mouseX, mouseY);
         drawSkillList(mouseX, mouseY);
@@ -137,13 +141,6 @@ public final class GuiKnownSkills extends GuiScreen {
         }
     }
 
-    /**
-     * 绘制技能提示 （中文括号不能绘制？）
-     *
-     * @param skill  技能
-     * @param mouseX 鼠标坐标X
-     * @param mouseY 鼠标坐标Y
-     */
     private void drawToolTip(Skill skill, int mouseX, int mouseY) {
         if (skill != null) {
             mouseX += 9;
@@ -201,7 +198,15 @@ public final class GuiKnownSkills extends GuiScreen {
     }
 
     @Override
+    protected void actionPerformed(GuiButton button) {
+        if (button.id == 1) {
+            this.mc.displayGuiScreen(new SkillConfigGui());
+        }
+    }
+
+    @Override
     protected void mouseClicked(int mouseX, int mouseY, int button) {
+        super.mouseClicked(mouseX, mouseY, button);
         if (button != 0) {
             return;
         }
