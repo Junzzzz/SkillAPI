@@ -4,6 +4,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import skillapi.utils.StringUtils;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Jun
@@ -11,7 +12,7 @@ import java.util.List;
  */
 public abstract class BaseSkillEffect {
     private String name;
-    private Integer[] params;
+    private Integer[] staticParams;
 
     protected final void init(List<Integer> params) {
         this.name = initName();
@@ -21,20 +22,20 @@ public abstract class BaseSkillEffect {
         if (params.size() != initParamNum()) {
             throw new SkillRuntimeException("The number of parameters does not match. Required: %d. Provide: %d", initParamNum(), params.size());
         }
-        this.params = params.toArray(new Integer[0]);
+        this.staticParams = params.toArray(new Integer[0]);
     }
 
     public String getName() {
         return this.name;
     }
 
-    protected int getParam(int index) {
-        return params[index];
+    protected int getStaticParam(int index) {
+        return staticParams[index];
     }
 
-    abstract String initName();
+    protected abstract String initName();
 
-    abstract int initParamNum();
+    protected abstract int initParamNum();
 
-    abstract void effect(EntityPlayer player);
+    protected abstract void effect(EntityPlayer player, Map<String, Object> params);
 }

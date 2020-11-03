@@ -3,16 +3,14 @@ package skillapi.skill;
 import skillapi.common.SkillLog;
 import skillapi.utils.ClassUtils;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Jun
  * @date 2020/9/4.
  */
 public final class SkillEffectHandler {
-    private static Map<String, Class<? extends BaseSkillEffect>> effectMap = new HashMap<String, Class<? extends BaseSkillEffect>>();
+    private static Map<String, Class<? extends BaseSkillEffect>> effectMap = new HashMap<>(16);
 
     public static void register(String name, Class<? extends BaseSkillEffect> clz) {
         name = renameEffect(name);
@@ -24,7 +22,9 @@ public final class SkillEffectHandler {
         for (int i = 1; isRegistered(newName); i++) {
             newName = name + "-" + i;
         }
-        SkillLog.warn("The skill effect has the same name [%s] and has been automatically renamed to [%s]", name, newName);
+        if (!newName.equals(name)) {
+            SkillLog.warn("The skill effect has the same name [%s] and has been automatically renamed to [%s]", name, newName);
+        }
         return newName;
     }
 
@@ -40,5 +40,9 @@ public final class SkillEffectHandler {
         final BaseSkillEffect effect = ClassUtils.newEmptyInstance(clz, "Failed to instantiate skill effect");
         effect.init(params);
         return effect;
+    }
+
+    public static Collection<Class<? extends BaseSkillEffect>> getEffects() {
+        return effectMap.values();
     }
 }

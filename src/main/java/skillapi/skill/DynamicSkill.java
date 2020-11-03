@@ -5,6 +5,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Jun
@@ -15,11 +16,11 @@ public final class DynamicSkill extends BaseSkill {
 
     public DynamicSkill(String name, Collection<BaseSkillEffect> effects) {
         super.setName(name);
-        this.skillEffects = new LinkedList<BaseSkillEffect>(effects);
+        this.setEffects(effects);
     }
 
     public void setEffects(Collection<BaseSkillEffect> effects) {
-        this.skillEffects = new LinkedList<BaseSkillEffect>(effects);
+        this.skillEffects = new LinkedList<>(effects);
     }
 
     @Override
@@ -28,9 +29,9 @@ public final class DynamicSkill extends BaseSkill {
     }
 
     @Override
-    public void doSkill(EntityPlayer player) {
+    public void doSkill(EntityPlayer player, Map<String, Object> params) {
         for (BaseSkillEffect effect : skillEffects) {
-            effect.effect(player);
+            effect.effect(player, params);
         }
     }
 }

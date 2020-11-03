@@ -76,14 +76,14 @@ public class ClassUtils {
     }
 
     public static List<Class<?>> scanLocalClasses(JarFile jar, String packageName, boolean annotation) {
-        final List<Class<?>> classes = new LinkedList<Class<?>>();
-        List<String> classNames = new LinkedList<String>();
+        final List<Class<?>> classes = new LinkedList<>();
+        List<String> classNames = new LinkedList<>();
         scanClassByJar(jar, classNames, annotation);
         return getClasses(packageName, annotation, classes, classNames);
     }
 
     public static List<Class<?>> scanLocalClasses(URL classUrl, String packageName, boolean annotation) {
-        final List<Class<?>> classes = new LinkedList<Class<?>>();
+        final List<Class<?>> classes = new LinkedList<>();
 
         final String path;
         try {
@@ -93,7 +93,7 @@ public class ClassUtils {
             return classes;
         }
 
-        List<String> classNames = new LinkedList<String>();
+        List<String> classNames = new LinkedList<>();
 
         final boolean isJar = "jar".equalsIgnoreCase(classUrl.getProtocol());
         if (!isJar) {
@@ -125,7 +125,7 @@ public class ClassUtils {
     }
 
     private static List<String> filterClassName(List<String> list, String packageName) {
-        final List<String> result = new LinkedList<String>();
+        final List<String> result = new LinkedList<>();
         for (String s : list) {
             if (s.startsWith(packageName)) {
                 result.add(s);
@@ -190,13 +190,11 @@ public class ClassUtils {
         classReader.accept(classNode, 0);
 
         if (checkAnnotation(classNode)) {
-            if (annotation) {
-                return true;
-            }
-
-            return checkSideAnnotation(classNode);
+            // Do not have annotation
+            return annotation;
         }
-        return false;
+
+        return checkSideAnnotation(classNode);
     }
 
     /**
@@ -271,12 +269,7 @@ public class ClassUtils {
         if (!dir.exists() || !dir.isDirectory()) {
             return;
         }
-        File[] dirFiles = dir.listFiles(new FileFilter() {
-            @Override
-            public boolean accept(File file) {
-                return (file.isFile() && file.getName().endsWith(".class")) || file.isDirectory();
-            }
-        });
+        File[] dirFiles = dir.listFiles(file -> (file.isFile() && file.getName().endsWith(".class")) || file.isDirectory());
         if (dirFiles == null) {
             return;
         }

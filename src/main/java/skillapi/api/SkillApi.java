@@ -5,7 +5,6 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import org.apache.logging.log4j.Level;
 import skillapi.utils.ClassUtils;
 import skillapi.utils.ListUtils;
-import skillapi.utils.ListUtils.Function;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.ParameterizedType;
@@ -30,13 +29,8 @@ public final class SkillApi {
 
     public static void init(FMLPreInitializationEvent event, String packageName) {
         List<Class<?>> classes = ClassUtils.scanLocalClasses(event.getSourceFile(), packageName, true);
-        final List<Class<?>> remainClass = new LinkedList<Class<?>>();
-        classes = ListUtils.filter(classes, new Function<Class<?>, Boolean>() {
-            @Override
-            public Boolean apply(Class<?> clz) {
-                return clz.isAnnotationPresent(SkillAnnotation.class);
-            }
-        }, remainClass);
+        final List<Class<?>> remainClass = new LinkedList<>();
+        classes = ListUtils.filter(classes, clz -> clz.isAnnotationPresent(SkillAnnotation.class), remainClass);
         registerAnnotation(classes);
         registerAll(remainClass);
     }

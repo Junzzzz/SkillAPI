@@ -21,9 +21,6 @@ public final class SkillPacketAnnotationImpl implements SkillAnnotationRegister<
             throw new SkillRuntimeException("Skill packet registration failed. Class: %s", target.getName());
         }
 
-        final String name = SkillPacketHandler.register(target.getSimpleName(), new SkillPacketStructure((Class<? extends BaseSkillPacket>) target));
-
-        System.out.println("name: " + name);
-
+       SkillPacketHandler.register(target.getSimpleName(), new SkillPacketStructure((Class<? extends BaseSkillPacket>) target));
     }
 }

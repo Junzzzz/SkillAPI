@@ -1,5 +1,4 @@
-﻿
-key.categories.gui=通用技能
+﻿key.categories.gui=通用技能
 key.skillGui=查看技能列表
 key.skill1=技能 1
 key.skill2=技能 2
@@ -14,3 +13,5 @@ commands.teach.skill.invalidPlayer=%1$s 无法学习 %2$s
 commands.teach.skill.notFound=找不到技能"%1$s"
 
 skill.gui.title=已学技能
+skill.gui.config.delete.title=是否删除技能[%1$s]？
+skill.gui.config.delete.tip=技能将无法被恢复！

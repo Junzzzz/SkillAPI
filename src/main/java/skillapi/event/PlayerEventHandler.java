@@ -13,6 +13,7 @@ import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
 import skillapi.Application;
 import skillapi.PlayerSkills;
 import skillapi.Skill;
+import skillapi.api.annotation.SkillEvent;
 import skillapi.packets.InitSkillPacket;
 import skillapi.packets.SkillPacket;
 
@@ -21,13 +22,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+@SkillEvent
 public final class PlayerEventHandler {
-    public static final PlayerEventHandler INSTANCE = new PlayerEventHandler();
-    public Map<UUID, List<String>> knownSkillsBackup = new HashMap<UUID, List<String>>();
-    public Map<UUID, Skill[]> skillBarBackup = new HashMap<UUID, Skill[]>();
-
-    private PlayerEventHandler() {
-    }
+    public Map<UUID, List<String>> knownSkillsBackup = new HashMap<>();
+    public Map<UUID, Skill[]> skillBarBackup = new HashMap<>();
 
     @SubscribeEvent
     public void onConstructing(EntityConstructing event) {

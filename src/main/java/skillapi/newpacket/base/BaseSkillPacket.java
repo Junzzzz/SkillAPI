@@ -16,26 +16,23 @@ import skillapi.utils.JsonUtils;
  * @date 2020/8/25.
  */
 public abstract class BaseSkillPacket {
-    private String test;
     public final void sendToClient(EntityPlayerMP player) {
-        final FMLProxyPacket packet = processPacket();
+        final FMLProxyPacket packet = processPacket(Side.CLIENT);
         if (packet == null) {
             return;
         }
-        packet.setTarget(Side.CLIENT);
         SkillPacketHandler.CHANNEL.sendTo(packet, player);
     }
 
     public final void sendToServer() {
-        final FMLProxyPacket packet = processPacket();
+        final FMLProxyPacket packet = processPacket(Side.SERVER);
         if (packet == null) {
             return;
         }
-        packet.setTarget(Side.SERVER);
         SkillPacketHandler.CHANNEL.sendToServer(packet);
     }
 
-    private FMLProxyPacket processPacket() {
+    public final FMLProxyPacket processPacket(Side target) {
         ByteBuf buf = Unpooled.buffer();
         final String packetName = SkillPacketHandler.getPacketName(this.getClass());
         if (packetName == null) {
@@ -48,14 +45,16 @@ public abstract class BaseSkillPacket {
 
         try {
             JsonUtils.getMapper().writeValueAsString(this);
-            System.out.println(new String(JsonUtils.getMapper().writeValueAsBytes(this), Charsets.UTF_8));
             buf.writeBytes(JsonUtils.getMapper().writeValueAsBytes(this));
         } catch (JsonProcessingException e) {
             buf.clear();
             SkillLog.error("Data processing failed!", e);
             return null;
         }
-        return new FMLProxyPacket(buf, SkillPacketHandler.CHANNEL_NAME);
+
+        final FMLProxyPacket fmlProxyPacket = new FMLProxyPacket(buf, SkillPacketHandler.CHANNEL_NAME);
+        fmlProxyPacket.setTarget(target);
+        return fmlProxyPacket;
     }
 
     /**

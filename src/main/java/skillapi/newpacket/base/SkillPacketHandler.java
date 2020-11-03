@@ -17,8 +17,8 @@ public final class SkillPacketHandler {
     public final static FMLEventChannel CHANNEL;
     private final static PacketReceiveEvent RECEIVE_EVENT;
 
-    private static Map<String, SkillPacketStructure> packetMap = new HashMap<String, SkillPacketStructure>(32);
-    private static Map<String, String> classMap = new HashMap<String, String>(32);
+    private static Map<String, SkillPacketStructure> packetMap = new HashMap<>(32);
+    private static Map<String, String> classMap = new HashMap<>(32);
 
     static {
         CHANNEL_NAME = "SkillChannel";
@@ -39,7 +39,9 @@ public final class SkillPacketHandler {
         for (int i = 1; isRegistered(newName); i++) {
             newName = name + "-" + i;
         }
-        SkillLog.warn("The data package has the same name [%s] and has been automatically renamed to [%s]", name, newName);
+        if (!newName.equals(name)) {
+            SkillLog.warn("The packet has the same name [%s] and has been automatically renamed to [%s]", name, newName);
+        }
         return newName;
     }
 

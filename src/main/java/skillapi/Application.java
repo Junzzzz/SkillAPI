@@ -18,14 +18,15 @@ import skillapi.skill.SkillHandler;
 import java.util.HashMap;
 import java.util.Map;
 
-@Mod(modid = "skillapi", name = "Skill API", useMetadata = true)
+@Mod(modid = Application.MOD_ID, name = "Skill API", useMetadata = true)
 public final class Application {
+    public static final String MOD_ID = "skillapi";
     public static boolean isPhysicalServer = FMLLaunchHandler.side().isServer();
 
-    @SidedProxy(modId = "skillapi", clientSide = "skillapi.client.SkillClientProxy", serverSide = "skillapi.server.SkillServerProxy")
+    @SidedProxy(modId = MOD_ID, clientSide = "skillapi.client.SkillClientProxy", serverSide = "skillapi.server.SkillServerProxy")
     public static SkillProxy proxy;
 
-    @SidedProxy(modId = "skillapi", clientSide = "skillapi.client.SkillAPIClientProxy", serverSide = "skillapi.SkillAPIProxy")
+    @SidedProxy(modId = MOD_ID, clientSide = "skillapi.client.SkillAPIClientProxy", serverSide = "skillapi.SkillAPIProxy")
     public static SkillAPIProxy oldProxy;
     public static Map<String, FMLEventChannel> channels;
 
@@ -33,25 +34,15 @@ public final class Application {
     public void pre(FMLPreInitializationEvent event) {
         proxy.preInit(event);
 
-        SkillHandler.register(SkillConfig.load(event));
+        SkillConfig.load(event);
 
         SkillApi.init(event);
-        channels = new HashMap<String, FMLEventChannel>(16);
+        channels = new HashMap<>(16);
         FMLEventChannel channel;
         for (int i = 0; i < SkillPacketHandler.CHANNELS.length; i++) {
             channel = NetworkRegistry.INSTANCE.newEventDrivenChannel(SkillPacketHandler.CHANNELS[i]);
             channel.register(new SkillPacketHandler());
             channels.put(SkillPacketHandler.CHANNELS[i], channel);
-        }
-        if (event.getSourceFile().getName().endsWith(".jar") && event.getSide().isClient()) {
-            try {
-                Class.forName("mods.mud.ModUpdateDetector").getDeclaredMethod("registerMod", ModContainer.class, String.class, String.class).invoke(null,
-                        FMLCommonHandler.instance().findContainerFor(this),
-                        "https://raw.github.com/GotoLink/SkillAPI/master/API_update.xml",
-                        "https://raw.github.com/GotoLink/SkillAPI/master/API_changelog.md"
-                );
-            } catch (Throwable ignored) {
-            }
         }
     }
 
@@ -65,6 +56,7 @@ public final class Application {
 
     @EventHandler
     public void serverStart(FMLServerStartingEvent event) {
+        SkillHandler.register(SkillConfig.SERVER_CONFIG);
         event.registerServerCommand(new SkillCommand());
     }
 }

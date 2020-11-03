@@ -4,6 +4,9 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.GuiYesNo;
+import net.minecraft.client.gui.GuiYesNoCallback;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 import skillapi.Application;
@@ -19,7 +22,7 @@ import java.util.List;
  * @date 2020/10/4.
  */
 @SideOnly(Side.CLIENT)
-public class SkillConfigGui extends GuiScreen {
+public final class SkillConfigGui extends GuiScreen implements GuiYesNoCallback {
     protected static final ResourceLocation SKILL_LIST_TEXTURES = new ResourceLocation(Application.MOD_ID, "textures/gui/skill-list.png");
 
     private static final int SKILL_LIST_WIDTH = 121;
@@ -45,7 +48,7 @@ public class SkillConfigGui extends GuiScreen {
     private GuiButton deleteSkillButton;
     private GuiButton editSkillButton;
 
-    private final PageHelper<DynamicSkillConfig> page = new PageHelper<DynamicSkillConfig>(SkillConfig.SERVER_CONFIG.getCustoms(), 7);
+    private final PageHelper<DynamicSkillConfig> page = new PageHelper<>(SkillConfig.SERVER_CONFIG.getCustoms(), 7);
 
     private int selectedLine = -1;
 
@@ -118,6 +121,14 @@ public class SkillConfigGui extends GuiScreen {
     }
 
     @Override
+    public void confirmClicked(boolean clickYes, int select) {
+        if (clickYes) {
+            this.page.removeInCurrentPage(select);
+        }
+        this.mc.displayGuiScreen(this);
+    }
+
+    @Override
     protected void actionPerformed(GuiButton button) {
         if (button.id == nextPageButton.id) {
             this.page.nextPage();
@@ -126,9 +137,14 @@ public class SkillConfigGui extends GuiScreen {
         } else if (button.id == addSkillButton.id) {
             this.page.addAndToLastPage(new DynamicSkillConfig("Temporary skill name#" + this.page.dataSize()));
         } else if (button.id == deleteSkillButton.id) {
-
+            this.mc.displayGuiScreen(new GuiYesNo(
+                    this,
+                    I18n.format("skill.gui.config.delete.title", getSelectedSkill().getName()),
+                    I18n.format("skill.gui.config.delete.tip"),
+                    this.selectedLine
+            ));
         } else if (button.id == editSkillButton.id) {
-
+            this.mc.displayGuiScreen(new SkillEditGui(this));
         }
     }
 
@@ -138,10 +154,12 @@ public class SkillConfigGui extends GuiScreen {
 
         // Check if selected
         this.editSkillButton.enabled = this.selectedLine != -1;
+        this.deleteSkillButton.enabled = this.editSkillButton.enabled;
     }
 
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int button) {
+        super.mouseClicked(mouseX, mouseY, button);
         if (button != 0) {
             return;
         }
@@ -151,7 +169,6 @@ public class SkillConfigGui extends GuiScreen {
             this.selectedLine = -1;
         }
 
-        super.mouseClicked(mouseX, mouseY, button);
         checkPageStatus();
     }
 
@@ -169,5 +186,9 @@ public class SkillConfigGui extends GuiScreen {
             return y / SKILL_LIST_ITEM_HEIGHT;
         }
         return -1;
+    }
+
+    private DynamicSkillConfig getSelectedSkill() {
+        return this.page.getCurrentPage().get(this.selectedLine);
     }
 }

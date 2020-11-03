@@ -1,4 +1,4 @@
-package skillapi.utils;
+package skillapi.common;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
@@ -17,12 +17,12 @@ import java.lang.reflect.Method;
  * @author Jun
  * @date 2020/8/22.
  */
-public class EventBusUtils {
-    private static EventBus FML_EVENT_BUS;
-    private static EventBus MC_EVENT_BUS;
+public class EventBusHandler {
+    private static final EventBus FML_EVENT_BUS;
+    private static final EventBus MC_EVENT_BUS;
 
-    private static Method FML_REGISTER;
-    private static Method MC_REGISTER;
+    private static final Method FML_REGISTER;
+    private static final Method MC_REGISTER;
 
     static {
         try {
@@ -57,21 +57,18 @@ public class EventBusUtils {
         }
         try {
             busMethod.invoke(bus, eventClass, targetInstance, method, activeModContainer);
-        } catch (IllegalAccessException e) {
-            FMLLog.log(Level.ERROR, e, "Unable to determine registrant mod for %s. This is a critical error and should be impossible", targetInstance);
-            return false;
-        } catch (InvocationTargetException e) {
+        } catch (IllegalAccessException | InvocationTargetException e) {
             FMLLog.log(Level.ERROR, e, "Unable to determine registrant mod for %s. This is a critical error and should be impossible", targetInstance);
             return false;
         }
         return true;
     }
 
-    public static boolean forceRegisterFMLEvent(Object targetInstance, Method method, Class<?> eventClass) {
+    public static boolean forceRegisterFmlEvent(Object targetInstance, Method method, Class<?> eventClass) {
         return register(FML_EVENT_BUS, FML_REGISTER, targetInstance, method, eventClass);
     }
 
-    public static boolean forceRegisterMCEvent(Object targetInstance, Method method, Class<?> eventClass) {
+    public static boolean forceRegisterMcEvent(Object targetInstance, Method method, Class<?> eventClass) {
         return register(MC_EVENT_BUS, MC_REGISTER, targetInstance, method, eventClass);
     }
 }

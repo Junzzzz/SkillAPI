@@ -22,16 +22,16 @@ public abstract class BaseStaticSkill extends BaseSkill {
     }
 
     /**
-     * 初始化技能名（仅允许英文）
+     * Initialize the skill name (English only)
      *
-     * @return 属性-技能吗
+     * @return Attribute-skill name
      */
     protected abstract String initName();
 
     /**
-     * 初始化需要消耗的魔法量
+     * Initialize the amount of mana consumed
      *
-     * @return 属性-魔法值
+     * @return Attribute-mana value
      */
     protected abstract int initMana();
 

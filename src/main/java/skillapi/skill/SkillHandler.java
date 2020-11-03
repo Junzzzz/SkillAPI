@@ -6,35 +6,44 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author Jun
  * @date 2020/8/23.
  */
 public final class SkillHandler {
-    private static List<BaseSkill> skills = new ArrayList<BaseSkill>(16);
-    private static Map<String, Integer> skillMap = new HashMap<String, Integer>(16);
+    private static final List<BaseSkill> SKILLS = new ArrayList<>(16);
+    private static final Map<String, Integer> SKILL_MAP = new HashMap<>(16);
     private static int size = 0;
 
     private static int lastRemovedId = -1;
 
     private static final Object MUTEX = new Object();
 
+    protected static void init() {
+        synchronized (MUTEX) {
+            SKILLS.clear();
+            SKILL_MAP.clear();
+            size = 0;
+            lastRemovedId = -1;
+        }
+    }
+
     public static void register(SkillConfig config) {
+        SkillHandler.init();
+
         for (SkillConfig.DynamicSkillConfig dynamicSkillConfig : config.getCustoms()) {
-            final List<BaseSkillEffect> skillEffects = ListUtils.mapTo(dynamicSkillConfig.getEffects(), new ListUtils.Function<SkillConfig.SkillEffectConfig, BaseSkillEffect>() {
-                @Override
-                public BaseSkillEffect apply(SkillConfig.SkillEffectConfig skillEffectConfig) {
-                    return SkillEffectHandler.getEffect(skillEffectConfig.getName(), skillEffectConfig.getPrams());
-                }
-            });
+            final List<BaseSkillEffect> skillEffects = dynamicSkillConfig.getEffects().stream()
+                    .map(skillEffectConfig -> SkillEffectHandler.getEffect(skillEffectConfig.getName(), skillEffectConfig.getPrams()))
+                    .collect(Collectors.toList());
 
             register(new DynamicSkill(dynamicSkillConfig.getName(), skillEffects));
         }
     }
 
     public static boolean register(BaseSkill skill) {
-        if (!skillMap.containsKey(skill.getName())) {
+        if (!SKILL_MAP.containsKey(skill.getName())) {
             return false;
         }
         synchronized (MUTEX) {
@@ -42,8 +51,8 @@ public final class SkillHandler {
             final int id = lastRemovedId == -1 ? size++ : lastRemovedId;
 
             skill.setId(id);
-            skills.add(id, skill);
-            skillMap.put(skill.getName(), id);
+            SKILLS.add(id, skill);
+            SKILL_MAP.put(skill.getName(), id);
 
             lastRemovedId = -1;
         }
@@ -55,9 +64,9 @@ public final class SkillHandler {
             return false;
         }
         synchronized (MUTEX) {
-            final BaseSkill oldSkill = skills.get(id);
-            skillMap.remove(oldSkill.getName());
-            skills.set(id, null);
+            final BaseSkill oldSkill = SKILLS.get(id);
+            SKILL_MAP.remove(oldSkill.getName());
+            SKILLS.set(id, null);
             lastRemovedId = id;
         }
         return true;
@@ -67,7 +76,7 @@ public final class SkillHandler {
         if (!rangeCheck(id)) {
             return null;
         }
-        return skills.get(id);
+        return SKILLS.get(id);
     }
 
     private static boolean rangeCheck(int id) {
@@ -77,10 +86,10 @@ public final class SkillHandler {
     public static BaseSkill getSkill(String name) {
         synchronized (MUTEX) {
             Integer id;
-            if ((id = skillMap.get(name)) == null) {
+            if ((id = SKILL_MAP.get(name)) == null) {
                 return null;
             }
-            return skills.get(id);
+            return SKILLS.get(id);
         }
     }
 
@@ -89,6 +98,10 @@ public final class SkillHandler {
     }
 
     public static boolean containsSkill(String name) {
-        return skillMap.containsKey(name);
+        return SKILL_MAP.containsKey(name);
+    }
+
+    public static List<BaseSkill> getSkills() {
+        return SKILLS;
     }
 }

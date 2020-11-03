@@ -2,6 +2,8 @@ package skillapi.skill;
 
 import net.minecraft.entity.player.EntityPlayer;
 
+import java.util.Map;
+
 /**
  * @author Jun
  * @date 2020/8/23.
@@ -56,17 +58,18 @@ public abstract class BaseSkill {
     }
 
     /**
-     * 是否能释放技能
+     * Preconditions for players to use skills
      *
-     * @param player 玩家
-     * @return 判断结果
+     * @param player The players using skills
+     * @return Returns {@code true} if the player can use the skill, otherwise returns {@code false}.
      */
     public abstract boolean canUse(EntityPlayer player);
 
     /**
-     * 释放技能
+     * Use skills
      *
-     * @param player 玩家
+     * @param player The players using skills
+     * @param params Skill parameters
      */
-    public abstract void doSkill(EntityPlayer player);
+    public abstract void doSkill(EntityPlayer player, Map<String, Object> params);
 }

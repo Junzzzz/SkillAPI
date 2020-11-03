@@ -18,7 +18,7 @@ public final class PageHelper<T> {
     private List<T> cache;
 
     public PageHelper(Collection<T> pagingList, int size) {
-        this.data = new ArrayList<T>(pagingList);
+        this.data = new ArrayList<>(pagingList);
         this.pageSize = size;
         this.pageNow = 1;
 
@@ -32,12 +32,12 @@ public final class PageHelper<T> {
 
     public List<T> getPage(int pageNum) {
         if (!rangeCheck(pageNum)) {
-            return cache(new LinkedList<T>());
+            return cache(new LinkedList<>());
         }
 
         int size = Math.min(pageNum * pageSize, this.data.size());
         if (size == 0) {
-            return cache(new LinkedList<T>());
+            return cache(new LinkedList<>());
         }
 
         return cache(this.data.subList((pageNum - 1) * pageSize, size));
@@ -98,6 +98,16 @@ public final class PageHelper<T> {
 
     public void remove(int index) {
         this.data.remove(index);
+
+        if ((this.data.size() + this.pageSize - 1) / this.pageSize >= this.pageNow) {
+            cachePageNow();
+        } else {
+            prevPage();
+        }
+    }
+
+    public void removeInCurrentPage(int index) {
+        this.remove((this.pageNow - 1) * this.pageSize + index);
     }
 
     public List<T> toLastPage() {

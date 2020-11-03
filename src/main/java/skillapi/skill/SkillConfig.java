@@ -13,13 +13,15 @@ import java.util.List;
  * @author Jun
  * @date 2020/9/4.
  */
-public class SkillConfig {
+public final class SkillConfig {
     private static final String DEFAULT_CONFIG_NAME = "SkillConfig.json";
+
+    public static SkillConfig SERVER_CONFIG;
 
     private List<DynamicSkillConfig> customs;
 
     public SkillConfig() {
-        this.customs = new LinkedList<DynamicSkillConfig>();
+        this.customs = new LinkedList<>();
     }
 
     public List<DynamicSkillConfig> getCustoms() {
@@ -31,7 +33,8 @@ public class SkillConfig {
     }
 
     public static SkillConfig load(FMLPreInitializationEvent event) {
-        return loadFromDir(event.getModConfigurationDirectory());
+        SERVER_CONFIG = loadFromDir(event.getModConfigurationDirectory());
+        return SERVER_CONFIG;
     }
 
     public static SkillConfig loadFromDir(File configurationDirectory) {
@@ -62,11 +65,16 @@ public class SkillConfig {
         return new SkillConfig();
     }
 
-    static class DynamicSkillConfig {
+    public static class DynamicSkillConfig {
         private String name;
         private List<SkillEffectConfig> effects;
 
         public DynamicSkillConfig() {
+        }
+
+        public DynamicSkillConfig(String name) {
+            this.name = name;
+            this.effects = new LinkedList<>();
         }
 
         public String getName() {
@@ -86,7 +94,7 @@ public class SkillConfig {
         }
     }
 
-    static class SkillEffectConfig {
+    public static class SkillEffectConfig {
         private String name;
         private List<Integer> prams;
 

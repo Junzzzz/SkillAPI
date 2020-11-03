@@ -8,6 +8,7 @@ import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import skillapi.Application;
+import skillapi.common.SkillLog;
 
 /**
  * Used to distinguish the logic execution side of the code.
@@ -31,12 +32,15 @@ public abstract class BaseSkillEvent<T extends Event> {
 
         // Check inner server running
         if (this.onServer && Minecraft.getMinecraft().isIntegratedServerRunning()) {
-            if (isServer(event)) {
+            if (!onClient) {
+                // Only happens on server
+                onServer(event);
+            } else if (isServer(event)) {
                 // Server thread
                 onServer(event);
             } else {
                 // Client thread
-                doClient(event);
+                onClient(event);
             }
             return;
         }
@@ -73,8 +77,7 @@ public abstract class BaseSkillEvent<T extends Event> {
         if (className.startsWith("net.minecraftforge.client.event")) {
             return false;
         }
-
-        System.out.println("Don't hit. Class:" + className);
+        SkillLog.warn("Don't hit. This may affect processing efficiency. Class: " + className);
         // The worst situation
         return FMLCommonHandler.instance().getEffectiveSide().isServer();
     }
