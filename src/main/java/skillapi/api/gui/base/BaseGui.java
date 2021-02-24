@@ -1,12 +1,12 @@
-package skillapi.client.gui.base;
+package skillapi.api.gui.base;
 
 import lombok.Builder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.resources.I18n;
+import org.lwjgl.input.Mouse;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -48,6 +48,31 @@ public abstract class BaseGui extends GuiScreen {
 
         renderComponent(mouseX, mouseY, partialTicks);
         renderButton(mouseX, mouseY);
+
+        // Must be placed last, otherwise it will affect the display
+        mouseCheck(mouseX, mouseY);
+    }
+
+    private void mouseCheck(int mouseX, int mouseY) {
+        if (Mouse.isButtonDown(0) ) {
+            if (!GuiConst.isMouseLeftButtonPressed) {
+                GuiConst.isMouseLeftButtonPressed = true;
+                for (BaseComponent component : this.components) {
+                    if (component.mousePressed(mouseX, mouseY)) {
+                        break;
+                    }
+                }
+            }
+        } else {
+            if (GuiConst.isMouseLeftButtonPressed) {
+                GuiConst.isMouseLeftButtonPressed = false;
+                for (BaseComponent component : this.components) {
+                    if (component.mouseReleased(mouseX, mouseY)) {
+                        break;
+                    }
+                }
+            }
+        }
     }
 
     /**

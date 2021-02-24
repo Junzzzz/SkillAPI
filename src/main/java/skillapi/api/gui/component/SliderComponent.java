@@ -1,12 +1,11 @@
-package skillapi.client.gui.component;
+package skillapi.api.gui.component;
 
 import lombok.Builder;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
-import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
-import skillapi.client.gui.base.BaseComponent;
-import skillapi.client.gui.base.GuiBox;
+import skillapi.api.gui.base.BaseComponent;
+import skillapi.api.gui.base.GuiBox;
 
 /**
  * @author Jun
@@ -16,6 +15,8 @@ public class SliderComponent extends BaseComponent {
     private final GuiBox sliderButton;
 
     private boolean isDragging;
+    private int moveDistanceMax;
+
     private int buttonInitialY;
     private int buttonClickPosY;
     private int buttonMinY;
@@ -39,6 +40,9 @@ public class SliderComponent extends BaseComponent {
 
         this.buttonMinY = this.guiBox.getY();
         this.buttonMaxY = this.guiBox.getBottom() - this.sliderButton.getHeight();
+
+        // The maximum distance the button can move
+        this.moveDistanceMax = this.guiBox.getHeight() - this.sliderButton.getHeight();
     }
 
     /**
@@ -54,38 +58,38 @@ public class SliderComponent extends BaseComponent {
     }
 
     @Override
+    protected boolean mousePressed(int mouseX, int mouseY) {
+        if (sliderButton.isInBox(mouseX, mouseY)) {
+            // Click slider button -> Start dragging
+            isDragging = true;
+            buttonClickPosY = mouseY;
+            buttonInitialY = this.sliderButton.getY();
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    protected boolean mouseReleased(int mouseX, int mouseY) {
+        if (isDragging) {
+            isDragging = false;
+        }
+        return true;
+    }
+
+    @Override
     protected void render(int mouseX, int mouseY, float partialTicks) {
-        if (!Mouse.isButtonDown(0)) {
-            // The left mouse button is not pressed
-            if (isDragging) {
-                isDragging = false;
-            }
-            // Render button
-            renderSlider();
-            return;
-        }
-
-        // The maximum distance the button can move
-        final int moveDistanceMax = this.guiBox.getHeight() - sliderButton.getHeight();
-        if (moveDistanceMax > 0) {
+        if (isDragging && moveDistanceMax > 0) {
             // Slider button exists
-            if (isDragging) {
-                int y = mouseY - buttonClickPosY + buttonInitialY;
-                if (y > this.buttonMaxY) {
-                    y = this.buttonMaxY;
-                } else if (y < this.buttonMinY) {
-                    y = this.buttonMinY;
-                }
-                // Dragging slider button
-                this.sliderButton.setY(y);
-            } else if (sliderButton.isInBox(mouseX, mouseY)) {
-                // Click slider button -> Start dragging
-                isDragging = true;
-                buttonClickPosY = mouseY;
-                buttonInitialY = this.sliderButton.getY();
+            int y = mouseY - buttonClickPosY + buttonInitialY;
+            if (y > this.buttonMaxY) {
+                y = this.buttonMaxY;
+            } else if (y < this.buttonMinY) {
+                y = this.buttonMinY;
             }
+            // Dragging slider button
+            this.sliderButton.setY(y);
         }
-
         // Render button
         renderSlider();
     }

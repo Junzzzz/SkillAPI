@@ -1,4 +1,4 @@
-package skillapi.client.gui.base;
+package skillapi.api.gui.base;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

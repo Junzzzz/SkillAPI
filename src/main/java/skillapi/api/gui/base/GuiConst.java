@@ -1,4 +1,4 @@
-package skillapi.client.gui.base;
+package skillapi.api.gui.base;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -11,6 +11,8 @@ import net.minecraft.client.gui.ScaledResolution;
 public class GuiConst {
     private static int scaleFactor;
     private static FontRenderer fontRenderer;
+
+    public static boolean isMouseLeftButtonPressed;
 
     // Make sure it is initialized
     static {
