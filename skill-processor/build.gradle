@@ -1,18 +1,16 @@
 plugins {
-    id 'java'
+    id 'java-library'
 }
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 group 'com.github.junzzzz'
 version '0.1'
 
-sourceCompatibility = 1.6
-
-repositories {
-    mavenCentral()
-}
-
 dependencies {
-    compile files("${System.getenv('JAVA_HOME')}/lib/tools.jar")
+    implementation project(':skill-annotation')
+    implementation files("${System.getenv('JAVA_HOME')}/lib/tools.jar")
 
-    compile group: 'com.google.auto.service', name: 'auto-service', version: '1.0-rc4'
+    implementation group: 'com.google.auto.service', name: 'auto-service', version: '1.0-rc4'
 }

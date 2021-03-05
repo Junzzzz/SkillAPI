@@ -1,0 +1,13 @@
+plugins {
+    id 'java-library'
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+group 'com.github.junzzzz'
+version '0.1'
+
+dependencies {
+    implementation group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '1.2-SNAPSHOT'
+}
