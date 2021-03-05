@@ -1,12 +1,12 @@
-package skillapi.api.impl;
+package skillapi.api.annotation.impl;
 
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.eventhandler.Event;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
 import org.apache.logging.log4j.Level;
-import skillapi.api.SkillAnnotation;
-import skillapi.api.SkillAnnotationRegister;
+import skillapi.api.annotation.SkillAnnotation;
+import skillapi.api.annotation.SkillAnnotationRegister;
 import skillapi.api.annotation.SkillEvent;
 import skillapi.event.base.BaseSkillEvent;
 import skillapi.skill.SkillRuntimeException;

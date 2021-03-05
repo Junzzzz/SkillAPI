@@ -1,4 +1,4 @@
-package skillapi.api;
+package skillapi.api.annotation;
 
 import java.lang.annotation.*;
 

@@ -3,6 +3,8 @@ package skillapi.api;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import org.apache.logging.log4j.Level;
+import skillapi.api.annotation.SkillAnnotation;
+import skillapi.api.annotation.SkillAnnotationRegister;
 import skillapi.utils.ClassUtils;
 import skillapi.utils.ListUtils;
 
@@ -20,7 +22,7 @@ import java.util.Map;
  */
 public final class SkillApi {
     private static Map<Class<? extends Annotation>, SkillAnnotationRegister<Annotation>> annotationMap =
-            new HashMap<Class<? extends Annotation>, SkillAnnotationRegister<Annotation>>(16);
+            new HashMap<>(16);
 
 
     public static void init(FMLPreInitializationEvent event) {
@@ -74,9 +76,7 @@ public final class SkillApi {
                 try {
                     annotationMap.put((Class<? extends Annotation>) generic, (SkillAnnotationRegister<Annotation>) clz.newInstance());
                     break;
-                } catch (InstantiationException e) {
-                    FMLLog.log(Level.ERROR, e, "Unable to register %s class", clz.getName());
-                } catch (IllegalAccessException e) {
+                } catch (InstantiationException | IllegalAccessException e) {
                     FMLLog.log(Level.ERROR, e, "Unable to register %s class", clz.getName());
                 }
             }

@@ -1,7 +1,7 @@
-package skillapi.api.impl;
+package skillapi.api.annotation.impl;
 
-import skillapi.api.SkillAnnotation;
-import skillapi.api.SkillAnnotationRegister;
+import skillapi.api.annotation.SkillAnnotation;
+import skillapi.api.annotation.SkillAnnotationRegister;
 import skillapi.api.annotation.StaticSkill;
 
 /**
