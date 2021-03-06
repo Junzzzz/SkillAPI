@@ -20,6 +20,7 @@ public class CachedTexture {
     private final int height;
     private final int scaleFactor;
 
+    private boolean hasTexture = false;
     private boolean delFlag = false;
 
     public CachedTexture(int width, int height, boolean useDepth) {
@@ -28,7 +29,11 @@ public class CachedTexture {
         final Minecraft mc = Minecraft.getMinecraft();
         final ScaledResolution scaledResolution = new ScaledResolution(mc, mc.displayWidth, mc.displayHeight);
         this.scaleFactor = scaledResolution.getScaleFactor();
-        this.framebuffer = new Framebuffer(width * this.scaleFactor, height * this.scaleFactor, useDepth);
+        if (checkBounds()) {
+            this.framebuffer = null;
+        } else {
+            this.framebuffer = new Framebuffer(width * this.scaleFactor, height * this.scaleFactor, useDepth);
+        }
     }
 
     public int getWidth() {
@@ -42,6 +47,10 @@ public class CachedTexture {
     public void startDrawTexture() {
         if (delFlag) {
             throw new RuntimeException("This texture has been deleted, please recreate it！");
+        }
+        this.hasTexture = false;
+        if (checkBounds()) {
+            return;
         }
         this.framebuffer.bindFramebuffer(true);
         GL11.glMatrixMode(GL11.GL_PROJECTION);
@@ -57,15 +66,27 @@ public class CachedTexture {
     }
 
     public void endDrawTexture() {
+        if (checkBounds()) {
+            return;
+        }
         this.framebuffer.unbindFramebuffer();
+        this.hasTexture = true;
+    }
+
+    private boolean checkBounds() {
+        return this.width == 0 || this.height == 0;
     }
 
     public void bindTexture() {
-        this.framebuffer.bindFramebufferTexture();
+        if (this.framebuffer != null) {
+            this.framebuffer.bindFramebufferTexture();
+        }
     }
 
     public void unbindTexture() {
-        this.framebuffer.unbindFramebufferTexture();
+        if (this.framebuffer != null) {
+            this.framebuffer.unbindFramebufferTexture();
+        }
     }
 
     public void render(int x, int y, int width, int height) {
@@ -77,6 +98,9 @@ public class CachedTexture {
     }
 
     public void render(int x, int y, int textureX, int textureY, int width, int height, boolean blend) {
+        if (!hasTexture || this.framebuffer == null) {
+            return;
+        }
         GL11.glColorMask(true, true, true, false);
         GL11.glDisable(GL11.GL_DEPTH_TEST);
         GL11.glDepthMask(false);
@@ -97,7 +121,7 @@ public class CachedTexture {
         // Flip
         textureY = this.height * this.scaleFactor - textureY;
 
-        // Calculate u/v
+        // Calculate u, v
         final double u0 = (double) textureX / this.framebuffer.framebufferTextureWidth;
         final double v0 = (double) textureY / this.framebuffer.framebufferTextureHeight;
         final double u1 = (double) (textureX + width * this.scaleFactor) / this.framebuffer.framebufferTextureWidth;
@@ -120,12 +144,16 @@ public class CachedTexture {
     }
 
     public void clear() {
-        this.framebuffer.framebufferClear();
+        if (this.framebuffer != null) {
+            this.framebuffer.framebufferClear();
+        }
     }
 
     public void delete() {
         if (!delFlag) {
-            this.framebuffer.deleteFramebuffer();
+            if (this.framebuffer != null) {
+                this.framebuffer.deleteFramebuffer();
+            }
             this.delFlag = true;
         }
     }

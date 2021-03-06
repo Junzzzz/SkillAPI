@@ -7,6 +7,7 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -54,7 +55,7 @@ public abstract class BaseGui extends GuiScreen {
     }
 
     private void mouseCheck(int mouseX, int mouseY) {
-        if (Mouse.isButtonDown(0) ) {
+        if (Mouse.isButtonDown(0)) {
             if (!GuiConst.isMouseLeftButtonPressed) {
                 GuiConst.isMouseLeftButtonPressed = true;
                 for (BaseComponent component : this.components) {
@@ -100,6 +101,7 @@ public abstract class BaseGui extends GuiScreen {
     }
 
     private void renderButton(int mouseX, int mouseY) {
+        GL11.glEnable(GL11.GL_TEXTURE_2D);
         for (Button btn : this.buttons) {
             btn.guiButton.drawButton(this.mc, mouseX, mouseY);
         }
@@ -170,7 +172,9 @@ public abstract class BaseGui extends GuiScreen {
         }
 
         public void doEvent() {
-            event.apply();
+            if (event != null) {
+                event.apply();
+            }
         }
 
         public void setEnabled(boolean enabled) {
