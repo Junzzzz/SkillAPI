@@ -161,7 +161,8 @@ public abstract class BaseGui extends GuiScreen {
         this.initGui();
     }
 
-    protected static class Button {
+    public static class Button {
+        // TODO 重制
         private final GuiButton guiButton;
         private final FunctionalEvent event;
 

@@ -43,7 +43,7 @@ public abstract class AbstractScrollingList<T> extends BaseComponent {
         this.elementsBox = Layout.builder()
                 .x(layout.getX() + 1)
                 .y(layout.getY() + 1)
-                .width(layout.getWidth() - 6 - 2)
+                .width(layout.getWidth() - 2)
                 .height(layout.getHeight() - 2).build();
         setSliderButtonHeight();
 
@@ -66,20 +66,38 @@ public abstract class AbstractScrollingList<T> extends BaseComponent {
      */
     protected abstract void renderSlot(T data, int x, int y);
 
-//    protected abstract elementClicked(int index, boolean doubleClick);
+    /**
+     * Called when the element is clicked
+     *
+     * @param index Element index
+     */
+    protected abstract void elementClicked(int index);
 
     public int getSelectedIndex() {
         return this.selectedIndex;
     }
 
     public T getSelected() {
-        return this.dataList.get(this.selectedIndex);
+        if (hasSelected()) {
+            return this.dataList.get(this.selectedIndex);
+        }
+        return null;
     }
 
     public T removeSelected() {
+        if (!hasSelected()) {
+            return null;
+        }
         final T tmp = this.dataList.remove(this.selectedIndex);
+        if (this.selectedIndex >= this.dataList.size()) {
+            this.selectedIndex--;
+        }
         refresh();
         return tmp;
+    }
+
+    public boolean hasSelected() {
+        return this.dataList.size() > selectedIndex && selectedIndex > -1;
     }
 
     public void add(T item) {
@@ -96,12 +114,17 @@ public abstract class AbstractScrollingList<T> extends BaseComponent {
         return Collections.unmodifiableList(this.dataList);
     }
 
+    public int getListSize() {
+        return this.dataList.size();
+    }
+
     protected void init() {
         refreshCachedTexture();
     }
 
     private void refreshCachedTexture() {
         this.movableWindowHeight = getContentHeight() - this.layout.getHeight();
+        this.elementsBox.setWidth(layout.getWidth() - 2 - (this.movableWindowHeight > 0 ? 6 : 0));
         final CachedTexture temp = this.cachedTexture;
         this.cachedTexture = createCachedTexture();
 
@@ -115,12 +138,12 @@ public abstract class AbstractScrollingList<T> extends BaseComponent {
         texture.startDrawTexture();
 
         if (this.selectedIndex > -1 && this.selectedIndex < this.dataList.size()) {
-            renderSelected(0, this.selectedIndex * this.slotHeight + 2);
+            renderSelected(0, this.selectedIndex * this.slotHeight);
         }
 
         int i = 0;
         for (T data : this.dataList) {
-            this.renderSlot(data, 0, i * this.slotHeight);
+            this.renderSlot(data, 1, i * this.slotHeight);
             i++;
         }
         texture.endDrawTexture();
@@ -170,6 +193,7 @@ public abstract class AbstractScrollingList<T> extends BaseComponent {
         }
         this.selectedIndex = ((int) (slider.getRatio() * this.movableWindowHeight) + mouseY - this.elementsBox.getY()) / this.slotHeight;
         refreshCachedTexture();
+        elementClicked(this.selectedIndex);
         return true;
     }
 
@@ -215,21 +239,21 @@ public abstract class AbstractScrollingList<T> extends BaseComponent {
 
     private void renderSelected(int x, int y) {
         final int x1 = x + this.elementsBox.getWidth();
-        final int y1 = y + this.slotHeight - 3;
+        final int y1 = y + this.slotHeight;
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         Tessellator tessellator = Tessellator.instance;
         tessellator.startDrawingQuads();
         tessellator.setColorOpaque_I(0x808080);
-        tessellator.addVertexWithUV(x, y1 + 2, 0.0D, 0.0D, 1.0D);
-        tessellator.addVertexWithUV(x1, y1 + 2, 0.0D, 1.0D, 1.0D);
-        tessellator.addVertexWithUV(x1, y - 2, 0.0D, 1.0D, 0.0D);
-        tessellator.addVertexWithUV(x, y - 2, 0.0D, 0.0D, 0.0D);
+        tessellator.addVertexWithUV(x, y1, 0.0D, 0.0D, 1.0D);
+        tessellator.addVertexWithUV(x1, y1, 0.0D, 1.0D, 1.0D);
+        tessellator.addVertexWithUV(x1, y, 0.0D, 1.0D, 0.0D);
+        tessellator.addVertexWithUV(x, y, 0.0D, 0.0D, 0.0D);
         tessellator.setColorOpaque_I(0);
-        tessellator.addVertexWithUV(x + 1, y1 + 1, 0.0D, 0.0D, 1.0D);
-        tessellator.addVertexWithUV(x1 - 1, y1 + 1, 0.0D, 1.0D, 1.0D);
-        tessellator.addVertexWithUV(x1 - 1, y - 1, 0.0D, 1.0D, 0.0D);
-        tessellator.addVertexWithUV(x + 1, y - 1, 0.0D, 0.0D, 0.0D);
+        tessellator.addVertexWithUV(x + 1, y1 - 1, 0.0D, 0.0D, 1.0D);
+        tessellator.addVertexWithUV(x1 - 1, y1 - 1, 0.0D, 1.0D, 1.0D);
+        tessellator.addVertexWithUV(x1 - 1, y + 1, 0.0D, 1.0D, 0.0D);
+        tessellator.addVertexWithUV(x + 1, y + 1, 0.0D, 0.0D, 0.0D);
         tessellator.draw();
         GL11.glEnable(GL11.GL_TEXTURE_2D);
     }

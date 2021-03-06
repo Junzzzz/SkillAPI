@@ -1,13 +1,12 @@
 package skillapi.client.gui;
 
-import lombok.var;
+import lombok.val;
 import skillapi.api.gui.base.BaseGui;
 import skillapi.api.gui.base.Layout;
 import skillapi.client.gui.component.SkillEffectListComponent;
 import skillapi.skill.SkillEffectHandler;
 import skillapi.utils.ClassUtils;
 
-import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 /**
@@ -30,36 +29,6 @@ public class SkillEffectChooseGui extends BaseGui {
 
     @Override
     protected void init() {
-        final int listWidth = (width - 10 - 10 - 30) / 2;
-
-//        // TODO TEST
-        final var test = SkillEffectHandler.getEffects();
-        test.addAll(new ArrayList<>(test));
-        test.addAll(new ArrayList<>(test));
-//        this.leftSelectList = new SkillEffectListGui(this,
-//                ,
-//                test,
-//                (index, dClk) -> addButton.setEnabled(index != -1)
-//        );
-//        this.leftSelectList = new SkillEffectListGui(this,
-//                new GuiConfig(10, 30, listWidth, height - 30 - 40),
-//                SkillEffectHandler.getEffects().stream()
-//                        .filter(e -> !parent.effectListGui.getEffects().contains(e))
-//                        .collect(Collectors.toList()),
-//                (index, dClk) -> addButton.setEnabled(index != -1)
-//        );
-//        this.rightSelectList = new SkillEffectListGui(this,
-//                new GuiBox(width - listWidth - 10, 30, listWidth, height - 30 - 40),
-//                parent.effectListGui.getEffects(),
-//                (index, dClk) -> removeButton.setEnabled(index != -1)
-//        );
-
-        final Layout rightListBox = new Layout(width - listWidth - 10, 30, listWidth, height - 30 - 40);
-        final Layout leftListBox = new Layout(10, 30, listWidth, height - 30 - 40);
-
-        this.leftSelectList = new SkillEffectListComponent(leftListBox, 25, test);
-        this.rightSelectList = new SkillEffectListComponent(rightListBox, 25, parent.effectListGui.getEffects());
-
         removeButton = addButton(width / 2 - 10, height / 3 - 10, 20, 20, "<<", () -> {
             this.leftSelectList.add(this.rightSelectList.removeSelected());
             checkButtonStatus();
@@ -78,25 +47,36 @@ public class SkillEffectChooseGui extends BaseGui {
             );
             displayGui(parent);
         });
+
+        final int listWidth = (width - 10 - 10 - 30) / 2;
+
+        final Layout rightListBox = new Layout(width - listWidth - 10, 30, listWidth, height - 30 - 40);
+        final Layout leftListBox = new Layout(10, 30, listWidth, height - 30 - 40);
+
+        val leftList = SkillEffectHandler.getEffects().stream()
+                .filter(e -> !parent.effectListGui.getEffects().contains(e))
+                .collect(Collectors.toList());
+
+        this.leftSelectList = new SkillEffectListComponent(leftListBox, 25, leftList);
+        this.rightSelectList = new SkillEffectListComponent(rightListBox, 25, parent.effectListGui.getEffects());
+
+        this.leftSelectList.setAssociatedButton(addButton);
+        this.rightSelectList.setAssociatedButton(removeButton);
+
         addComponent(leftSelectList);
         addComponent(rightSelectList);
         checkButtonStatus();
     }
 
     private void checkButtonStatus() {
-//        this.removeButton.setEnabled(this.rightSelectList.canRemoveSelected());
-//        this.addButton.setEnabled(this.leftSelectList.canRemoveSelected());
-//        this.finishButton.setEnabled(this.rightSelectList.getSize() > 0);
+        this.removeButton.setEnabled(this.rightSelectList.hasSelected());
+        this.addButton.setEnabled(this.leftSelectList.hasSelected());
+        this.finishButton.setEnabled(this.rightSelectList.getListSize() > 0);
     }
 
     @Override
     protected void render(int mouseX, int mouseY, float partialTicks) {
         this.drawBackground(0);
-
-//        this.leftSelectList.drawScreen(mouseX, mouseY, partialTicks);
-//        this.leftSelectList.overlay();
-//        this.rightSelectList.drawScreen(mouseX, mouseY, partialTicks);
-//        this.rightSelectList.overlay();
 
         this.drawCenteredString("Choose Effect", width / 2, 15, 0xFFFFFF);
     }
