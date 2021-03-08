@@ -1,25 +1,22 @@
 package skillapi.api.gui.base;
 
-import net.minecraft.client.gui.FontRenderer;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * @author Jun
  * @date 2020/11/18.
  */
-public abstract class BaseComponent {
+public abstract class BaseComponent implements GenericGui {
     protected final Layout layout;
 
+    @Getter
+    @Setter
+    protected boolean visible;
 
     protected BaseComponent(Layout layout) {
         this.layout = layout;
-    }
-
-    public FontRenderer getFontRenderer() {
-        return GuiConst.getFontRenderer();
-    }
-
-    public int getScaleFactor() {
-        return GuiConst.getScaleFactor();
+        this.visible = true;
     }
 
     /**

@@ -1,6 +1,5 @@
 package skillapi.api.gui.component;
 
-import lombok.Builder;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import org.lwjgl.opengl.GL11;
@@ -22,7 +21,6 @@ public class SliderComponent extends BaseComponent {
     private int buttonMinY;
     private int buttonMaxY;
 
-    @Builder
     public SliderComponent(Layout sliderBox) {
         super(sliderBox);
         this.sliderButton = new Layout(sliderBox.getX(), sliderBox.getY(), sliderBox.getWidth(), sliderBox.getHeight());

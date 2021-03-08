@@ -3,16 +3,17 @@ package skillapi.api.gui.base;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.util.ResourceLocation;
 
 /**
  * @author Jun
  * @date 2021/2/23.
  */
 public class GuiConst {
-    private static int scaleFactor;
-    private static FontRenderer fontRenderer;
+    public static final ResourceLocation BUTTON_TEXTURES = new ResourceLocation("textures/gui/widgets.png");
 
-    public static boolean isMouseLeftButtonPressed;
+    protected static int scaleFactor;
+    protected static FontRenderer fontRenderer;
 
     // Make sure it is initialized
     static {

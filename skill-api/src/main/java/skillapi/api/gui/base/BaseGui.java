@@ -17,9 +17,11 @@ import java.util.List;
  * @author Jun
  * @date 2020/11/3.
  */
-public abstract class BaseGui extends GuiScreen {
+public abstract class BaseGui extends GuiScreen implements GenericGui {
     private final List<BaseComponent> components = new LinkedList<>();
     private final List<Button> buttons = new ArrayList<>();
+
+    private boolean isMouseLeftButtonPressed;
 
     /**
      * Init gui
@@ -56,8 +58,8 @@ public abstract class BaseGui extends GuiScreen {
 
     private void mouseCheck(int mouseX, int mouseY) {
         if (Mouse.isButtonDown(0)) {
-            if (!GuiConst.isMouseLeftButtonPressed) {
-                GuiConst.isMouseLeftButtonPressed = true;
+            if (!isMouseLeftButtonPressed) {
+                isMouseLeftButtonPressed = true;
                 for (BaseComponent component : this.components) {
                     if (component.mousePressed(mouseX, mouseY)) {
                         break;
@@ -65,8 +67,8 @@ public abstract class BaseGui extends GuiScreen {
                 }
             }
         } else {
-            if (GuiConst.isMouseLeftButtonPressed) {
-                GuiConst.isMouseLeftButtonPressed = false;
+            if (isMouseLeftButtonPressed) {
+                isMouseLeftButtonPressed = false;
                 for (BaseComponent component : this.components) {
                     if (component.mouseReleased(mouseX, mouseY)) {
                         break;
@@ -187,12 +189,9 @@ public abstract class BaseGui extends GuiScreen {
         }
     }
 
+    @Override
     public FontRenderer getFontRenderer() {
         return this.fontRendererObj;
-    }
-
-    public int getScaleFactor() {
-        return GuiConst.getScaleFactor();
     }
 
     @FunctionalInterface

@@ -19,6 +19,14 @@ public final class Layout {
     private int width;
     private int height;
 
+    public int getCenterX() {
+        return x + width / 2;
+    }
+
+    public int getCenterY() {
+        return y + height / 2;
+    }
+
     public int getTop() {
         return y;
     }

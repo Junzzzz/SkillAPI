@@ -2,7 +2,7 @@ package skillapi.client.gui.component;
 
 import skillapi.api.gui.base.BaseGui;
 import skillapi.api.gui.base.Layout;
-import skillapi.api.gui.component.AbstractScrollingList;
+import skillapi.api.gui.component.AbstractScrollingListComponent;
 import skillapi.skill.BaseSkillEffect;
 
 import java.util.List;
@@ -11,7 +11,7 @@ import java.util.List;
  * @author Jun
  * @date 2021/2/24.
  */
-public class SkillEffectListComponent extends AbstractScrollingList<Class<? extends BaseSkillEffect>> {
+public class SkillEffectListComponent extends AbstractScrollingListComponent<Class<? extends BaseSkillEffect>> {
     private BaseGui.Button associatedButton;
 
     public SkillEffectListComponent(Layout layout, int slotHeight, List<Class<? extends BaseSkillEffect>> data) {

@@ -1,10 +1,11 @@
 package skillapi.api.gui.component;
 
-import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import org.lwjgl.opengl.GL11;
 import skillapi.api.gui.base.BaseComponent;
+import skillapi.api.gui.base.GenericGui;
 import skillapi.api.gui.base.Layout;
+import skillapi.api.gui.base.RenderUtils;
 import skillapi.client.CachedTexture;
 
 import java.util.ArrayList;
@@ -15,7 +16,7 @@ import java.util.List;
  * @author Jun
  * @date 2021/2/24.
  */
-public abstract class AbstractScrollingList<T> extends BaseComponent {
+public abstract class AbstractScrollingListComponent<T> extends BaseComponent {
     private CachedTexture cachedTexture;
     private final SliderComponent slider;
 
@@ -26,19 +27,19 @@ public abstract class AbstractScrollingList<T> extends BaseComponent {
 
     protected int selectedIndex = -1;
 
-    public AbstractScrollingList(Layout layout, int slotHeight, List<T> data, boolean lazyLoad) {
+    public AbstractScrollingListComponent(Layout layout, int slotHeight, List<T> data, boolean lazyLoad) {
         super(layout);
         this.slotHeight = slotHeight;
 
         this.dataList = new ArrayList<>(data);
-        this.slider = SliderComponent.builder()
-                .sliderBox(Layout.builder()
-                        .x(layout.getRight() - 6)
-                        .y(layout.getY())
-                        .width(6)
-                        .height(layout.getHeight())
-                        .build()
-                ).build();
+        this.slider = new SliderComponent(Layout.builder()
+                .x(layout.getRight() - 6)
+                .y(layout.getY())
+                .width(6)
+                .height(layout.getHeight())
+                .build()
+        );
+
         // -2 for edge, -6 for slider
         this.elementsBox = Layout.builder()
                 .x(layout.getX() + 1)
@@ -53,7 +54,7 @@ public abstract class AbstractScrollingList<T> extends BaseComponent {
         }
     }
 
-    public AbstractScrollingList(Layout layout, int slotHeight, List<T> data) {
+    public AbstractScrollingListComponent(Layout layout, int slotHeight, List<T> data) {
         this(layout, slotHeight, data, false);
     }
 
@@ -206,7 +207,7 @@ public abstract class AbstractScrollingList<T> extends BaseComponent {
     }
 
     private void renderListBackground() {
-        drawGradientRect(layout.getLeft(), layout.getTop(), layout.getRight(), layout.getBottom(), 0xC0101010, 0xD0101010);
+        RenderUtils.drawGradientRect(layout.getLeft(), layout.getTop(), layout.getRight(), layout.getBottom(), 0xC0101010, 0xD0101010);
     }
 
     private void renderEdgeShadow() {
@@ -260,7 +261,7 @@ public abstract class AbstractScrollingList<T> extends BaseComponent {
 
     private void renderList() {
         final int y = (int) (slider.getRatio() * this.movableWindowHeight);
-        final int fromY = y * getScaleFactor();
+        final int fromY = y * GenericGui.getScaleFactor();
 
         final int showHeight = this.movableWindowHeight > 0 ? this.layout.getHeight() - 2 : this.cachedTexture.getHeight();
 
@@ -271,38 +272,6 @@ public abstract class AbstractScrollingList<T> extends BaseComponent {
                 fromY,
                 this.cachedTexture.getWidth(),
                 showHeight);
-    }
-
-    /**
-     * Draws a rectangle with a vertical gradient between the specified colors.
-     */
-    private void drawGradientRect(int left, int top, int right, int bottom, int colorTop, int colorBottom) {
-        float f = (float) (colorTop >> 24 & 255) / 255.0F;
-        float f1 = (float) (colorTop >> 16 & 255) / 255.0F;
-        float f2 = (float) (colorTop >> 8 & 255) / 255.0F;
-        float f3 = (float) (colorTop & 255) / 255.0F;
-        float f4 = (float) (colorBottom >> 24 & 255) / 255.0F;
-        float f5 = (float) (colorBottom >> 16 & 255) / 255.0F;
-        float f6 = (float) (colorBottom >> 8 & 255) / 255.0F;
-        float f7 = (float) (colorBottom & 255) / 255.0F;
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glDisable(GL11.GL_ALPHA_TEST);
-        OpenGlHelper.glBlendFunc(770, 771, 1, 0);
-        GL11.glShadeModel(GL11.GL_SMOOTH);
-        Tessellator tessellator = Tessellator.instance;
-        tessellator.startDrawingQuads();
-        tessellator.setColorRGBA_F(f1, f2, f3, f);
-        tessellator.addVertex(right, top, 0.0D);
-        tessellator.addVertex(left, top, 0.0D);
-        tessellator.setColorRGBA_F(f5, f6, f7, f4);
-        tessellator.addVertex(left, bottom, 0.0D);
-        tessellator.addVertex(right, bottom, 0.0D);
-        tessellator.draw();
-        GL11.glShadeModel(GL11.GL_FLAT);
-        GL11.glDisable(GL11.GL_BLEND);
-        GL11.glEnable(GL11.GL_ALPHA_TEST);
-        GL11.glEnable(GL11.GL_TEXTURE_2D);
     }
 
     @Override

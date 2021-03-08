@@ -2,7 +2,7 @@ package skillapi.api.gui.component.impl;
 
 import lombok.Builder;
 import skillapi.api.gui.base.Layout;
-import skillapi.api.gui.component.AbstractScrollingList;
+import skillapi.api.gui.component.AbstractScrollingListComponent;
 
 import java.util.List;
 import java.util.Objects;
@@ -11,7 +11,7 @@ import java.util.Objects;
  * @author Jun
  * @date 2020/11/20.
  */
-public class ScrollingListComponent<T> extends AbstractScrollingList<T> {
+public class ScrollingListComponent<T> extends AbstractScrollingListComponent<T> {
     private final SlotRenderer<T> slotRenderer;
     private ItemClickEvent<T> clickEvent;
 
