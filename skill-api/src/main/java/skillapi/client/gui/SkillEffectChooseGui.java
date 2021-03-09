@@ -3,6 +3,7 @@ package skillapi.client.gui;
 import lombok.val;
 import skillapi.api.gui.base.BaseGui;
 import skillapi.api.gui.base.Layout;
+import skillapi.api.gui.component.ButtonComponent;
 import skillapi.client.gui.component.SkillEffectListComponent;
 import skillapi.skill.SkillEffectHandler;
 import skillapi.utils.ClassUtils;
@@ -19,9 +20,9 @@ public class SkillEffectChooseGui extends BaseGui {
     private SkillEffectListComponent leftSelectList;
     private SkillEffectListComponent rightSelectList;
 
-    private Button addButton;
-    private Button removeButton;
-    private Button finishButton;
+    private ButtonComponent addButton;
+    private ButtonComponent removeButton;
+    private ButtonComponent finishButton;
 
     public SkillEffectChooseGui(SkillEditGui parent) {
         this.parent = parent;
@@ -69,9 +70,9 @@ public class SkillEffectChooseGui extends BaseGui {
     }
 
     private void checkButtonStatus() {
-        this.removeButton.setEnabled(this.rightSelectList.hasSelected());
-        this.addButton.setEnabled(this.leftSelectList.hasSelected());
-        this.finishButton.setEnabled(this.rightSelectList.getListSize() > 0);
+        this.removeButton.setEnable(this.rightSelectList.hasSelected());
+        this.addButton.setEnable(this.leftSelectList.hasSelected());
+        this.finishButton.setEnable(this.rightSelectList.getListSize() > 0);
     }
 
     @Override

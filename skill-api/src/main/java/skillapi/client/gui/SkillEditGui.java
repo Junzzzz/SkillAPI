@@ -4,7 +4,6 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import skillapi.api.gui.base.BaseGui;
 import skillapi.api.gui.base.Layout;
-import skillapi.api.gui.component.SliderComponent;
 import skillapi.skill.BaseSkillEffect;
 
 import java.util.ArrayList;
@@ -33,12 +32,6 @@ public final class SkillEditGui extends BaseGui {
                         .map(BaseSkillEffect::getClass)
                         .collect(Collectors.toList())
         );
-
-        final SliderComponent slider = SliderComponent.builder()
-                .sliderBox(Layout.builder().x(this.width / 2).y(0).width(20).height(this.height).build()).build();
-        // TODO TEST
-        slider.setButtonHeight(this.height / 2);
-        addComponent(slider);
 
         addButton(10, height - 5 - 20, 100, 20, "Edit", () ->
                 displayGui(new SkillEffectChooseGui(this)));

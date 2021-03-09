@@ -44,15 +44,38 @@ public class RenderUtils {
     }
 
     /**
-     * Draws a textured rectangle at the stored z-value
+     * Draw a textured rectangle at the zero point of the Z axis
+     *
+     * @param x      Window coordinate X
+     * @param y      Window coordinate Y
+     * @param u      Texture coordinate X
+     * @param v      Texture coordinate Y
+     * @param width  The width of the texture to be drawn
+     * @param height The height of the texture to be drawn
      */
     public static void drawTexturedModalRect(int x, int y, int u, int v, int width, int height) {
+        drawTexturedModalRect(x, y, u, v, width, height, width, height);
+    }
+
+    /**
+     * Draw a textured rectangle at the zero point of the Z axis
+     *
+     * @param x      Window coordinate X
+     * @param y      Window coordinate Y
+     * @param u      Texture coordinate X
+     * @param v      Texture coordinate Y
+     * @param width  The width to be drawn in the window
+     * @param height The height to be drawn in the window
+     * @param uWidth The width to be drawn in the window
+     * @param vHeight The height to be drawn in the texture
+     */
+    public static void drawTexturedModalRect(int x, int y, int u, int v, int width, int height, int uWidth, int vHeight) {
         double f = 0.00390625F;
         Tessellator tessellator = Tessellator.instance;
         tessellator.startDrawingQuads();
-        tessellator.addVertexWithUV(x, y + height, 0, u * f, (v + height) * f);
-        tessellator.addVertexWithUV(x + width, y + height, 0, (u + width) * f, (v + height) * f);
-        tessellator.addVertexWithUV(x + width, y, 0, (u + width) * f, v * f);
+        tessellator.addVertexWithUV(x, y + height, 0, u * f, (v + vHeight) * f);
+        tessellator.addVertexWithUV(x + width, y + height, 0, (u + uWidth) * f, (v + vHeight) * f);
+        tessellator.addVertexWithUV(x + width, y, 0, (u + uWidth) * f, v * f);
         tessellator.addVertexWithUV(x, y, 0, u * f, v * f);
         tessellator.draw();
     }

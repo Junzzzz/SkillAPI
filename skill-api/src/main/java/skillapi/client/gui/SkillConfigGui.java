@@ -9,6 +9,7 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 import skillapi.Application;
 import skillapi.api.gui.base.BaseGui;
+import skillapi.api.gui.component.ButtonComponent;
 import skillapi.common.PageHelper;
 import skillapi.skill.SkillConfig;
 import skillapi.skill.SkillConfig.DynamicSkillConfig;
@@ -40,12 +41,12 @@ public final class SkillConfigGui extends BaseGui implements GuiYesNoCallback {
     private int skillListPositionX;
     private int skillListPositionY;
 
-    private Button nextPageButton;
-    private Button prevPageButton;
+    private ButtonComponent nextPageButton;
+    private ButtonComponent prevPageButton;
 
-    private Button addSkillButton;
-    private Button deleteSkillButton;
-    private Button editSkillButton;
+    private ButtonComponent addSkillButton;
+    private ButtonComponent deleteSkillButton;
+    private ButtonComponent editSkillButton;
 
     private final PageHelper<DynamicSkillConfig> page = new PageHelper<>(SkillConfig.SERVER_CONFIG.getCustoms(), 7);
 
@@ -132,12 +133,12 @@ public final class SkillConfigGui extends BaseGui implements GuiYesNoCallback {
     }
 
     private void checkPageStatus() {
-        this.nextPageButton.setEnabled(this.page.hasNextPage());
-        this.prevPageButton.setEnabled(this.page.hasPrevPage());
+        this.nextPageButton.setEnable(this.page.hasNextPage());
+        this.prevPageButton.setEnable(this.page.hasPrevPage());
 
         // Check if selected
-        this.editSkillButton.setEnabled(this.selectedLine != -1);
-        this.deleteSkillButton.setEnabled(this.editSkillButton.getEnabled());
+        this.editSkillButton.setEnable(this.selectedLine != -1);
+        this.deleteSkillButton.setEnable(this.editSkillButton.isEnable());
     }
 
     @Override

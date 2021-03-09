@@ -1,15 +1,13 @@
 package skillapi.api.gui.base;
 
-import lombok.Builder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.GL11;
+import skillapi.api.gui.component.ButtonComponent;
+import skillapi.api.util.function.EventFunction;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -19,7 +17,6 @@ import java.util.List;
  */
 public abstract class BaseGui extends GuiScreen implements GenericGui {
     private final List<BaseComponent> components = new LinkedList<>();
-    private final List<Button> buttons = new ArrayList<>();
 
     private boolean isMouseLeftButtonPressed;
 
@@ -40,7 +37,6 @@ public abstract class BaseGui extends GuiScreen implements GenericGui {
     @Override
     public final void initGui() {
         components.clear();
-        buttons.clear();
 
         init();
     }
@@ -50,7 +46,6 @@ public abstract class BaseGui extends GuiScreen implements GenericGui {
         render(mouseX, mouseY, partialTicks);
 
         renderComponent(mouseX, mouseY, partialTicks);
-        renderButton(mouseX, mouseY);
 
         // Must be placed last, otherwise it will affect the display
         mouseCheck(mouseX, mouseY);
@@ -87,9 +82,9 @@ public abstract class BaseGui extends GuiScreen implements GenericGui {
      * @param event  Button click event
      * @return Button
      */
-    protected Button addButton(int x, int y, int width, int height, String text, FunctionalEvent event) {
-        final Button button = new Button(this.buttons.size(), x, y, width, height, translate(text), event);
-        this.buttons.add(button);
+    protected ButtonComponent addButton(int x, int y, int width, int height, String text, EventFunction event) {
+        final ButtonComponent button = new ButtonComponent(new Layout(x, y, width, height), translate(text), event);
+        this.components.add(button);
         return button;
     }
 
@@ -100,13 +95,6 @@ public abstract class BaseGui extends GuiScreen implements GenericGui {
 
     private String translate(String text) {
         return text.startsWith("$") ? I18n.format(text.substring(1)) : text;
-    }
-
-    private void renderButton(int mouseX, int mouseY) {
-        GL11.glEnable(GL11.GL_TEXTURE_2D);
-        for (Button btn : this.buttons) {
-            btn.guiButton.drawButton(this.mc, mouseX, mouseY);
-        }
     }
 
     private void renderComponent(int mouseX, int mouseY, float partialTicks) {
@@ -132,18 +120,19 @@ public abstract class BaseGui extends GuiScreen implements GenericGui {
      */
     @Override
     protected void mouseClicked(int x, int y, int button) {
+        // TODO remake handleMouseInput
         // Left mouse button down
-        if (button == 0) {
-            for (Button btn : this.buttons) {
-                if (btn.guiButton.mousePressed(this.mc, x, y)) {
-                    btn.guiButton.func_146113_a(this.mc.getSoundHandler());
-                    btn.doEvent();
-
-                    // Only execute a mouse click event
-                    return;
-                }
-            }
-        }
+//        if (button == 0) {
+//            for (Button btn : this.buttons) {
+//                if (btn.guiButton.mousePressed(this.mc, x, y)) {
+//                    btn.guiButton.func_146113_a(this.mc.getSoundHandler());
+//                    btn.doEvent();
+//
+//                    // Only execute a mouse click event
+//                    return;
+//                }
+//            }
+//        }
 
     }
 
@@ -159,46 +148,11 @@ public abstract class BaseGui extends GuiScreen implements GenericGui {
         this.height = height;
         GuiConst.reload();
 
-        this.buttons.clear();
         this.initGui();
-    }
-
-    public static class Button {
-        // TODO 重制
-        private final GuiButton guiButton;
-        private final FunctionalEvent event;
-
-        @Builder
-        Button(int id, int x, int y, int width, int height, String text, FunctionalEvent event) {
-            this.guiButton = new GuiButton(id, x, y, width, height, text);
-            this.event = event;
-        }
-
-        public void doEvent() {
-            if (event != null) {
-                event.apply();
-            }
-        }
-
-        public void setEnabled(boolean enabled) {
-            this.guiButton.enabled = enabled;
-        }
-
-        public boolean getEnabled() {
-            return this.guiButton.enabled;
-        }
     }
 
     @Override
     public FontRenderer getFontRenderer() {
         return this.fontRendererObj;
-    }
-
-    @FunctionalInterface
-    public interface FunctionalEvent {
-        /**
-         * The event to be executed
-         */
-        void apply();
     }
 }

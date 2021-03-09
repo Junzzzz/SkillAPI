@@ -3,6 +3,7 @@ package skillapi.client.gui.component;
 import skillapi.api.gui.base.BaseGui;
 import skillapi.api.gui.base.Layout;
 import skillapi.api.gui.component.AbstractScrollingListComponent;
+import skillapi.api.gui.component.ButtonComponent;
 import skillapi.skill.BaseSkillEffect;
 
 import java.util.List;
@@ -12,7 +13,7 @@ import java.util.List;
  * @date 2021/2/24.
  */
 public class SkillEffectListComponent extends AbstractScrollingListComponent<Class<? extends BaseSkillEffect>> {
-    private BaseGui.Button associatedButton;
+    private ButtonComponent associatedButton;
 
     public SkillEffectListComponent(Layout layout, int slotHeight, List<Class<? extends BaseSkillEffect>> data) {
         super(layout, slotHeight, data);
@@ -26,11 +27,11 @@ public class SkillEffectListComponent extends AbstractScrollingListComponent<Cla
     @Override
     protected void elementClicked(int index) {
         if (this.associatedButton != null) {
-            this.associatedButton.setEnabled(index != -1);
+            this.associatedButton.setEnable(index != -1);
         }
     }
 
-    public void setAssociatedButton(BaseGui.Button button) {
+    public void setAssociatedButton(ButtonComponent button) {
         this.associatedButton = button;
     }
 
