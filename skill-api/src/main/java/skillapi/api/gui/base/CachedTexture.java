@@ -1,4 +1,4 @@
-package skillapi.client;
+package skillapi.api.gui.base;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -87,6 +87,10 @@ public class CachedTexture {
         if (this.framebuffer != null) {
             this.framebuffer.unbindFramebufferTexture();
         }
+    }
+
+    public void render(Layout layout) {
+        render(layout.x, layout.y, 0, 0, layout.width, layout.height, true);
     }
 
     public void render(int x, int y, int width, int height) {

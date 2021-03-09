@@ -14,10 +14,10 @@ import lombok.Setter;
 @Builder
 @AllArgsConstructor
 public final class Layout {
-    private int x;
-    private int y;
-    private int width;
-    private int height;
+    protected int x;
+    protected int y;
+    protected int width;
+    protected int height;
 
     public int getCenterX() {
         return x + width / 2;

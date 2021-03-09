@@ -6,7 +6,7 @@ import skillapi.api.gui.base.BaseComponent;
 import skillapi.api.gui.base.GenericGui;
 import skillapi.api.gui.base.Layout;
 import skillapi.api.gui.base.RenderUtils;
-import skillapi.client.CachedTexture;
+import skillapi.api.gui.base.CachedTexture;
 
 import java.util.ArrayList;
 import java.util.Collections;

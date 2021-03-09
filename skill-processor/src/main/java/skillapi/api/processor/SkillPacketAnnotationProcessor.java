@@ -25,7 +25,7 @@ import java.util.Set;
  * @date 2020/8/31.
  */
 @SupportedAnnotationTypes("skillapi.api.annotation.SkillPacket")
-@SupportedSourceVersion(SourceVersion.RELEASE_6)
+@SupportedSourceVersion(SourceVersion.RELEASE_8)
 @AutoService(Processor.class)
 public class SkillPacketAnnotationProcessor extends AbstractProcessor {
     private Messager messager;
@@ -94,37 +94,37 @@ public class SkillPacketAnnotationProcessor extends AbstractProcessor {
     }
 
     private JCTree.JCMethodDecl createNoArgsConstructor() {
-        JCTree.JCBlock body = treeMaker.Block(0, List.<JCTree.JCStatement>nil());
+        JCTree.JCBlock body = treeMaker.Block(0, List.nil());
         return treeMaker.MethodDef(
                 treeMaker.Modifiers(Flags.PRIVATE),
                 constructorName,
                 null,
-                List.<JCTree.JCTypeParameter>nil(),
-                List.<JCTree.JCVariableDecl>nil(),
-                List.<JCTree.JCExpression>nil(),
+                List.nil(),
+                List.nil(),
+                List.nil(),
                 body,
                 null
         );
     }
 
     private JCTree.JCMethodDecl createGetter(JCTree.JCVariableDecl jcVariableDecl) {
-        ListBuffer<JCTree.JCStatement> statements = new ListBuffer<JCTree.JCStatement>();
+        ListBuffer<JCTree.JCStatement> statements = new ListBuffer<>();
         statements.append(treeMaker.Return(treeMaker.Select(treeMaker.Ident(names.fromString("this")), jcVariableDecl.getName())));
         JCTree.JCBlock body = treeMaker.Block(0, statements.toList());
         return treeMaker.MethodDef(
                 treeMaker.Modifiers(Flags.PUBLIC),
                 getNewMethodName("get", jcVariableDecl.getName()),
                 jcVariableDecl.vartype,
-                List.<JCTree.JCTypeParameter>nil(),
-                List.<JCTree.JCVariableDecl>nil(),
-                List.<JCTree.JCExpression>nil(),
+                List.nil(),
+                List.nil(),
+                List.nil(),
                 body,
                 null
         );
     }
 
     private JCTree.JCMethodDecl createSetter(JCTree.JCVariableDecl jcVariableDecl) {
-        ListBuffer<JCTree.JCStatement> statements = new ListBuffer<JCTree.JCStatement>();
+        ListBuffer<JCTree.JCStatement> statements = new ListBuffer<>();
 
         statements.append(treeMaker.Exec(
                 treeMaker.Assign(
@@ -145,9 +145,9 @@ public class SkillPacketAnnotationProcessor extends AbstractProcessor {
         return treeMaker.MethodDef(treeMaker.Modifiers(Flags.PUBLIC),
                 getNewMethodName("set", jcVariableDecl.getName()),
                 treeMaker.Type(new Type.JCVoidType()),
-                List.<JCTree.JCTypeParameter>nil(),
+                List.nil(),
                 parameters,
-                List.<JCTree.JCExpression>nil(),
+                List.nil(),
                 body,
                 null
         );
