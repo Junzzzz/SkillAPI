@@ -4,7 +4,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
-import org.lwjgl.input.Mouse;
 import skillapi.api.gui.component.ButtonComponent;
 import skillapi.api.util.function.EventFunction;
 
@@ -17,8 +16,6 @@ import java.util.List;
  */
 public abstract class BaseGui extends GuiScreen implements GenericGui {
     private final List<BaseComponent> components = new LinkedList<>();
-
-    private boolean isMouseLeftButtonPressed;
 
     /**
      * Init gui
@@ -46,31 +43,6 @@ public abstract class BaseGui extends GuiScreen implements GenericGui {
         render(mouseX, mouseY, partialTicks);
 
         renderComponent(mouseX, mouseY, partialTicks);
-
-        // Must be placed last, otherwise it will affect the display
-        mouseCheck(mouseX, mouseY);
-    }
-
-    private void mouseCheck(int mouseX, int mouseY) {
-        if (Mouse.isButtonDown(0)) {
-            if (!isMouseLeftButtonPressed) {
-                isMouseLeftButtonPressed = true;
-                for (BaseComponent component : this.components) {
-                    if (component.mousePressed(mouseX, mouseY)) {
-                        break;
-                    }
-                }
-            }
-        } else {
-            if (isMouseLeftButtonPressed) {
-                isMouseLeftButtonPressed = false;
-                for (BaseComponent component : this.components) {
-                    if (component.mouseReleased(mouseX, mouseY)) {
-                        break;
-                    }
-                }
-            }
-        }
     }
 
     /**
@@ -119,21 +91,27 @@ public abstract class BaseGui extends GuiScreen implements GenericGui {
      * Called when the mouse is clicked.
      */
     @Override
-    protected void mouseClicked(int x, int y, int button) {
-        // TODO remake handleMouseInput
+    protected void mouseClicked(int mouseX, int mouseY, int button) {
         // Left mouse button down
-//        if (button == 0) {
-//            for (Button btn : this.buttons) {
-//                if (btn.guiButton.mousePressed(this.mc, x, y)) {
-//                    btn.guiButton.func_146113_a(this.mc.getSoundHandler());
-//                    btn.doEvent();
-//
-//                    // Only execute a mouse click event
-//                    return;
-//                }
-//            }
-//        }
+        if (button == MouseButton.LEFT.button) {
+            for (BaseComponent component : this.components) {
+                if (component.mousePressed(mouseX, mouseY, MouseButton.LEFT)) {
+                    break;
+                }
+            }
+        }
 
+    }
+
+    @Override
+    protected void mouseMovedOrUp(int mouseX, int mouseY, int which) {
+        if (which == 0) {
+            for (BaseComponent component : this.components) {
+                if (component.mouseReleased(mouseX, mouseY)) {
+                    break;
+                }
+            }
+        }
     }
 
     /**
@@ -155,4 +133,5 @@ public abstract class BaseGui extends GuiScreen implements GenericGui {
     public FontRenderer getFontRenderer() {
         return this.fontRendererObj;
     }
+
 }

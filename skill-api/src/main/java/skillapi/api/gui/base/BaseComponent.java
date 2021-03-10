@@ -35,7 +35,7 @@ public abstract class BaseComponent implements GenericGui {
      * @param mouseY Mouse y axis
      * @return Whether to intercept
      */
-    protected abstract boolean mousePressed(int mouseX, int mouseY);
+    protected abstract boolean mousePressed(int mouseX, int mouseY, MouseButton button);
     /**
      * Called when the mouse button is released
      *

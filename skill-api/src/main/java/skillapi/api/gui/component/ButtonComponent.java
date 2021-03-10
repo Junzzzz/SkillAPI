@@ -9,6 +9,7 @@ import skillapi.api.gui.base.*;
 import skillapi.api.util.function.EventFunction;
 
 /**
+ * TODO SOUND
  * Remake the original GuiButton component.
  * Button height cannot exceed 20, width cannot exceed 200.
  *
@@ -67,7 +68,7 @@ public class ButtonComponent extends BaseComponent {
             return;
         }
         if (this.enable) {
-            if (this.focus) {
+            if (this.focus || this.layout.isInBox(mouseX, mouseY)) {
                 this.focusTexture.render(layout);
             } else {
                 this.normalTexture.render(layout);
@@ -84,25 +85,31 @@ public class ButtonComponent extends BaseComponent {
         GL11.glEnable(GL11.GL_BLEND);
         OpenGlHelper.glBlendFunc(770, 771, 1, 0);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        RenderUtils.drawTexturedModalRect(layout.getX(), layout.getY(), 0, 46 + order * 20, layout.getWidth() / 2, layout.getHeight());
-        RenderUtils.drawTexturedModalRect(layout.getCenterX(), layout.getY(), 200 - layout.getWidth() / 2, 46 + order * 20, layout.getWidth() / 2, layout.getHeight());
+        // Start drawing from (0, 0)
+        RenderUtils.drawTexturedModalRect(0, 0, 0, 46 + order * 20, layout.getWidth() / 2, layout.getHeight());
+        RenderUtils.drawTexturedModalRect(layout.getWidth() / 2, 0, 200 - layout.getWidth() / 2, 46 + order * 20, layout.getWidth() / 2, layout.getHeight());
 
-        RenderUtils.drawCenteredString(displayString, layout.getCenterX(), layout.getY() + (layout.getWidth() - 8) / 2, color);
+        RenderUtils.drawCenteredString(displayString, layout.getWidth() / 2, (layout.getHeight() - 8) / 2, color);
     }
 
     @Override
-    protected boolean mousePressed(int mouseX, int mouseY) {
-        this.focus = true;
-        return true;
+    protected boolean mousePressed(int mouseX, int mouseY, MouseButton button) {
+        if (layout.isInBox(mouseX, mouseY)) {
+            this.focus = true;
+            return true;
+        }
+        return false;
     }
 
     @Override
     protected boolean mouseReleased(int mouseX, int mouseY) {
-        this.focus = false;
-        if (this.clickEvent != null) {
-         this.clickEvent.apply();
+        if (this.focus) {
+            this.focus = false;
+            if (layout.isInBox(mouseX, mouseY) && this.clickEvent != null) {
+                this.clickEvent.apply();
+            }
+            return true;
         }
-        return true;
+        return false;
     }
-
 }

@@ -5,6 +5,7 @@ import net.minecraft.client.renderer.Tessellator;
 import org.lwjgl.opengl.GL11;
 import skillapi.api.gui.base.BaseComponent;
 import skillapi.api.gui.base.Layout;
+import skillapi.api.gui.base.MouseButton;
 
 /**
  * @author Jun
@@ -56,7 +57,7 @@ public class SliderComponent extends BaseComponent {
     }
 
     @Override
-    protected boolean mousePressed(int mouseX, int mouseY) {
+    protected boolean mousePressed(int mouseX, int mouseY, MouseButton button) {
         if (sliderButton.isInBox(mouseX, mouseY)) {
             // Click slider button -> Start dragging
             isDragging = true;
