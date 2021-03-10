@@ -1,5 +1,7 @@
 package skillapi.api.gui.base;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import org.lwjgl.opengl.GL11;
@@ -10,6 +12,7 @@ import static skillapi.api.gui.base.GuiConst.fontRenderer;
  * @author Jun
  * @date 2021/3/8.
  */
+@SideOnly(Side.CLIENT)
 public class RenderUtils {
     /**
      * Draws a rectangle with a vertical gradient between the specified colors.

@@ -1,5 +1,7 @@
 package skillapi.api.gui.base;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,6 +15,7 @@ import lombok.Setter;
 @Setter
 @Builder
 @AllArgsConstructor
+@SideOnly(Side.CLIENT)
 public final class Layout {
     protected int x;
     protected int y;

@@ -44,6 +44,9 @@ public class CachedTexture {
         return this.height;
     }
 
+    /**
+     * Start drawing the cache texture. Note that the image should be drawn from the origin (0, 0)
+     */
     public void startDrawTexture() {
         if (delFlag) {
             throw new RuntimeException("This texture has been deleted, please recreate it！");
