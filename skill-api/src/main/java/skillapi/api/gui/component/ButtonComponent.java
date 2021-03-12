@@ -3,7 +3,9 @@ package skillapi.api.gui.component;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 import skillapi.api.gui.base.*;
 import skillapi.api.util.function.EventFunction;
@@ -21,7 +23,6 @@ public class ButtonComponent extends BaseComponent {
     @Setter
     private boolean enable;
     private String text;
-    private boolean focus;
     private final EventFunction clickEvent;
 
     private final CachedTexture disableTexture;
@@ -32,7 +33,6 @@ public class ButtonComponent extends BaseComponent {
         super(layout);
         this.enable = true;
         this.text = text;
-        this.focus = false;
         this.clickEvent = event;
         this.disableTexture = new CachedTexture(layout.getWidth(), layout.getHeight(), true);
         this.normalTexture = new CachedTexture(layout.getWidth(), layout.getHeight(), true);
@@ -68,7 +68,7 @@ public class ButtonComponent extends BaseComponent {
             return;
         }
         if (this.enable) {
-            if (this.focus || this.layout.isInBox(mouseX, mouseY)) {
+            if (this.layout.isInBox(mouseX, mouseY)) {
                 this.focusTexture.render(layout);
             } else {
                 this.normalTexture.render(layout);
@@ -95,7 +95,7 @@ public class ButtonComponent extends BaseComponent {
     @Override
     protected boolean mousePressed(int mouseX, int mouseY, MouseButton button) {
         if (layout.isInBox(mouseX, mouseY)) {
-            this.focus = true;
+            getSoundHandler().playSound(PositionedSoundRecord.func_147674_a(new ResourceLocation("gui.button.press"), 1.0F));
             return true;
         }
         return false;
@@ -103,11 +103,8 @@ public class ButtonComponent extends BaseComponent {
 
     @Override
     protected boolean mouseReleased(int mouseX, int mouseY) {
-        if (this.focus) {
-            this.focus = false;
-            if (layout.isInBox(mouseX, mouseY) && this.clickEvent != null) {
-                this.clickEvent.apply();
-            }
+        if (this.enable && layout.isInBox(mouseX, mouseY) && this.clickEvent != null) {
+            this.clickEvent.apply();
             return true;
         }
         return false;

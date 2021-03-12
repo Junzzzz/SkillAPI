@@ -1,5 +1,8 @@
 package skillapi.api.gui.base;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.PositionedSoundRecord;
+import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.gui.FontRenderer;
 
 /**
@@ -14,6 +17,14 @@ public interface GenericGui {
      */
     default FontRenderer getFontRenderer() {
         return GuiConst.fontRenderer;
+    }
+
+    /**
+     *
+     * @return
+     */
+    default SoundHandler getSoundHandler() {
+        return Minecraft.getMinecraft().getSoundHandler();
     }
 
     /**

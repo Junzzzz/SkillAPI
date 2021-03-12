@@ -2,11 +2,7 @@ package skillapi.api.gui.component;
 
 import net.minecraft.client.renderer.Tessellator;
 import org.lwjgl.opengl.GL11;
-import skillapi.api.gui.base.BaseComponent;
-import skillapi.api.gui.base.GenericGui;
-import skillapi.api.gui.base.Layout;
-import skillapi.api.gui.base.RenderUtils;
-import skillapi.api.gui.base.CachedTexture;
+import skillapi.api.gui.base.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,7 +16,7 @@ public abstract class AbstractScrollingListComponent<T> extends BaseComponent {
     private CachedTexture cachedTexture;
     private final SliderComponent slider;
 
-    private final Layout elementsBox;
+    private final Layout elementsLayout;
     private final int slotHeight;
     private int movableWindowHeight;
     private final ArrayList<T> dataList;
@@ -41,7 +37,7 @@ public abstract class AbstractScrollingListComponent<T> extends BaseComponent {
         );
 
         // -2 for edge, -6 for slider
-        this.elementsBox = Layout.builder()
+        this.elementsLayout = Layout.builder()
                 .x(layout.getX() + 1)
                 .y(layout.getY() + 1)
                 .width(layout.getWidth() - 2)
@@ -125,7 +121,7 @@ public abstract class AbstractScrollingListComponent<T> extends BaseComponent {
 
     private void refreshCachedTexture() {
         this.movableWindowHeight = getContentHeight() - this.layout.getHeight();
-        this.elementsBox.setWidth(layout.getWidth() - 2 - (this.movableWindowHeight > 0 ? 6 : 0));
+        this.elementsLayout.setWidth(layout.getWidth() - 2 - (this.movableWindowHeight > 0 ? 6 : 0));
         final CachedTexture temp = this.cachedTexture;
         this.cachedTexture = createCachedTexture();
 
@@ -135,7 +131,7 @@ public abstract class AbstractScrollingListComponent<T> extends BaseComponent {
     }
 
     private CachedTexture createCachedTexture() {
-        CachedTexture texture = new CachedTexture(elementsBox.getWidth(), getContentHeight(), true);
+        CachedTexture texture = new CachedTexture(elementsLayout.getWidth(), getContentHeight(), true);
         texture.startDrawTexture();
 
         if (this.selectedIndex > -1 && this.selectedIndex < this.dataList.size()) {
@@ -189,18 +185,18 @@ public abstract class AbstractScrollingListComponent<T> extends BaseComponent {
     protected boolean mouseReleased(int mouseX, int mouseY) {
         slider.mouseReleased(mouseX, mouseY);
 
-        if (!this.elementsBox.isInBox(mouseX, mouseY)) {
+        if (!this.elementsLayout.isInBox(mouseX, mouseY)) {
             return false;
         }
-        this.selectedIndex = ((int) (slider.getRatio() * this.movableWindowHeight) + mouseY - this.elementsBox.getY()) / this.slotHeight;
+        this.selectedIndex = ((int) (slider.getRatio() * this.movableWindowHeight) + mouseY - this.elementsLayout.getY()) / this.slotHeight;
         refreshCachedTexture();
         elementClicked(this.selectedIndex);
         return true;
     }
 
     @Override
-    protected boolean mousePressed(int mouseX, int mouseY) {
-        if (slider.mousePressed(mouseX, mouseY)) {
+    protected boolean mousePressed(int mouseX, int mouseY, MouseButton button) {
+        if (slider.mousePressed(mouseX, mouseY, button)) {
             return true;
         }
         return false;
@@ -239,7 +235,7 @@ public abstract class AbstractScrollingListComponent<T> extends BaseComponent {
     }
 
     private void renderSelected(int x, int y) {
-        final int x1 = x + this.elementsBox.getWidth();
+        final int x1 = x + this.elementsLayout.getWidth();
         final int y1 = y + this.slotHeight;
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         GL11.glDisable(GL11.GL_TEXTURE_2D);
@@ -266,8 +262,8 @@ public abstract class AbstractScrollingListComponent<T> extends BaseComponent {
         final int showHeight = this.movableWindowHeight > 0 ? this.layout.getHeight() - 2 : this.cachedTexture.getHeight();
 
         // Render elements
-        this.cachedTexture.render(elementsBox.getX(),
-                elementsBox.getY(),
+        this.cachedTexture.render(elementsLayout.getX(),
+                elementsLayout.getY(),
                 0,
                 fromY,
                 this.cachedTexture.getWidth(),
