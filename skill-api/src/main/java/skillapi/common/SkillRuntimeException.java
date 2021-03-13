@@ -1,4 +1,4 @@
-package skillapi.skill;
+package skillapi.common;
 
 /**
  * @author Jun

@@ -1,6 +1,7 @@
 package skillapi.skill;
 
 import net.minecraft.entity.player.EntityPlayer;
+import skillapi.common.SkillRuntimeException;
 import skillapi.utils.StringUtils;
 
 import java.util.List;

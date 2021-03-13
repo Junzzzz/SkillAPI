@@ -8,7 +8,6 @@ import cpw.mods.fml.common.eventhandler.Event;
 import cpw.mods.fml.common.eventhandler.EventBus;
 import net.minecraftforge.common.MinecraftForge;
 import org.apache.logging.log4j.Level;
-import skillapi.skill.SkillRuntimeException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

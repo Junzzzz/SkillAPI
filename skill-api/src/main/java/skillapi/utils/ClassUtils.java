@@ -12,7 +12,7 @@ import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AnnotationNode;
 import org.objectweb.asm.tree.ClassNode;
 import skillapi.common.SkillLog;
-import skillapi.skill.SkillRuntimeException;
+import skillapi.common.SkillRuntimeException;
 
 import java.io.*;
 import java.net.JarURLConnection;

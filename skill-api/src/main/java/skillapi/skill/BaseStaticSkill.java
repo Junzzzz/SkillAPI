@@ -1,5 +1,6 @@
 package skillapi.skill;
 
+import skillapi.common.SkillRuntimeException;
 import skillapi.utils.StringUtils;
 
 /**

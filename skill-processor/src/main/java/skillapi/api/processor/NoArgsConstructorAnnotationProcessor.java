@@ -10,6 +10,7 @@ import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.tree.TreeTranslator;
 import com.sun.tools.javac.util.*;
+import skillapi.api.annotation.SkillEffect;
 import skillapi.api.annotation.SkillPacket;
 
 import javax.annotation.processing.*;
@@ -18,16 +19,20 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
 import javax.tools.Diagnostic;
+import java.lang.annotation.Annotation;
 import java.util.Set;
 
 /**
  * @author Jun
  * @date 2020/8/31.
  */
-@SupportedAnnotationTypes("skillapi.api.annotation.SkillPacket")
+@SupportedAnnotationTypes({"skillapi.api.annotation.SkillPacket", "skillapi.api.annotation.SkillEffect"})
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
 @AutoService(Processor.class)
-public class SkillPacketAnnotationProcessor extends AbstractProcessor {
+public class NoArgsConstructorAnnotationProcessor extends AbstractProcessor {
+    @SuppressWarnings("unchecked")
+    private final Class<? extends Annotation>[] annotations = new Class[]{SkillPacket.class, SkillEffect.class};
+
     private Messager messager;
     private JavacTrees trees;
     private TreeMaker treeMaker;
@@ -48,47 +53,49 @@ public class SkillPacketAnnotationProcessor extends AbstractProcessor {
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-        Set<? extends Element> set = roundEnv.getElementsAnnotatedWith(SkillPacket.class);
-        for (Element element : set) {
-            if (element.getKind() != ElementKind.CLASS) {
-                error(element, "Only classes can be annotated with @%s", SkillPacket.class.getSimpleName());
-                // exit
-                return true;
-            }
+        for (Class<? extends Annotation> annotation : this.annotations) {
+            Set<? extends Element> set = roundEnv.getElementsAnnotatedWith(annotation);
+            for (Element element : set) {
+                if (element.getKind() != ElementKind.CLASS) {
+                    error(element, "Only classes can be annotated with @%s", annotation.getSimpleName());
+                    // exit
+                    return true;
+                }
 
-            JCTree jcTree = trees.getTree(element);
-            jcTree.accept(new TreeTranslator() {
-                @Override
-                public void visitClassDef(JCTree.JCClassDecl jcClassDecl) {
-                    List<JCTree.JCVariableDecl> jcVariableDeclList = List.nil();
-                    boolean hasConstructor = false;
-                    // Get class fields
-                    for (JCTree tree : jcClassDecl.defs) {
-                        if (tree.getKind().equals(Tree.Kind.VARIABLE)) {
-                            JCTree.JCVariableDecl jcVariableDecl = (JCTree.JCVariableDecl) tree;
-                            jcVariableDeclList = jcVariableDeclList.append(jcVariableDecl);
-                        }
-                        if (tree.getKind().equals(Tree.Kind.METHOD)) {
-                            JCTree.JCMethodDecl jcMethodDecl = (JCTree.JCMethodDecl) tree;
-                            if (jcMethodDecl.name.equals(constructorName) && jcMethodDecl.params.length() == 0) {
-                                hasConstructor = true;
+                JCTree jcTree = trees.getTree(element);
+                jcTree.accept(new TreeTranslator() {
+                    @Override
+                    public void visitClassDef(JCTree.JCClassDecl jcClassDecl) {
+                        List<JCTree.JCVariableDecl> jcVariableDeclList = List.nil();
+                        boolean hasConstructor = false;
+                        // Get class fields
+                        for (JCTree tree : jcClassDecl.defs) {
+                            if (tree.getKind().equals(Tree.Kind.VARIABLE)) {
+                                JCTree.JCVariableDecl jcVariableDecl = (JCTree.JCVariableDecl) tree;
+                                jcVariableDeclList = jcVariableDeclList.append(jcVariableDecl);
+                            }
+                            if (tree.getKind().equals(Tree.Kind.METHOD)) {
+                                JCTree.JCMethodDecl jcMethodDecl = (JCTree.JCMethodDecl) tree;
+                                if (jcMethodDecl.name.equals(constructorName) && jcMethodDecl.params.length() == 0) {
+                                    hasConstructor = true;
+                                }
                             }
                         }
-                    }
 
-                    // Inject getter & setter
-                    for (JCTree.JCVariableDecl jcVariableDecl : jcVariableDeclList) {
-                        jcClassDecl.defs = jcClassDecl.defs
-                                .prepend(createGetter(jcVariableDecl))
-                                .prepend(createSetter(jcVariableDecl));
-                    }
+                        // Inject getter & setter
+                        for (JCTree.JCVariableDecl jcVariableDecl : jcVariableDeclList) {
+                            jcClassDecl.defs = jcClassDecl.defs
+                                    .prepend(createGetter(jcVariableDecl))
+                                    .prepend(createSetter(jcVariableDecl));
+                        }
 
-                    if (!hasConstructor) {
-                        jcClassDecl.defs = jcClassDecl.defs.prepend(createNoArgsConstructor());
+                        if (!hasConstructor) {
+                            jcClassDecl.defs = jcClassDecl.defs.prepend(createNoArgsConstructor());
+                        }
+                        super.visitClassDef(jcClassDecl);
                     }
-                    super.visitClassDef(jcClassDecl);
-                }
-            });
+                });
+            }
         }
         return true;
     }
