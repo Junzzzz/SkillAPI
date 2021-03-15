@@ -1,5 +1,6 @@
 package skillapi.api.annotation.impl;
 
+import cpw.mods.fml.common.ModMetadata;
 import skillapi.api.annotation.SkillAnnotation;
 import skillapi.api.annotation.SkillAnnotationRegister;
 import skillapi.api.annotation.StaticSkill;
@@ -11,7 +12,7 @@ import skillapi.api.annotation.StaticSkill;
 @SkillAnnotation
 public class StaticSkillAnnotationImpl implements SkillAnnotationRegister<StaticSkill> {
     @Override
-    public void register(Class<?> target, StaticSkill annotation) {
+    public void register(Class<?> target, StaticSkill annotation, ModMetadata mod) {
 
     }
 }

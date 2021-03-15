@@ -1,6 +1,7 @@
 package skillapi.api.annotation.impl;
 
 import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.common.ModMetadata;
 import cpw.mods.fml.common.eventhandler.Event;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
@@ -9,7 +10,7 @@ import skillapi.api.annotation.SkillAnnotation;
 import skillapi.api.annotation.SkillAnnotationRegister;
 import skillapi.api.annotation.SkillEvent;
 import skillapi.event.base.BaseSkillEvent;
-import skillapi.skill.SkillRuntimeException;
+import skillapi.common.SkillRuntimeException;
 import skillapi.utils.ClassUtils;
 import skillapi.common.EventBusHandler;
 
@@ -40,7 +41,7 @@ public final class SkillEventAnnotationImpl implements SkillAnnotationRegister<S
     }
 
     @Override
-    public void register(Class<?> target, SkillEvent annotation) {
+    public void register(Class<?> target, SkillEvent annotation, ModMetadata mod) {
         if (BaseSkillEvent.class.isAssignableFrom(target)) {
             registerClass(target, annotation);
         } else {

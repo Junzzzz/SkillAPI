@@ -304,9 +304,7 @@ public class ClassUtils {
     public static <T> T newEmptyInstance(Class<T> target, String msgFormat, Object... msgArgs) {
         try {
             return target.newInstance();
-        } catch (InstantiationException e) {
-            throw new SkillRuntimeException(e, msgFormat, msgArgs);
-        } catch (IllegalAccessException e) {
+        } catch (InstantiationException | IllegalAccessException e) {
             throw new SkillRuntimeException(e, msgFormat, msgArgs);
         }
     }

@@ -1,16 +1,17 @@
 package skillapi.skill;
 
 import skillapi.common.SkillLog;
-import skillapi.utils.ClassUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Jun
  * @date 2020/9/4.
  */
 public final class SkillEffectHandler {
-    private static Map<String, Class<? extends BaseSkillEffect>> effectMap = new HashMap<>(16);
+    private static final Map<String, Class<? extends BaseSkillEffect>> effectMap = new HashMap<>(16);
 
     public static void register(String name, Class<? extends BaseSkillEffect> clz) {
         name = renameEffect(name);
@@ -32,14 +33,14 @@ public final class SkillEffectHandler {
         return effectMap.get(name) != null;
     }
 
-    public static BaseSkillEffect getEffect(String name, List<Integer> params) {
+    public static BaseSkillEffect getEffect(String name, Map<String, Number> params) {
         final Class<? extends BaseSkillEffect> clz = effectMap.get(name);
         if (clz == null) {
             return null;
         }
-        final BaseSkillEffect effect = ClassUtils.newEmptyInstance(clz, "Failed to instantiate skill effect");
-        effect.init(params);
-        return effect;
+        final SkillEffectBuilder seb = new SkillEffectBuilder(clz);
+        params.forEach(seb::add);
+        return seb.build();
     }
 
     public static ArrayList<Class<? extends BaseSkillEffect>> getEffects() {

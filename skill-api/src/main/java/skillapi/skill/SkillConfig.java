@@ -1,7 +1,6 @@
 package skillapi.skill;
 
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,6 +11,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Jun
@@ -86,7 +86,10 @@ public final class SkillConfig {
     @Getter
     @NoArgsConstructor
     public static class SkillEffectConfig {
+        /**
+         * Effect name
+         */
         private String name;
-        private List<Integer> prams;
+        private Map<String, Number> params;
     }
 }

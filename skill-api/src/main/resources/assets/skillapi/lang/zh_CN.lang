@@ -15,3 +15,5 @@ commands.teach.skill.notFound=找不到技能"%1$s"
 skill.gui.title=已学技能
 skill.gui.config.delete.title=是否删除技能[%1$s]？
 skill.gui.config.delete.tip=技能将无法被恢复！
+
+skill.effect.skillapi.TestSkill=测试技能

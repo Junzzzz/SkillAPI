@@ -1,6 +1,7 @@
 package skillapi.skill;
 
 import lombok.val;
+import skillapi.common.SkillLog;
 import skillapi.common.SkillRuntimeException;
 import skillapi.utils.ClassUtils;
 
@@ -13,11 +14,10 @@ import java.util.Map;
  * @date 2021/3/13.
  */
 public class SkillEffectBuilder {
-    final BaseSkillEffect skillEffect;
-    final Map<String, Field> fieldMap;
+    private final BaseSkillEffect skillEffect;
+    private final Map<String, Field> fieldMap;
 
-    public SkillEffectBuilder(BaseSkillEffect effect) {
-        val clz = effect.getClass();
+    public SkillEffectBuilder(Class<? extends BaseSkillEffect> clz) {
         val declaredFields = clz.getDeclaredFields();
         this.fieldMap = new HashMap<>(declaredFields.length);
         for (Field f : declaredFields) {
@@ -31,8 +31,12 @@ public class SkillEffectBuilder {
         this.skillEffect = ClassUtils.newEmptyInstance(clz, "A fatal error occurred and the skill effect could not be created.");
     }
 
-    public void add(String name, Object value) {
+    public void add(String name, Number value) {
         final Field field = fieldMap.get(name);
+        if (field == null) {
+            SkillLog.error("A serious error occurred, unable to add parameters to the skill effect. Cause variable: %s - %s", skillEffect.getClass().getName(), name);
+            return;
+        }
         try {
             if (value instanceof Double) {
                 field.setDouble(skillEffect, (double) value);
@@ -47,11 +51,26 @@ public class SkillEffectBuilder {
 
     }
 
+    public String getName() {
+        return this.skillEffect.getName();
+    }
+
     public BaseSkillEffect build() {
         return this.skillEffect;
     }
 
     private static boolean checkBasicType(Class<?> clz) {
         return clz.isPrimitive() && ("double".equals(clz.getName()) || "int".equals(clz.getName()));
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj instanceof SkillEffectBuilder) {
+            return ((SkillEffectBuilder) obj).skillEffect.getClass().equals(this.skillEffect.getClass());
+        }
+        return false;
     }
 }

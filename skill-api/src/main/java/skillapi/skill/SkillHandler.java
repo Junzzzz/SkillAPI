@@ -35,7 +35,7 @@ public final class SkillHandler {
 
         for (SkillConfig.DynamicSkillConfig dynamicSkillConfig : config.getCustoms()) {
             final List<BaseSkillEffect> skillEffects = dynamicSkillConfig.getEffects().stream()
-                    .map(skillEffectConfig -> SkillEffectHandler.getEffect(skillEffectConfig.getName(), skillEffectConfig.getPrams()))
+                    .map(skillEffectConfig -> SkillEffectHandler.getEffect(skillEffectConfig.getName(), skillEffectConfig.getParams()))
                     .collect(Collectors.toList());
 
             register(new DynamicSkill(dynamicSkillConfig.getName(), skillEffects));

@@ -14,22 +14,13 @@ import java.util.Map;
  */
 @SkillEffect
 public class AttackByWeaponEffect extends BaseSkillToLivingEntityEffect {
-    @Override
-    protected String initName() {
-        return "AttackByWeapon";
-    }
-
-    @Override
-    protected int initParamNum() {
-        return 1;
-    }
-
+    private double ratio;
     /**
      * @see EntityPlayer#attackTargetEntityWithCurrentItem
      */
     @Override
     protected void effect(EntityPlayer player, EntityLivingBase entity, Map<String, Object> params) {
-        final float damage = player.getHeldItem().getItemDamage() / 100f * getStaticParam(0);
+        final float damage = (float) (player.getHeldItem().getItemDamage() / 100f * ratio);
         entity.attackEntityFrom(DamageSource.causePlayerDamage(player), damage);
     }
 }

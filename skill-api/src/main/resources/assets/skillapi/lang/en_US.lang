@@ -15,3 +15,5 @@ commands.teach.skill.notFound=Couldn't found skill named %1$s
 skill.gui.title=Known Skills
 skill.gui.config.delete.title=Whether to delete the skill [%1$s]?
 skill.gui.config.delete.tip=The skills will not be restored!
+
+skill.effect.skillapi.TestSkill=Test Skill

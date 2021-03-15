@@ -10,17 +10,7 @@ import java.util.Map;
  * @date 2020/11/3.
  */
 @SkillEffect
-public class TestSkillEffect extends BaseSkillEffect{
-    @Override
-    protected String initName() {
-        return "Test";
-    }
-
-    @Override
-    protected int initParamNum() {
-        return 1;
-    }
-
+public class TestSkillEffect extends BaseSkillEffect {
     @Override
     protected void effect(EntityPlayer player, Map<String, Object> params) {
 
