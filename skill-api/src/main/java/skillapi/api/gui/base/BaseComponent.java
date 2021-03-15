@@ -7,7 +7,8 @@ import lombok.Setter;
  * @author Jun
  * @date 2020/11/18.
  */
-public abstract class BaseComponent implements GenericGui {
+public abstract class BaseComponent extends GenericGui {
+    @Getter
     protected final Layout layout;
 
     @Getter
@@ -33,15 +34,23 @@ public abstract class BaseComponent implements GenericGui {
      *
      * @param mouseX Mouse x axis
      * @param mouseY Mouse y axis
-     * @return Whether to intercept
      */
-    protected abstract boolean mousePressed(int mouseX, int mouseY, MouseButton button);
+    protected abstract void mousePressed(int mouseX, int mouseY);
+
     /**
      * Called when the mouse button is released
      *
      * @param mouseX Mouse x axis
      * @param mouseY Mouse y axis
-     * @return Whether to intercept
      */
-    protected abstract boolean mouseReleased(int mouseX, int mouseY);
+    protected abstract void mouseReleased(int mouseX, int mouseY);
+
+    /**
+     * Called when the component focus changes
+     *
+     * @param focus Whether to get focus
+     */
+    protected void focusChanged(boolean focus) {
+        // Overwrite the method when the component needs it
+    }
 }

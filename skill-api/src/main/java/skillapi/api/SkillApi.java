@@ -1,6 +1,7 @@
 package skillapi.api;
 
 import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.common.ModMetadata;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import org.apache.logging.log4j.Level;
 import skillapi.api.annotation.SkillAnnotation;
@@ -21,9 +22,10 @@ import java.util.Map;
  * @date 2020/8/26.
  */
 public final class SkillApi {
-    private static Map<Class<? extends Annotation>, SkillAnnotationRegister<Annotation>> annotationMap =
+    private static final Map<Class<? extends Annotation>, SkillAnnotationRegister<Annotation>> annotationMap =
             new HashMap<>(16);
 
+    private static final Map<Class<?>, String> modMap = new HashMap<>(16);
 
     public static void init(FMLPreInitializationEvent event) {
         init(event, null);
@@ -34,17 +36,18 @@ public final class SkillApi {
         final List<Class<?>> remainClass = new LinkedList<>();
         classes = ListUtils.filter(classes, clz -> clz.isAnnotationPresent(SkillAnnotation.class), remainClass);
         registerAnnotation(classes);
-        registerAll(remainClass);
+        registerAll(remainClass, event.getModMetadata());
     }
 
-    private static void registerAll(List<Class<?>> classes) {
+    private static void registerAll(List<Class<?>> classes, ModMetadata modMetadata) {
         for (Class<?> clz : classes) {
             for (Annotation annotation : clz.getAnnotations()) {
                 final SkillAnnotationRegister<Annotation> function = annotationMap.get(annotation.annotationType());
                 if (function != null) {
-                    function.register(clz, annotation);
+                    function.register(clz, annotation, modMetadata);
                 }
             }
+            modMap.put(clz, modMetadata.modId);
         }
     }
 
@@ -81,5 +84,10 @@ public final class SkillApi {
                 }
             }
         }
+    }
+
+    public static String getModId(Class<?> clz) {
+        final String s = modMap.get(clz);
+        return s == null ? "" : s;
     }
 }

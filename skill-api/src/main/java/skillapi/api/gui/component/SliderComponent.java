@@ -57,23 +57,27 @@ public class SliderComponent extends BaseComponent {
     }
 
     @Override
-    protected boolean mousePressed(int mouseX, int mouseY, MouseButton button) {
-        if (sliderButton.isInBox(mouseX, mouseY)) {
-            // Click slider button -> Start dragging
-            isDragging = true;
-            buttonClickPosY = mouseY;
-            buttonInitialY = this.sliderButton.getY();
-            return true;
-        }
-        return false;
+    protected void mousePressed(int mouseX, int mouseY) {
+        // Click slider button -> Start dragging
+        isDragging = true;
+        buttonClickPosY = mouseY;
+        buttonInitialY = this.sliderButton.getY();
     }
 
     @Override
-    protected boolean mouseReleased(int mouseX, int mouseY) {
+    protected void mouseReleased(int mouseX, int mouseY) {
         if (isDragging) {
             isDragging = false;
         }
-        return true;
+    }
+
+    @Override
+    protected void focusChanged(boolean focus) {
+        if (!focus) {
+            if (isDragging) {
+                isDragging = false;
+            }
+        }
     }
 
     @Override

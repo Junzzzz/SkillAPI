@@ -5,8 +5,8 @@ import skillapi.api.gui.base.BaseGui;
 import skillapi.api.gui.base.Layout;
 import skillapi.api.gui.component.ButtonComponent;
 import skillapi.client.gui.component.SkillEffectListComponent;
+import skillapi.skill.SkillEffectBuilder;
 import skillapi.skill.SkillEffectHandler;
-import skillapi.utils.ClassUtils;
 
 import java.util.stream.Collectors;
 
@@ -41,11 +41,7 @@ public class SkillEffectChooseGui extends BaseGui {
 
         finishButton = addButton(width / 2 - 40, height - 30, 80, 20, "$gui.done", () -> {
             parent.selectedEffects.clear();
-            parent.selectedEffects.addAll(
-                    this.rightSelectList.getEffects().stream()
-                            .map(a -> ClassUtils.newEmptyInstance(a, "Failed to instantiate skill effect: %s", a.getName()))
-                            .collect(Collectors.toList())
-            );
+            parent.selectedEffects.addAll(this.rightSelectList.getEffects());
             displayGui(parent);
         });
 
@@ -55,11 +51,12 @@ public class SkillEffectChooseGui extends BaseGui {
         final Layout leftListBox = new Layout(10, 30, listWidth, height - 30 - 40);
 
         val leftList = SkillEffectHandler.getEffects().stream()
-                .filter(e -> !parent.effectListGui.getEffects().contains(e))
+                .map(SkillEffectBuilder::new)
+                .filter(e -> !parent.effectList.contains(e))
                 .collect(Collectors.toList());
 
         this.leftSelectList = new SkillEffectListComponent(leftListBox, 25, leftList);
-        this.rightSelectList = new SkillEffectListComponent(rightListBox, 25, parent.effectListGui.getEffects());
+        this.rightSelectList = new SkillEffectListComponent(rightListBox, 25, parent.effectList.getEffects());
 
         this.leftSelectList.setAssociatedButton(addButton);
         this.rightSelectList.setAssociatedButton(removeButton);
@@ -77,7 +74,7 @@ public class SkillEffectChooseGui extends BaseGui {
 
     @Override
     protected void render(int mouseX, int mouseY, float partialTicks) {
-        this.drawBackground(0);
+        this.drawBackground();
 
         this.drawCenteredString("Choose Effect", width / 2, 15, 0xFFFFFF);
     }

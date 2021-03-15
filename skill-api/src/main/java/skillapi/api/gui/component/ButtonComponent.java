@@ -11,7 +11,6 @@ import skillapi.api.gui.base.*;
 import skillapi.api.util.function.EventFunction;
 
 /**
- * TODO SOUND
  * Remake the original GuiButton component.
  * Button height cannot exceed 20, width cannot exceed 200.
  *
@@ -68,7 +67,7 @@ public class ButtonComponent extends BaseComponent {
             return;
         }
         if (this.enable) {
-            if (this.layout.isInBox(mouseX, mouseY)) {
+            if (this.layout.isIn(mouseX, mouseY)) {
                 this.focusTexture.render(layout);
             } else {
                 this.normalTexture.render(layout);
@@ -93,20 +92,14 @@ public class ButtonComponent extends BaseComponent {
     }
 
     @Override
-    protected boolean mousePressed(int mouseX, int mouseY, MouseButton button) {
-        if (layout.isInBox(mouseX, mouseY)) {
-            getSoundHandler().playSound(PositionedSoundRecord.func_147674_a(new ResourceLocation("gui.button.press"), 1.0F));
-            return true;
-        }
-        return false;
+    protected void mousePressed(int mouseX, int mouseY) {
+        getSoundHandler().playSound(PositionedSoundRecord.func_147674_a(new ResourceLocation("gui.button.press"), 1.0F));
     }
 
     @Override
-    protected boolean mouseReleased(int mouseX, int mouseY) {
-        if (this.enable && layout.isInBox(mouseX, mouseY) && this.clickEvent != null) {
+    protected void mouseReleased(int mouseX, int mouseY) {
+        if (this.enable && this.clickEvent != null) {
             this.clickEvent.apply();
-            return true;
         }
-        return false;
     }
 }

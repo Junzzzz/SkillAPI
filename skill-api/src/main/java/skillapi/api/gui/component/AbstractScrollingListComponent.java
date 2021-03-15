@@ -2,7 +2,10 @@ package skillapi.api.gui.component;
 
 import net.minecraft.client.renderer.Tessellator;
 import org.lwjgl.opengl.GL11;
-import skillapi.api.gui.base.*;
+import skillapi.api.gui.base.BaseComponent;
+import skillapi.api.gui.base.CachedTexture;
+import skillapi.api.gui.base.Layout;
+import skillapi.api.gui.base.RenderUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -102,6 +105,10 @@ public abstract class AbstractScrollingListComponent<T> extends BaseComponent {
         refresh();
     }
 
+    public boolean contains(T item) {
+        return this.dataList.contains(item);
+    }
+
     public void refresh() {
         setSliderButtonHeight();
         refreshCachedTexture();
@@ -182,24 +189,24 @@ public abstract class AbstractScrollingListComponent<T> extends BaseComponent {
     }
 
     @Override
-    protected boolean mouseReleased(int mouseX, int mouseY) {
-        slider.mouseReleased(mouseX, mouseY);
-
-        if (!this.elementsLayout.isInBox(mouseX, mouseY)) {
-            return false;
-        }
-        this.selectedIndex = ((int) (slider.getRatio() * this.movableWindowHeight) + mouseY - this.elementsLayout.getY()) / this.slotHeight;
-        refreshCachedTexture();
-        elementClicked(this.selectedIndex);
-        return true;
+    protected void focusChanged(boolean focus) {
+        this.slider.focusChanged(focus);
     }
 
     @Override
-    protected boolean mousePressed(int mouseX, int mouseY, MouseButton button) {
-        if (slider.mousePressed(mouseX, mouseY, button)) {
-            return true;
+    protected void mouseReleased(int mouseX, int mouseY) {
+        slider.mouseReleased(mouseX, mouseY);
+
+        if (this.elementsLayout.isIn(mouseX, mouseY)) {
+            this.selectedIndex = ((int) (slider.getRatio() * this.movableWindowHeight) + mouseY - this.elementsLayout.getY()) / this.slotHeight;
+            refreshCachedTexture();
+            elementClicked(this.selectedIndex);
         }
-        return false;
+    }
+
+    @Override
+    protected void mousePressed(int mouseX, int mouseY) {
+        slider.mousePressed(mouseX, mouseY);
     }
 
     private void renderListBackground() {
@@ -257,7 +264,7 @@ public abstract class AbstractScrollingListComponent<T> extends BaseComponent {
 
     private void renderList() {
         final int y = (int) (slider.getRatio() * this.movableWindowHeight);
-        final int fromY = y * GenericGui.getScaleFactor();
+        final int fromY = y * getScaleFactor();
 
         final int showHeight = this.movableWindowHeight > 0 ? this.layout.getHeight() - 2 : this.cachedTexture.getHeight();
 

@@ -9,6 +9,7 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 import skillapi.Application;
 import skillapi.api.gui.base.BaseGui;
+import skillapi.api.gui.base.RenderUtils;
 import skillapi.api.gui.component.ButtonComponent;
 import skillapi.common.PageHelper;
 import skillapi.skill.SkillConfig;
@@ -61,9 +62,18 @@ public final class SkillConfigGui extends BaseGui implements GuiYesNoCallback {
         this.skillListPositionY = this.guiPositionY + SKILL_LIST_ITEM_Y;
 
         // Prev page button
-        prevPageButton = addButton(this.guiPositionX, this.guiPositionY + SKILL_LIST_HEIGHT, 20, 20, "<", this.page::prevPage);
+        prevPageButton = addButton(this.guiPositionX, this.guiPositionY + SKILL_LIST_HEIGHT, 20, 20, "<",
+                () -> {
+                    this.page.prevPage();
+                    checkPageStatus();
+                }
+        );
         // Next page button
-        nextPageButton = addButton(this.guiPositionX + SKILL_LIST_WIDTH - 20, this.guiPositionY + SKILL_LIST_HEIGHT, 20, 20, ">", this.page::nextPage);
+        nextPageButton = addButton(this.guiPositionX + SKILL_LIST_WIDTH - 20, this.guiPositionY + SKILL_LIST_HEIGHT, 20, 20, ">",
+                () -> {
+                    this.page.nextPage();
+                    checkPageStatus();
+                });
         // Add skill button
         addSkillButton = addButton(this.guiPositionX + 5, this.guiPositionY + 145, 18, 20, "+",
                 () -> this.page.addAndToLastPage(new DynamicSkillConfig("Temporary skill name#" + this.page.dataSize()))
@@ -79,7 +89,7 @@ public final class SkillConfigGui extends BaseGui implements GuiYesNoCallback {
         );
         // Edit skill button
         editSkillButton = addButton(this.guiPositionX + 85, this.guiPositionY + 145, 30, 20, "Edit",
-                () -> this.mc.displayGuiScreen(new SkillEditGui(this))
+                () -> displayGui(new SkillEditGui(this))
         );
 
         checkPageStatus();
@@ -97,8 +107,9 @@ public final class SkillConfigGui extends BaseGui implements GuiYesNoCallback {
         GL11.glDisable(GL11.GL_BLEND);
     }
 
-    private void drawBackground() {
-        this.drawTexturedModalRect(guiPositionX, guiPositionY, 0, 0, SKILL_LIST_WIDTH, SKILL_LIST_HEIGHT);
+    @Override
+    protected void drawBackground() {
+        RenderUtils.drawTexturedModalRect(guiPositionX, guiPositionY, 0, 0, SKILL_LIST_WIDTH, SKILL_LIST_HEIGHT);
     }
 
     private void drawSkill(int mouseX, int mouseY) {
@@ -106,21 +117,21 @@ public final class SkillConfigGui extends BaseGui implements GuiYesNoCallback {
 
         // Draw background
         for (int i = 0; i < skills.size(); i++) {
-            this.drawTexturedModalRect(this.skillListPositionX, this.skillListPositionY + i * SKILL_LIST_ITEM_HEIGHT, 0, 169, SKILL_LIST_ITEM_WIDTH, SKILL_LIST_ITEM_HEIGHT);
+            RenderUtils.drawTexturedModalRect(this.skillListPositionX, this.skillListPositionY + i * SKILL_LIST_ITEM_HEIGHT, 0, 169, SKILL_LIST_ITEM_WIDTH, SKILL_LIST_ITEM_HEIGHT);
         }
 
         final int mouseOver = getMouseOver(mouseX, mouseY);
         if (mouseOver != -1 && mouseOver < skills.size()) {
-            this.drawTexturedModalRect(this.skillListPositionX, this.skillListPositionY + mouseOver * SKILL_LIST_ITEM_HEIGHT, 0, 207, SKILL_LIST_ITEM_WIDTH, SKILL_LIST_ITEM_HEIGHT);
+            RenderUtils.drawTexturedModalRect(this.skillListPositionX, this.skillListPositionY + mouseOver * SKILL_LIST_ITEM_HEIGHT, 0, 207, SKILL_LIST_ITEM_WIDTH, SKILL_LIST_ITEM_HEIGHT);
         }
 
         if (selectedLine != -1) {
-            this.drawTexturedModalRect(this.skillListPositionX, this.skillListPositionY + selectedLine * SKILL_LIST_ITEM_HEIGHT, 108, 169, SKILL_LIST_ITEM_WIDTH, SKILL_LIST_ITEM_HEIGHT);
+            RenderUtils.drawTexturedModalRect(this.skillListPositionX, this.skillListPositionY + selectedLine * SKILL_LIST_ITEM_HEIGHT, 108, 169, SKILL_LIST_ITEM_WIDTH, SKILL_LIST_ITEM_HEIGHT);
         }
 
         // Draw text
         for (int i = 0; i < skills.size(); i++) {
-            this.fontRendererObj.drawString(skills.get(i).getName(), this.skillListPositionX + 2, this.skillListPositionY + i * SKILL_LIST_ITEM_HEIGHT + 2, Color.WHITE.getRGB());
+           getFontRenderer().drawString(skills.get(i).getName(), this.skillListPositionX + 2, this.skillListPositionY + i * SKILL_LIST_ITEM_HEIGHT + 2, Color.WHITE.getRGB());
         }
     }
 
@@ -129,7 +140,7 @@ public final class SkillConfigGui extends BaseGui implements GuiYesNoCallback {
         if (clickYes) {
             this.page.removeInCurrentPage(select);
         }
-        this.mc.displayGuiScreen(this);
+        displayGui(this);
     }
 
     private void checkPageStatus() {
@@ -148,9 +159,12 @@ public final class SkillConfigGui extends BaseGui implements GuiYesNoCallback {
             return;
         }
 
-        this.selectedLine = getMouseOver(mouseX, mouseY);
-        if (this.selectedLine >= this.page.getCurrentPage().size()) {
-            this.selectedLine = -1;
+        // Do not lose focus when deleting and editing
+        if (!deleteSkillButton.getLayout().isIn(mouseX, mouseY) && !editSkillButton.getLayout().isIn(mouseX, mouseY)) {
+            this.selectedLine = getMouseOver(mouseX, mouseY);
+            if (this.selectedLine >= this.page.getCurrentPage().size()) {
+                this.selectedLine = -1;
+            }
         }
 
         checkPageStatus();

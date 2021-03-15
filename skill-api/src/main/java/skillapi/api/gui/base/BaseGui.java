@@ -2,8 +2,10 @@ package skillapi.api.gui.base;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.Gui;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.resources.I18n;
+import org.lwjgl.opengl.GL11;
 import skillapi.api.gui.component.ButtonComponent;
 import skillapi.api.util.function.EventFunction;
 
@@ -14,7 +16,11 @@ import java.util.List;
  * @author Jun
  * @date 2020/11/3.
  */
-public abstract class BaseGui extends GuiScreen implements GenericGui {
+public abstract class BaseGui extends GenericGui {
+    protected int width;
+    protected int height;
+    protected Minecraft mc;
+
     private final List<BaseComponent> components = new LinkedList<>();
 
     /**
@@ -31,14 +37,11 @@ public abstract class BaseGui extends GuiScreen implements GenericGui {
      */
     protected abstract void render(int mouseX, int mouseY, float partialTicks);
 
-    @Override
-    public final void initGui() {
+    protected final void initGui() {
         components.clear();
-
         init();
     }
 
-    @Override
     public final void drawScreen(int mouseX, int mouseY, float partialTicks) {
         render(mouseX, mouseY, partialTicks);
 
@@ -76,62 +79,90 @@ public abstract class BaseGui extends GuiScreen implements GenericGui {
     }
 
     protected void displayGui(BaseGui gui) {
-        mc.displayGuiScreen(gui);
+        GuiApi.displayGui(gui);
     }
 
     protected void drawCenteredString(String text, int centerX, int centerY, int color) {
-        this.drawCenteredString(this.fontRendererObj, translate(text), centerX, centerY, color);
+        final FontRenderer fontRenderer = getFontRenderer();
+        text = translate(text);
+        fontRenderer.drawStringWithShadow(text, centerX - fontRenderer.getStringWidth(text) / 2, centerY, color);
     }
 
     protected void drawString(String text, int x, int y, int color) {
-        this.drawString(this.fontRendererObj, translate(text), x, y, color);
+        getFontRenderer().drawStringWithShadow(translate(text), x, y, color);
     }
+
 
     /**
      * Called when the mouse is clicked.
      */
-    @Override
     protected void mouseClicked(int mouseX, int mouseY, int button) {
         // Left mouse button down
         if (button == MouseButton.LEFT.button) {
+            boolean intercept = false;
             for (BaseComponent component : this.components) {
-                if (component.mousePressed(mouseX, mouseY, MouseButton.LEFT)) {
-                    break;
+                if (!intercept && component.layout.isIn(mouseX, mouseY)) {
+                    component.focusChanged(true);
+                    component.mousePressed(mouseX, mouseY);
+                    intercept = true;
+                } else {
+                    component.focusChanged(false);
                 }
             }
         }
 
     }
 
-    @Override
     protected void mouseMovedOrUp(int mouseX, int mouseY, int which) {
         if (which == 0) {
+            boolean intercept = false;
             for (BaseComponent component : this.components) {
-                if (component.mouseReleased(mouseX, mouseY)) {
-                    break;
+                if (!intercept && component.layout.isIn(mouseX, mouseY)) {
+                    component.focusChanged(true);
+                    component.mouseReleased(mouseX, mouseY);
+                    intercept = true;
+                } else {
+                    component.focusChanged(false);
                 }
             }
         }
     }
 
     /**
-     * Causes the screen to lay out its subcomponents again. This is the equivalent of the Java call
-     * Container.validate()
+     * Draws either a gradient over the background screen (when it exists) or a flat gradient over background.png
      */
-    @Override
-    public void setWorldAndResolution(Minecraft mc, int width, int height) {
-        this.mc = mc;
-        this.fontRendererObj = mc.fontRenderer;
-        this.width = width;
-        this.height = height;
-        GuiConst.reload();
-
-        this.initGui();
+    public void drawDefaultBackground() {
+        this.drawWorldBackground();
     }
 
-    @Override
-    public FontRenderer getFontRenderer() {
-        return this.fontRendererObj;
+    public void drawWorldBackground() {
+        if (this.mc.theWorld != null) {
+            RenderUtils.drawGradientRect(0, 0, this.width, this.height, 0xC0101010, 0xD0101010);
+        } else {
+            this.drawBackground();
+        }
     }
 
+    /**
+     * Draws the background
+     */
+    protected void drawBackground() {
+        GL11.glDisable(GL11.GL_LIGHTING);
+        GL11.glDisable(GL11.GL_FOG);
+        Tessellator tessellator = Tessellator.instance;
+        this.mc.getTextureManager().bindTexture(Gui.optionsBackground);
+        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        float f = 32.0F;
+        tessellator.startDrawingQuads();
+        tessellator.setColorOpaque_I(0x404040);
+        tessellator.addVertexWithUV(0.0D, this.height, 0.0D, 0.0D, this.height / f);
+        tessellator.addVertexWithUV(this.width, this.height, 0.0D, this.width / f, this.height / f);
+        tessellator.addVertexWithUV(this.width, 0.0D, 0.0D, this.width / f, 0);
+        tessellator.addVertexWithUV(0, 0, 0, 0, 0);
+        tessellator.draw();
+    }
+
+    protected void close() {
+        // TODO
+    }
 }

@@ -4,11 +4,11 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import skillapi.api.gui.base.BaseGui;
 import skillapi.api.gui.base.Layout;
-import skillapi.skill.BaseSkillEffect;
+import skillapi.client.gui.component.SkillEffectListComponent;
+import skillapi.skill.SkillEffectBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author Jun
@@ -17,9 +17,9 @@ import java.util.stream.Collectors;
 @SideOnly(Side.CLIENT)
 public final class SkillEditGui extends BaseGui {
     private final SkillConfigGui parent;
-    protected SkillEffectListGui effectListGui;
+    protected SkillEffectListComponent effectList;
 
-    protected final List<BaseSkillEffect> selectedEffects = new ArrayList<>();
+    protected final List<SkillEffectBuilder> selectedEffects = new ArrayList<>();
 
     public SkillEditGui(SkillConfigGui parent) {
         this.parent = parent;
@@ -27,14 +27,11 @@ public final class SkillEditGui extends BaseGui {
 
     @Override
     protected void init() {
-        this.effectListGui = new SkillEffectListGui(this, new Layout(10, 10, 100, height - 10 - 30),
-                selectedEffects.stream()
-                        .map(BaseSkillEffect::getClass)
-                        .collect(Collectors.toList())
-        );
+        final Layout listLayout = new Layout(10, 10, 100, this.height - 10 - 30);
+        this.effectList = new SkillEffectListComponent(listLayout, 25, selectedEffects);
 
-        addButton(10, height - 5 - 20, 100, 20, "Edit", () ->
-                displayGui(new SkillEffectChooseGui(this)));
+        addComponent(effectList);
+        addButton(10, this.height - 5 - 20, 100, 20, "Edit", () -> displayGui(new SkillEffectChooseGui(this)));
 
         if (selectedEffects.isEmpty()) {
             displayGui(new SkillEffectChooseGui(this));
@@ -43,8 +40,6 @@ public final class SkillEditGui extends BaseGui {
 
     @Override
     protected void render(int mouseX, int mouseY, float partialTicks) {
-        super.drawBackground(0);
-
-        this.effectListGui.drawScreen(mouseX, mouseY, partialTicks);
+        super.drawBackground();
     }
 }

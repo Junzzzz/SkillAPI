@@ -46,7 +46,7 @@ public final class Layout {
         return x;
     }
 
-    public boolean isInBox(int mouseX, int mouseY) {
+    public boolean isIn(int mouseX, int mouseY) {
         return mouseX > this.x && mouseY > this.y && mouseX < width + this.x && mouseY < height + this.y;
     }
 

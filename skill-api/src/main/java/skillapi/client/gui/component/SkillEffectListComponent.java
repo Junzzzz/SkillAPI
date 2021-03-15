@@ -1,10 +1,9 @@
 package skillapi.client.gui.component;
 
-import skillapi.api.gui.base.BaseGui;
 import skillapi.api.gui.base.Layout;
 import skillapi.api.gui.component.AbstractScrollingListComponent;
 import skillapi.api.gui.component.ButtonComponent;
-import skillapi.skill.BaseSkillEffect;
+import skillapi.skill.SkillEffectBuilder;
 
 import java.util.List;
 
@@ -12,16 +11,16 @@ import java.util.List;
  * @author Jun
  * @date 2021/2/24.
  */
-public class SkillEffectListComponent extends AbstractScrollingListComponent<Class<? extends BaseSkillEffect>> {
+public class SkillEffectListComponent extends AbstractScrollingListComponent<SkillEffectBuilder> {
     private ButtonComponent associatedButton;
 
-    public SkillEffectListComponent(Layout layout, int slotHeight, List<Class<? extends BaseSkillEffect>> data) {
+    public SkillEffectListComponent(Layout layout, int slotHeight, List<SkillEffectBuilder> data) {
         super(layout, slotHeight, data);
     }
 
     @Override
-    protected void renderSlot(Class<? extends BaseSkillEffect> data, int x, int y) {
-        this.getFontRenderer().drawString(data.getSimpleName(), x, y, 0xFFFFFF);
+    protected void renderSlot(SkillEffectBuilder data, int x, int y) {
+        this.getFontRenderer().drawString(data.getName(), x, y, 0xFFFFFF);
     }
 
     @Override
@@ -35,7 +34,7 @@ public class SkillEffectListComponent extends AbstractScrollingListComponent<Cla
         this.associatedButton = button;
     }
 
-    public List<Class<? extends BaseSkillEffect>> getEffects() {
+    public List<SkillEffectBuilder> getEffects() {
         return getList();
     }
 }

@@ -1,7 +1,6 @@
 package skillapi.api.gui.base;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.gui.FontRenderer;
 
@@ -9,21 +8,22 @@ import net.minecraft.client.gui.FontRenderer;
  * @author Jun
  * @date 2021/3/8.
  */
-public interface GenericGui {
+public abstract class GenericGui {
     /**
      * Get text renderer
      *
      * @return Renderer
      */
-    default FontRenderer getFontRenderer() {
+    public FontRenderer getFontRenderer() {
         return GuiConst.fontRenderer;
     }
 
     /**
+     * Get the game sound controller
      *
-     * @return
+     * @return Sound handler
      */
-    default SoundHandler getSoundHandler() {
+    protected SoundHandler getSoundHandler() {
         return Minecraft.getMinecraft().getSoundHandler();
     }
 
@@ -32,7 +32,7 @@ public interface GenericGui {
      *
      * @return The number of the ratio
      */
-    static int getScaleFactor() {
+    protected int getScaleFactor() {
         return GuiConst.scaleFactor;
     }
 }
