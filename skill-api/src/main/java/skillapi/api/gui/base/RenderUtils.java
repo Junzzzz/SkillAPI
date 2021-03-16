@@ -2,11 +2,10 @@ package skillapi.api.gui.base;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import org.lwjgl.opengl.GL11;
-
-import static skillapi.api.gui.base.GuiConst.fontRenderer;
 
 /**
  * @author Jun
@@ -87,6 +86,7 @@ public class RenderUtils {
      * Renders the specified text to the screen, center-aligned.
      */
     public static void drawCenteredString(String text, int x, int y, int color) {
+        final FontRenderer fontRenderer = GuiApi.minecraft.fontRenderer;
         fontRenderer.drawStringWithShadow(text, x - fontRenderer.getStringWidth(text) / 2, y, color);
     }
 }

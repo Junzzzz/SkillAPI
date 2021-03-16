@@ -18,6 +18,8 @@ import skillapi.api.util.function.EventFunction;
  * @date 2021/3/8.
  */
 public class ButtonComponent extends BaseComponent {
+    private static final ResourceLocation BUTTON_TEXTURES = new ResourceLocation("textures/gui/widgets.png");
+
     @Getter
     @Setter
     private boolean enable;
@@ -78,7 +80,7 @@ public class ButtonComponent extends BaseComponent {
     }
 
     private void drawButton(String displayString, int order, int color) {
-        Minecraft.getMinecraft().getTextureManager().bindTexture(GuiConst.BUTTON_TEXTURES);
+        getTextureManager().bindTexture(BUTTON_TEXTURES);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         GL11.glEnable(GL11.GL_TEXTURE_2D);
         GL11.glEnable(GL11.GL_BLEND);

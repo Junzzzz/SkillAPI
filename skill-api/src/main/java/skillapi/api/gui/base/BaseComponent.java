@@ -21,15 +21,6 @@ public abstract class BaseComponent extends GenericGui {
     }
 
     /**
-     * Render function
-     *
-     * @param mouseX       Mouse x axis
-     * @param mouseY       Mouse y axis
-     * @param partialTicks Time tick
-     */
-    protected abstract void render(int mouseX, int mouseY, float partialTicks);
-
-    /**
      * Called when the mouse button is pressed
      *
      * @param mouseX Mouse x axis
@@ -51,6 +42,10 @@ public abstract class BaseComponent extends GenericGui {
      * @param focus Whether to get focus
      */
     protected void focusChanged(boolean focus) {
+        // Overwrite the method when the component needs it
+    }
+
+    protected void keyTyped(char eventCharacter, int eventKey) {
         // Overwrite the method when the component needs it
     }
 }

@@ -1,10 +1,10 @@
 package skillapi.api.gui.base;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.resources.I18n;
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 import skillapi.api.gui.component.ButtonComponent;
 import skillapi.api.util.function.EventFunction;
@@ -19,7 +19,6 @@ import java.util.List;
 public abstract class BaseGui extends GenericGui {
     protected int width;
     protected int height;
-    protected Minecraft mc;
 
     private final List<BaseComponent> components = new LinkedList<>();
 
@@ -27,15 +26,6 @@ public abstract class BaseGui extends GenericGui {
      * Init gui
      */
     protected abstract void init();
-
-    /**
-     * Render function
-     *
-     * @param mouseX       Mouse x axis
-     * @param mouseY       Mouse y axis
-     * @param partialTicks Time tick
-     */
-    protected abstract void render(int mouseX, int mouseY, float partialTicks);
 
     protected final void initGui() {
         components.clear();
@@ -46,6 +36,17 @@ public abstract class BaseGui extends GenericGui {
         render(mouseX, mouseY, partialTicks);
 
         renderComponent(mouseX, mouseY, partialTicks);
+    }
+
+    protected void keyTyped(char eventCharacter, int eventKey) {
+        // ESC quit
+        if (eventCharacter == Keyboard.KEY_ESCAPE) {
+            GuiApi.closeGui();
+            return;
+        }
+        for (BaseComponent component : components) {
+            component.keyTyped(eventCharacter, eventKey);
+        }
     }
 
     /**
@@ -136,7 +137,7 @@ public abstract class BaseGui extends GenericGui {
     }
 
     public void drawWorldBackground() {
-        if (this.mc.theWorld != null) {
+        if (getMinecraft().theWorld != null) {
             RenderUtils.drawGradientRect(0, 0, this.width, this.height, 0xC0101010, 0xD0101010);
         } else {
             this.drawBackground();
@@ -150,7 +151,7 @@ public abstract class BaseGui extends GenericGui {
         GL11.glDisable(GL11.GL_LIGHTING);
         GL11.glDisable(GL11.GL_FOG);
         Tessellator tessellator = Tessellator.instance;
-        this.mc.getTextureManager().bindTexture(Gui.optionsBackground);
+        getTextureManager().bindTexture(Gui.optionsBackground);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         float f = 32.0F;
         tessellator.startDrawingQuads();

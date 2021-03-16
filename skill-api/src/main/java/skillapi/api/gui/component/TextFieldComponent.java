@@ -13,7 +13,7 @@ public class TextFieldComponent extends BaseComponent {
 
     private boolean canLoseFocus;
 
-    protected TextFieldComponent(Layout layout) {
+    public TextFieldComponent(Layout layout) {
         super(layout);
         this.textField = new GuiTextField(getFontRenderer(), layout.getX(), layout.getY(), layout.getWidth(), layout.getHeight());
     }
@@ -38,5 +38,10 @@ public class TextFieldComponent extends BaseComponent {
         if (this.canLoseFocus) {
             this.textField.setFocused(focus);
         }
+    }
+
+    @Override
+    protected void keyTyped(char eventCharacter, int eventKey) {
+        this.textField.textboxKeyTyped(eventCharacter, eventKey);
     }
 }

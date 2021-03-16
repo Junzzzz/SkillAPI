@@ -3,6 +3,8 @@ package skillapi.api.gui.base;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.renderer.texture.TextureManager;
+import org.lwjgl.input.Keyboard;
 
 /**
  * @author Jun
@@ -10,12 +12,21 @@ import net.minecraft.client.gui.FontRenderer;
  */
 public abstract class GenericGui {
     /**
+     * Render function
+     *
+     * @param mouseX       Mouse x axis
+     * @param mouseY       Mouse y axis
+     * @param partialTicks Time tick
+     */
+    protected abstract void render(int mouseX, int mouseY, float partialTicks);
+
+    /**
      * Get text renderer
      *
      * @return Renderer
      */
-    public FontRenderer getFontRenderer() {
-        return GuiConst.fontRenderer;
+    public final FontRenderer getFontRenderer() {
+        return GuiApi.minecraft.fontRenderer;
     }
 
     /**
@@ -23,8 +34,8 @@ public abstract class GenericGui {
      *
      * @return Sound handler
      */
-    protected SoundHandler getSoundHandler() {
-        return Minecraft.getMinecraft().getSoundHandler();
+    protected final SoundHandler getSoundHandler() {
+        return GuiApi.minecraft.getSoundHandler();
     }
 
     /**
@@ -32,7 +43,22 @@ public abstract class GenericGui {
      *
      * @return The number of the ratio
      */
-    protected int getScaleFactor() {
-        return GuiConst.scaleFactor;
+    protected final int getScaleFactor() {
+        return GuiApi.scaleFactor;
+    }
+
+    /**
+     * @return The minecraft!
+     * @see net.minecraft.client.Minecraft
+     */
+    protected final Minecraft getMinecraft() {
+        return GuiApi.minecraft;
+    }
+
+    /**
+     * The RenderEngine instance used by Minecraft
+     */
+    protected final TextureManager getTextureManager() {
+        return GuiApi.minecraft.renderEngine;
     }
 }

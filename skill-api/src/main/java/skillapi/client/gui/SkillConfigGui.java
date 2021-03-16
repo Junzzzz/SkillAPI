@@ -80,7 +80,7 @@ public final class SkillConfigGui extends BaseGui implements GuiYesNoCallback {
         );
         // Delete skill button
         deleteSkillButton = addButton(this.guiPositionX + 26, this.guiPositionY + 145, 18, 20, "-",
-                () -> this.mc.displayGuiScreen(new GuiYesNo(
+                () -> getMinecraft().displayGuiScreen(new GuiYesNo(
                         this,
                         I18n.format("skill.gui.config.delete.title", getSelectedSkill().getName()),
                         I18n.format("skill.gui.config.delete.tip"),
@@ -100,7 +100,7 @@ public final class SkillConfigGui extends BaseGui implements GuiYesNoCallback {
         GL11.glEnable(GL11.GL_BLEND);
         super.drawDefaultBackground();
 
-        this.mc.getTextureManager().bindTexture(SKILL_LIST_TEXTURES);
+        getTextureManager().bindTexture(SKILL_LIST_TEXTURES);
         drawBackground();
         drawSkill(mouseX, mouseY);
 
