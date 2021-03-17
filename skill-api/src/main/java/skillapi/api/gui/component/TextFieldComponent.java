@@ -1,6 +1,7 @@
 package skillapi.api.gui.component;
 
 import net.minecraft.client.gui.GuiTextField;
+import org.lwjgl.input.Keyboard;
 import skillapi.api.gui.base.BaseComponent;
 import skillapi.api.gui.base.Layout;
 
@@ -11,11 +12,13 @@ import skillapi.api.gui.base.Layout;
 public class TextFieldComponent extends BaseComponent {
     private final GuiTextField textField;
 
-    private boolean canLoseFocus;
+    private final boolean canLoseFocus;
 
     public TextFieldComponent(Layout layout) {
         super(layout);
         this.textField = new GuiTextField(getFontRenderer(), layout.getX(), layout.getY(), layout.getWidth(), layout.getHeight());
+        this.textField.setCanLoseFocus(true);
+        this.canLoseFocus = true;
     }
 
     @Override
@@ -36,12 +39,19 @@ public class TextFieldComponent extends BaseComponent {
     @Override
     protected void focusChanged(boolean focus) {
         if (this.canLoseFocus) {
+            System.out.println("focus: " + focus);
             this.textField.setFocused(focus);
+            Keyboard.enableRepeatEvents(focus);
         }
     }
 
     @Override
     protected void keyTyped(char eventCharacter, int eventKey) {
         this.textField.textboxKeyTyped(eventCharacter, eventKey);
+    }
+
+    @Override
+    protected void updateScreen() {
+        this.textField.updateCursorCounter();
     }
 }

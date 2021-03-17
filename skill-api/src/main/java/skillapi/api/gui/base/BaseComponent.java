@@ -48,4 +48,8 @@ public abstract class BaseComponent extends GenericGui {
     protected void keyTyped(char eventCharacter, int eventKey) {
         // Overwrite the method when the component needs it
     }
+
+    protected void updateScreen() {
+        // Overwrite the method when the component needs it
+    }
 }

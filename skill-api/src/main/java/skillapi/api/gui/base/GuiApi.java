@@ -56,7 +56,7 @@ public final class GuiApi extends GuiScreen {
 
     @Override
     public void updateScreen() {
-        super.updateScreen();
+        this.currentGui.updateScreen();
     }
 
     /**
@@ -73,7 +73,7 @@ public final class GuiApi extends GuiScreen {
     }
 
     private void switchGui(BaseGui gui) {
-        this.currentGui.close();
+        this.currentGui.onClose();
         this.currentGui = gui;
         initGui();
     }

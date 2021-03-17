@@ -40,12 +40,18 @@ public abstract class BaseGui extends GenericGui {
 
     protected void keyTyped(char eventCharacter, int eventKey) {
         // ESC quit
-        if (eventCharacter == Keyboard.KEY_ESCAPE) {
+        if (eventKey == Keyboard.KEY_ESCAPE) {
             GuiApi.closeGui();
             return;
         }
         for (BaseComponent component : components) {
             component.keyTyped(eventCharacter, eventKey);
+        }
+    }
+
+    protected void updateScreen() {
+        for (BaseComponent component : components) {
+            component.updateScreen();
         }
     }
 
@@ -163,7 +169,7 @@ public abstract class BaseGui extends GenericGui {
         tessellator.draw();
     }
 
-    protected void close() {
+    protected void onClose() {
         // TODO
     }
 }
