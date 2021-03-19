@@ -92,11 +92,11 @@ public abstract class BaseGui extends GenericGui {
     protected void drawCenteredString(String text, int centerX, int centerY, int color) {
         final FontRenderer fontRenderer = getFontRenderer();
         text = translate(text);
-        fontRenderer.drawStringWithShadow(text, centerX - fontRenderer.getStringWidth(text) / 2, centerY, color);
+        fontRenderer.drawString(text, centerX - fontRenderer.getStringWidth(text) / 2, centerY, color);
     }
 
     protected void drawString(String text, int x, int y, int color) {
-        getFontRenderer().drawStringWithShadow(translate(text), x, y, color);
+        getFontRenderer().drawString(translate(text), x, y, color);
     }
 
 

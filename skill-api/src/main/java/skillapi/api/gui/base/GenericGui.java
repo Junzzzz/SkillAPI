@@ -25,7 +25,7 @@ public abstract class GenericGui {
      *
      * @return Renderer
      */
-    public final FontRenderer getFontRenderer() {
+    protected final FontRenderer getFontRenderer() {
         return GuiApi.minecraft.fontRenderer;
     }
 

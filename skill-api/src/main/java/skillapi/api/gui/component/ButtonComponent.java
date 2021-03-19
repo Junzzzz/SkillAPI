@@ -35,9 +35,9 @@ public class ButtonComponent extends BaseComponent {
         this.enable = true;
         this.text = text;
         this.clickEvent = event;
-        this.disableTexture = new CachedTexture(layout.getWidth(), layout.getHeight(), true);
-        this.normalTexture = new CachedTexture(layout.getWidth(), layout.getHeight(), true);
-        this.focusTexture = new CachedTexture(layout.getWidth(), layout.getHeight(), true);
+        this.disableTexture = new CachedTexture(layout.getWidth(), layout.getHeight());
+        this.normalTexture = new CachedTexture(layout.getWidth(), layout.getHeight());
+        this.focusTexture = new CachedTexture(layout.getWidth(), layout.getHeight());
         init();
     }
 

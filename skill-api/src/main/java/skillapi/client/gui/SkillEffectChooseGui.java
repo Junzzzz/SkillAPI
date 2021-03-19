@@ -41,7 +41,7 @@ public class SkillEffectChooseGui extends BaseGui {
 
         finishButton = addButton(width / 2 - 40, height - 30, 80, 20, "$gui.done", () -> {
             parent.selectedEffects.clear();
-            parent.selectedEffects.addAll(this.rightSelectList.getEffects());
+            parent.selectedEffects.addAll(this.rightSelectList.getList());
             displayGui(parent);
         });
 
@@ -56,7 +56,7 @@ public class SkillEffectChooseGui extends BaseGui {
                 .collect(Collectors.toList());
 
         this.leftSelectList = new SkillEffectListComponent(leftListBox, 25, leftList);
-        this.rightSelectList = new SkillEffectListComponent(rightListBox, 25, parent.effectList.getEffects());
+        this.rightSelectList = new SkillEffectListComponent(rightListBox, 25, parent.effectList.getList());
 
         this.leftSelectList.setAssociatedButton(addButton);
         this.rightSelectList.setAssociatedButton(removeButton);

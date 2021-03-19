@@ -23,7 +23,9 @@ public class TextFieldComponent extends BaseComponent {
 
     @Override
     protected void render(int mouseX, int mouseY, float partialTicks) {
-        this.textField.drawTextBox();
+        if (this.visible) {
+            this.textField.drawTextBox();
+        }
     }
 
     @Override
@@ -39,7 +41,6 @@ public class TextFieldComponent extends BaseComponent {
     @Override
     protected void focusChanged(boolean focus) {
         if (this.canLoseFocus) {
-            System.out.println("focus: " + focus);
             this.textField.setFocused(focus);
             Keyboard.enableRepeatEvents(focus);
         }
@@ -53,5 +54,17 @@ public class TextFieldComponent extends BaseComponent {
     @Override
     protected void updateScreen() {
         this.textField.updateCursorCounter();
+    }
+
+    public void setMaxLength(int length) {
+        this.textField.setMaxStringLength(length);
+    }
+
+    public String getText() {
+        return this.textField.getText();
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.textField.setEnabled(enabled);
     }
 }

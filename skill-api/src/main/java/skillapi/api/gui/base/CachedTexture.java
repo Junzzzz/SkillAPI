@@ -23,7 +23,7 @@ public class CachedTexture {
     private boolean hasTexture = false;
     private boolean delFlag = false;
 
-    public CachedTexture(int width, int height, boolean useDepth) {
+    public CachedTexture(int width, int height) {
         this.width = width;
         this.height = height;
         final Minecraft mc = Minecraft.getMinecraft();
@@ -32,7 +32,7 @@ public class CachedTexture {
         if (checkBounds()) {
             this.framebuffer = null;
         } else {
-            this.framebuffer = new Framebuffer(width * this.scaleFactor, height * this.scaleFactor, useDepth);
+            this.framebuffer = new Framebuffer(width * this.scaleFactor, height * this.scaleFactor, false);
         }
     }
 

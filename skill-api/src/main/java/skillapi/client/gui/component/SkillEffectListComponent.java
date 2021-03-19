@@ -33,8 +33,4 @@ public class SkillEffectListComponent extends AbstractScrollingListComponent<Ski
     public void setAssociatedButton(ButtonComponent button) {
         this.associatedButton = button;
     }
-
-    public List<SkillEffectBuilder> getEffects() {
-        return getList();
-    }
 }

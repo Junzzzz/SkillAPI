@@ -97,7 +97,7 @@ public abstract class AbstractScrollingListComponent<T> extends BaseComponent {
     }
 
     public boolean hasSelected() {
-        return this.dataList.size() > selectedIndex && selectedIndex > -1;
+        return selectedIndex > -1 && this.dataList.size() > selectedIndex;
     }
 
     public void add(T item) {
@@ -114,7 +114,7 @@ public abstract class AbstractScrollingListComponent<T> extends BaseComponent {
         refreshCachedTexture();
     }
 
-    protected List<T> getList() {
+    public List<T> getList() {
         return Collections.unmodifiableList(this.dataList);
     }
 
@@ -138,7 +138,7 @@ public abstract class AbstractScrollingListComponent<T> extends BaseComponent {
     }
 
     private CachedTexture createCachedTexture() {
-        CachedTexture texture = new CachedTexture(elementsLayout.getWidth(), getContentHeight(), true);
+        CachedTexture texture = new CachedTexture(elementsLayout.getWidth(), getContentHeight());
         texture.startDrawTexture();
 
         if (this.selectedIndex > -1 && this.selectedIndex < this.dataList.size()) {
