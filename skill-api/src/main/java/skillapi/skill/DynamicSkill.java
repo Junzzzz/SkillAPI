@@ -29,9 +29,9 @@ public final class DynamicSkill extends BaseSkill {
     }
 
     @Override
-    public void doSkill(EntityPlayer player, Map<String, Object> params) {
+    public void doSkill(EntityPlayer player) {
         for (BaseSkillEffect effect : skillEffects) {
-            effect.effect(player, params);
+            effect.effect(player);
         }
     }
 }

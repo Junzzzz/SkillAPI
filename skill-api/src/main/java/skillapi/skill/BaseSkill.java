@@ -69,7 +69,6 @@ public abstract class BaseSkill {
      * Use skills
      *
      * @param player The players using skills
-     * @param params Skill parameters
      */
-    public abstract void doSkill(EntityPlayer player, Map<String, Object> params);
+    public abstract void doSkill(EntityPlayer player);
 }

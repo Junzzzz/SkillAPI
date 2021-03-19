@@ -1,13 +1,14 @@
 package skillapi.skill;
 
+import javafx.util.Pair;
 import lombok.val;
+import skillapi.annotation.SkillParam;
 import skillapi.common.SkillLog;
 import skillapi.common.SkillRuntimeException;
 import skillapi.utils.ClassUtils;
 
 import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Jun
@@ -21,6 +22,9 @@ public class SkillEffectBuilder {
         val declaredFields = clz.getDeclaredFields();
         this.fieldMap = new HashMap<>(declaredFields.length);
         for (Field f : declaredFields) {
+            if (!f.isAnnotationPresent(SkillParam.class)) {
+                continue;
+            }
             if (!checkBasicType(f.getType())) {
                 throw new SkillRuntimeException("This type is not supported.");
             }
@@ -55,7 +59,32 @@ public class SkillEffectBuilder {
         return this.skillEffect.getName();
     }
 
+    public int getParamSize() {
+        return this.fieldMap.size();
+    }
+
+    public String getParam(String param) {
+        return getParam(this.fieldMap.get(param));
+    }
+
+    private String getParam(Field field) {
+        try {
+            return field.get(this.skillEffect).toString();
+        } catch (IllegalAccessException e) {
+            throw new SkillRuntimeException("The construction of skill effect has been completed, and you cannot continue to visit.");
+        }
+    }
+
+    public List<Pair<String, String>> getParamList() {
+        List<Pair<String, String>> list = new LinkedList<>();
+        for (Map.Entry<String, Field> entry : this.fieldMap.entrySet()) {
+            list.add(new Pair<>(entry.getKey(), getParam(entry.getValue())));
+        }
+        return list;
+    }
+
     public BaseSkillEffect build() {
+
         return this.skillEffect;
     }
 

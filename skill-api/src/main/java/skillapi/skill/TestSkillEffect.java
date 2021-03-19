@@ -1,6 +1,7 @@
 package skillapi.skill;
 
 import net.minecraft.entity.player.EntityPlayer;
+import skillapi.annotation.SkillParam;
 import skillapi.api.annotation.SkillEffect;
 
 import java.util.Map;
@@ -11,8 +12,11 @@ import java.util.Map;
  */
 @SkillEffect
 public class TestSkillEffect extends BaseSkillEffect {
-    @Override
-    protected void effect(EntityPlayer player, Map<String, Object> params) {
+    @SkillParam
+    private int testParam;
 
+    @Override
+    protected void effect(EntityPlayer player) {
+        System.out.println(player.getDisplayName() + ": " + testParam);
     }
 }

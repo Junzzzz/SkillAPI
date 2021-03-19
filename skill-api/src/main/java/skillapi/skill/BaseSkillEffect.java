@@ -37,5 +37,5 @@ public abstract class BaseSkillEffect {
         return I18n.format(this.i18n + param);
     }
 
-    protected abstract void effect(EntityPlayer player, Map<String, Object> params);
+    protected abstract void effect(EntityPlayer player);
 }
