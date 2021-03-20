@@ -2,12 +2,13 @@ package skillapi.api.gui.component;
 
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 import skillapi.api.gui.base.*;
+import skillapi.api.gui.base.listener.MousePressedListener;
+import skillapi.api.gui.base.listener.MouseReleasedListener;
 import skillapi.api.util.function.EventFunction;
 
 /**
@@ -79,6 +80,20 @@ public class ButtonComponent extends BaseComponent {
         }
     }
 
+    @Override
+    protected void listener(ListenerRegistry listener) {
+        MousePressedListener pressed = (x, y) -> {
+            getSoundHandler().playSound(PositionedSoundRecord.func_147674_a(new ResourceLocation("gui.button.press"), 1.0F));
+        };
+        MouseReleasedListener released = (x, y) -> {
+            if (this.enable && this.clickEvent != null) {
+                this.clickEvent.apply();
+            }
+        };
+
+        listener.on(pressed, released);
+    }
+
     private void drawButton(String displayString, int order, int color) {
         getTextureManager().bindTexture(BUTTON_TEXTURES);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
@@ -91,17 +106,5 @@ public class ButtonComponent extends BaseComponent {
         RenderUtils.drawTexturedModalRect(layout.getWidth() / 2, 0, 200 - layout.getWidth() / 2, 46 + order * 20, layout.getWidth() / 2, layout.getHeight());
 
         RenderUtils.drawCenteredString(displayString, layout.getWidth() / 2, (layout.getHeight() - 8) / 2, color);
-    }
-
-    @Override
-    protected void mousePressed(int mouseX, int mouseY) {
-        getSoundHandler().playSound(PositionedSoundRecord.func_147674_a(new ResourceLocation("gui.button.press"), 1.0F));
-    }
-
-    @Override
-    protected void mouseReleased(int mouseX, int mouseY) {
-        if (this.enable && this.clickEvent != null) {
-            this.clickEvent.apply();
-        }
     }
 }

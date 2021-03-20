@@ -5,6 +5,10 @@ import net.minecraft.client.renderer.Tessellator;
 import org.lwjgl.opengl.GL11;
 import skillapi.api.gui.base.BaseComponent;
 import skillapi.api.gui.base.Layout;
+import skillapi.api.gui.base.ListenerRegistry;
+import skillapi.api.gui.base.listener.FocusChangedListener;
+import skillapi.api.gui.base.listener.MousePressedListener;
+import skillapi.api.gui.base.listener.MouseReleasedListener;
 
 /**
  * @author Jun
@@ -56,27 +60,28 @@ public class SliderComponent extends BaseComponent {
     }
 
     @Override
-    protected void mousePressed(int mouseX, int mouseY) {
-        // Click slider button -> Start dragging
-        isDragging = true;
-        buttonClickPosY = mouseY;
-        buttonInitialY = this.sliderButton.getY();
-    }
-
-    @Override
-    protected void mouseReleased(int mouseX, int mouseY) {
-        if (isDragging) {
-            isDragging = false;
-        }
-    }
-
-    @Override
-    protected void focusChanged(boolean focus) {
-        if (!focus) {
+    protected void listener(ListenerRegistry listener) {
+        MousePressedListener press = (x, y) -> {
+            // Click slider button -> Start dragging
+            isDragging = true;
+            buttonClickPosY = y;
+            buttonInitialY = this.sliderButton.getY();
+        };
+        MouseReleasedListener release = (x, y) -> {
             if (isDragging) {
                 isDragging = false;
+                System.out.println("2");
             }
-        }
+        };
+        FocusChangedListener focus = f -> {
+            if (!f) {
+                if (isDragging) {
+                    isDragging = false;
+                    System.out.println("3");
+                }
+            }
+        };
+        listener.on(press, release, focus);
     }
 
     @Override

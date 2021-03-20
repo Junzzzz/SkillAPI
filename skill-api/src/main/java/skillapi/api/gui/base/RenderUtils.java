@@ -12,7 +12,7 @@ import org.lwjgl.opengl.GL11;
  * @date 2021/3/8.
  */
 @SideOnly(Side.CLIENT)
-public class RenderUtils {
+public final class RenderUtils {
     /**
      * Draws a rectangle with a vertical gradient between the specified colors.
      */

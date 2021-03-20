@@ -4,7 +4,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.texture.TextureManager;
-import org.lwjgl.input.Keyboard;
 
 /**
  * @author Jun
@@ -19,6 +18,13 @@ public abstract class GenericGui {
      * @param partialTicks Time tick
      */
     protected abstract void render(int mouseX, int mouseY, float partialTicks);
+
+    /**
+     * Listener registration function
+     *
+     * @param listener Listener Registrar
+     */
+    protected abstract void listener(ListenerRegistry listener);
 
     /**
      * Get text renderer

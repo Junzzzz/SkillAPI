@@ -9,7 +9,9 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 import skillapi.Application;
 import skillapi.api.gui.base.BaseGui;
+import skillapi.api.gui.base.ListenerRegistry;
 import skillapi.api.gui.base.RenderUtils;
+import skillapi.api.gui.base.listener.MousePressedListener;
 import skillapi.api.gui.component.ButtonComponent;
 import skillapi.common.PageHelper;
 import skillapi.skill.SkillConfig;
@@ -108,6 +110,23 @@ public final class SkillConfigGui extends BaseGui implements GuiYesNoCallback {
     }
 
     @Override
+    protected void listener(ListenerRegistry listener) {
+        MousePressedListener press = (x, y) -> {
+            // Do not lose focus when deleting and editing
+            if (!deleteSkillButton.getLayout().isIn(x, y) && !editSkillButton.getLayout().isIn(x, y)) {
+                this.selectedLine = getMouseOver(x, y);
+                if (this.selectedLine >= this.page.getCurrentPage().size()) {
+                    this.selectedLine = -1;
+                }
+            }
+
+            checkPageStatus();
+        };
+
+        listener.on(press);
+    }
+
+    @Override
     protected void drawBackground() {
         RenderUtils.drawTexturedModalRect(guiPositionX, guiPositionY, 0, 0, SKILL_LIST_WIDTH, SKILL_LIST_HEIGHT);
     }
@@ -150,24 +169,6 @@ public final class SkillConfigGui extends BaseGui implements GuiYesNoCallback {
         // Check if selected
         this.editSkillButton.setEnable(this.selectedLine != -1);
         this.deleteSkillButton.setEnable(this.editSkillButton.isEnable());
-    }
-
-    @Override
-    protected void mouseClicked(int mouseX, int mouseY, int button) {
-        super.mouseClicked(mouseX, mouseY, button);
-        if (button != 0) {
-            return;
-        }
-
-        // Do not lose focus when deleting and editing
-        if (!deleteSkillButton.getLayout().isIn(mouseX, mouseY) && !editSkillButton.getLayout().isIn(mouseX, mouseY)) {
-            this.selectedLine = getMouseOver(mouseX, mouseY);
-            if (this.selectedLine >= this.page.getCurrentPage().size()) {
-                this.selectedLine = -1;
-            }
-        }
-
-        checkPageStatus();
     }
 
     /**

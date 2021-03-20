@@ -2,10 +2,8 @@ package skillapi.api.gui.component;
 
 import net.minecraft.client.renderer.Tessellator;
 import org.lwjgl.opengl.GL11;
-import skillapi.api.gui.base.BaseComponent;
-import skillapi.api.gui.base.CachedTexture;
-import skillapi.api.gui.base.Layout;
-import skillapi.api.gui.base.RenderUtils;
+import skillapi.api.gui.base.*;
+import skillapi.api.gui.base.listener.MouseReleasedListener;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -189,24 +187,17 @@ public abstract class AbstractScrollingListComponent<T> extends BaseComponent {
     }
 
     @Override
-    protected void focusChanged(boolean focus) {
-        this.slider.focusChanged(focus);
-    }
+    protected void listener(ListenerRegistry listener) {
+        slider.listener(listener);
+        MouseReleasedListener release = (x, y) -> {
+            if (this.elementsLayout.isIn(x, y)) {
+                this.selectedIndex = ((int) (slider.getRatio() * this.movableWindowHeight) + y - this.elementsLayout.getY()) / this.slotHeight;
+                refreshCachedTexture();
+                elementClicked(this.selectedIndex);
+            }
+        };
 
-    @Override
-    protected void mouseReleased(int mouseX, int mouseY) {
-        slider.mouseReleased(mouseX, mouseY);
-
-        if (this.elementsLayout.isIn(mouseX, mouseY)) {
-            this.selectedIndex = ((int) (slider.getRatio() * this.movableWindowHeight) + mouseY - this.elementsLayout.getY()) / this.slotHeight;
-            refreshCachedTexture();
-            elementClicked(this.selectedIndex);
-        }
-    }
-
-    @Override
-    protected void mousePressed(int mouseX, int mouseY) {
-        slider.mousePressed(mouseX, mouseY);
+        listener.on(release);
     }
 
     private void renderListBackground() {

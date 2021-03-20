@@ -4,6 +4,11 @@ import net.minecraft.client.gui.GuiTextField;
 import org.lwjgl.input.Keyboard;
 import skillapi.api.gui.base.BaseComponent;
 import skillapi.api.gui.base.Layout;
+import skillapi.api.gui.base.ListenerRegistry;
+import skillapi.api.gui.base.listener.FocusChangedListener;
+import skillapi.api.gui.base.listener.KeyTypedListener;
+import skillapi.api.gui.base.listener.MousePressedListener;
+import skillapi.api.gui.base.listener.UpdateScreenListener;
 
 /**
  * @author Jun
@@ -29,31 +34,18 @@ public class TextFieldComponent extends BaseComponent {
     }
 
     @Override
-    protected void mousePressed(int mouseX, int mouseY) {
-        this.textField.mouseClicked(mouseX, mouseY, 0);
-    }
+    protected void listener(ListenerRegistry listener) {
+        MousePressedListener press = (x, y) -> this.textField.mouseClicked(x, y, 0);
+        FocusChangedListener focus = f -> {
+            if (this.canLoseFocus) {
+                this.textField.setFocused(f);
+                Keyboard.enableRepeatEvents(f);
+            }
+        };
+        KeyTypedListener keyType = this.textField::textboxKeyTyped;
+        UpdateScreenListener update = this.textField::updateCursorCounter;
 
-    @Override
-    protected void mouseReleased(int mouseX, int mouseY) {
-
-    }
-
-    @Override
-    protected void focusChanged(boolean focus) {
-        if (this.canLoseFocus) {
-            this.textField.setFocused(focus);
-            Keyboard.enableRepeatEvents(focus);
-        }
-    }
-
-    @Override
-    protected void keyTyped(char eventCharacter, int eventKey) {
-        this.textField.textboxKeyTyped(eventCharacter, eventKey);
-    }
-
-    @Override
-    protected void updateScreen() {
-        this.textField.updateCursorCounter();
+        listener.on(press, focus, keyType, update);
     }
 
     public void setMaxLength(int length) {

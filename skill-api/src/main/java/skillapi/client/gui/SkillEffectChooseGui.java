@@ -3,6 +3,7 @@ package skillapi.client.gui;
 import lombok.val;
 import skillapi.api.gui.base.BaseGui;
 import skillapi.api.gui.base.Layout;
+import skillapi.api.gui.base.ListenerRegistry;
 import skillapi.api.gui.component.ButtonComponent;
 import skillapi.client.gui.component.SkillEffectListComponent;
 import skillapi.skill.SkillEffectBuilder;
@@ -77,5 +78,10 @@ public class SkillEffectChooseGui extends BaseGui {
         this.drawBackground();
 
         this.drawCenteredString("Choose Effect", width / 2, 15, 0xFFFFFF);
+    }
+
+    @Override
+    protected void listener(ListenerRegistry listener) {
+
     }
 }
