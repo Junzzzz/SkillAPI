@@ -19,4 +19,14 @@ public abstract class BaseComponent extends GenericGui {
         this.layout = layout;
         this.visible = true;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o;
+    }
+
+    @Override
+    public int hashCode() {
+        return this.getClass().getSimpleName().hashCode();
+    }
 }

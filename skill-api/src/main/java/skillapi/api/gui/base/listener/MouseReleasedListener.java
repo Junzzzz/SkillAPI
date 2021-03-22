@@ -1,13 +1,13 @@
 package skillapi.api.gui.base.listener;
 
-import skillapi.api.gui.base.BaseListener;
+import skillapi.api.gui.base.LocalListener;
 
 /**
  * @author Jun
  * @date 2021/3/20.
  */
 @FunctionalInterface
-public interface MouseReleasedListener extends BaseListener {
+public interface MouseReleasedListener extends LocalListener {
     /**
      * Called when the mouse is released
      *

@@ -36,6 +36,7 @@ public abstract class AbstractScrollingListComponent<T> extends BaseComponent {
                 .height(layout.getHeight())
                 .build()
         );
+        addComponent(this.slider);
 
         // -2 for edge, -6 for slider
         this.elementsLayout = Layout.builder()
@@ -188,7 +189,6 @@ public abstract class AbstractScrollingListComponent<T> extends BaseComponent {
 
     @Override
     protected void listener(ListenerRegistry listener) {
-        slider.listener(listener);
         MouseReleasedListener release = (x, y) -> {
             if (this.elementsLayout.isIn(x, y)) {
                 this.selectedIndex = ((int) (slider.getRatio() * this.movableWindowHeight) + y - this.elementsLayout.getY()) / this.slotHeight;

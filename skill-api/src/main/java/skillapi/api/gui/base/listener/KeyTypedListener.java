@@ -1,13 +1,13 @@
 package skillapi.api.gui.base.listener;
 
-import skillapi.api.gui.base.BaseListener;
+import skillapi.api.gui.base.GenericListener;
 
 /**
  * @author Jun
  * @date 2021/3/20.
  */
 @FunctionalInterface
-public interface KeyTypedListener extends BaseListener {
+public interface KeyTypedListener extends GenericListener {
     /**
      * Called when the keyboard key is pressed
      *

@@ -5,11 +5,28 @@ import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.texture.TextureManager;
 
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  * @author Jun
  * @date 2021/3/8.
  */
 public abstract class GenericGui {
+    protected GenericGui parent;
+    protected final List<BaseComponent> components = new LinkedList<>();
+    protected BaseComponent focusComponent;
+
+    protected final ListenerRegistry listenerRegistry = new ListenerRegistry(this);
+
+    protected final <T extends BaseComponent> T addComponent(T component) {
+        component.parent = this;
+        components.add(component);
+        listenerRegistry.onComponent(component);
+        component.listener(listenerRegistry);
+        return component;
+    }
+
     /**
      * Render function
      *

@@ -70,14 +70,12 @@ public class SliderComponent extends BaseComponent {
         MouseReleasedListener release = (x, y) -> {
             if (isDragging) {
                 isDragging = false;
-                System.out.println("2");
             }
         };
         FocusChangedListener focus = f -> {
             if (!f) {
                 if (isDragging) {
                     isDragging = false;
-                    System.out.println("3");
                 }
             }
         };

@@ -10,9 +10,6 @@ import skillapi.api.gui.base.listener.*;
 import skillapi.api.gui.component.ButtonComponent;
 import skillapi.api.util.function.EventFunction;
 
-import java.util.LinkedList;
-import java.util.List;
-
 /**
  * @author Jun
  * @date 2020/11/3.
@@ -21,10 +18,6 @@ public abstract class BaseGui extends GenericGui {
     protected int width;
     protected int height;
 
-    private final List<BaseComponent> components = new LinkedList<>();
-    private final ListenerRegistry componentListener = new ListenerRegistry();
-    private final ListenerRegistry guiListener = new ListenerRegistry();
-
     /**
      * Init gui
      */
@@ -32,10 +25,11 @@ public abstract class BaseGui extends GenericGui {
 
     protected final void initGui() {
         components.clear();
-        componentListener.clear();
-        guiListener.clear();
+        listenerRegistry.clear();
         init();
-        this.listener(guiListener);
+        // Null for gui
+        listenerRegistry.onComponent(null);
+        this.listener(listenerRegistry);
     }
 
     public final void drawScreen(int mouseX, int mouseY, float partialTicks) {
@@ -50,13 +44,11 @@ public abstract class BaseGui extends GenericGui {
             GuiApi.closeGui();
             return;
         }
-        guiListener.call(KeyTypedListener.class, l -> l.keyTyped(eventCharacter, eventKey));
-        componentListener.call(KeyTypedListener.class, l -> l.keyTyped(eventCharacter, eventKey));
+        listenerRegistry.call(KeyTypedListener.class, l -> l.keyTyped(eventCharacter, eventKey));
     }
 
     protected void updateScreen() {
-        guiListener.call(UpdateScreenListener.class, UpdateScreenListener::onUpdate);
-        componentListener.call(UpdateScreenListener.class, UpdateScreenListener::onUpdate);
+        listenerRegistry.call(UpdateScreenListener.class, UpdateScreenListener::onUpdate);
     }
 
     /**
@@ -68,15 +60,9 @@ public abstract class BaseGui extends GenericGui {
      * @param event  Button click event
      * @return Button
      */
-    protected ButtonComponent addButton(int x, int y, int width, int height, String text, EventFunction event) {
+    protected final ButtonComponent addButton(int x, int y, int width, int height, String text, EventFunction event) {
         final ButtonComponent button = new ButtonComponent(new Layout(x, y, width, height), translate(text), event);
         return addComponent(button);
-    }
-
-    protected <T extends BaseComponent> T addComponent(T component) {
-        components.add(component);
-        component.listener(componentListener);
-        return component;
     }
 
     private String translate(String text) {
@@ -89,17 +75,17 @@ public abstract class BaseGui extends GenericGui {
         }
     }
 
-    protected void displayGui(BaseGui gui) {
+    protected final void displayGui(BaseGui gui) {
         GuiApi.displayGui(gui);
     }
 
-    protected void drawCenteredString(String text, int centerX, int centerY, int color) {
+    protected final void drawCenteredString(String text, int centerX, int centerY, int color) {
         final FontRenderer fontRenderer = getFontRenderer();
         text = translate(text);
         fontRenderer.drawString(text, centerX - fontRenderer.getStringWidth(text) / 2, centerY, color);
     }
 
-    protected void drawString(String text, int x, int y, int color) {
+    protected final void drawString(String text, int x, int y, int color) {
         getFontRenderer().drawString(translate(text), x, y, color);
     }
 
@@ -110,19 +96,53 @@ public abstract class BaseGui extends GenericGui {
     protected void mouseClicked(int mouseX, int mouseY, int button) {
         // Left mouse button down
         if (button == MouseButton.LEFT.button) {
-            // TODO
-            guiListener.call(MousePressedListener.class, l -> l.onPressed(mouseX, mouseY));
-//            listener.call(FocusChangedListener.class, l -> l.onFocus(true));
-//            listener.call(MousePressedListener.class, l -> l.onPressed(mouseX, mouseY));
+            listenerRegistry.call(FocusChangedListener.class, (c, l) -> {
+                if (c.parent.focusComponent == c && !c.layout.isIn(mouseX, mouseY)) {
+                    ListenerRegistry.call(c, FocusChangedListener.class, fl -> fl.onFocus(false));
+                    c.focusComponent = null;
+                }
+            });
+            listenerRegistry.call(MousePressedListener.class, (c, l) -> {
+                if (c != null) {
+                    final GenericGui parent = c.parent;
+                    if (c.layout.isIn(mouseX, mouseY)) {
+                        if (parent.focusComponent != c) {
+                            parent.focusComponent = c;
+                            ListenerRegistry.call(c, FocusChangedListener.class, fl -> fl.onFocus(true));
+                        }
+                        l.onPressed(mouseX, mouseY);
+                    } else if (parent.focusComponent == c) {
+                        parent.focusComponent = null;
+                        ListenerRegistry.call(c, FocusChangedListener.class, fl -> fl.onFocus(false));
+                    }
+                } else {
+                    l.onPressed(mouseX, mouseY);
+                }
+            });
         }
     }
 
     protected void mouseMovedOrUp(int mouseX, int mouseY, int which) {
         if (which == 0) {
-            // TODO
-            guiListener.call(MouseReleasedListener.class, l -> l.onReleased(mouseX, mouseY));
-//            listener.call(FocusChangedListener.class, l -> l.onFocus(true));
-//            listener.call(MouseReleasedListener.class, l -> l.onReleased(mouseX, mouseY));
+            listenerRegistry.call(FocusChangedListener.class, (c, l) -> {
+                if (c.parent.focusComponent == c && !c.layout.isIn(mouseX, mouseY)) {
+                    ListenerRegistry.call(c, FocusChangedListener.class, fl -> fl.onFocus(false));
+                    c.focusComponent = null;
+                }
+            });
+            listenerRegistry.call(MouseReleasedListener.class, (c, l) -> {
+                if (c != null) {
+                    if (c.layout.isIn(mouseX, mouseY)) {
+                        if (c.parent.focusComponent != c) {
+                            ListenerRegistry.call(c, FocusChangedListener.class, fl -> fl.onFocus(true));
+                            c.parent.focusComponent = c;
+                        }
+                        l.onReleased(mouseX, mouseY);
+                    }
+                } else {
+                    l.onReleased(mouseX, mouseY);
+                }
+            });
         }
     }
 
