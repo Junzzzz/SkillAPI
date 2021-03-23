@@ -1,9 +1,7 @@
 package skillapi.api.gui.base;
 
-import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.resources.I18n;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 import skillapi.api.gui.base.listener.*;
@@ -65,10 +63,6 @@ public abstract class BaseGui extends GenericGui {
         return addComponent(button);
     }
 
-    private String translate(String text) {
-        return text.startsWith("$") ? I18n.format(text.substring(1)) : text;
-    }
-
     private void renderComponent(int mouseX, int mouseY, float partialTicks) {
         for (BaseComponent component : components) {
             component.render(mouseX, mouseY, partialTicks);
@@ -78,17 +72,6 @@ public abstract class BaseGui extends GenericGui {
     protected final void displayGui(BaseGui gui) {
         GuiApi.displayGui(gui);
     }
-
-    protected final void drawCenteredString(String text, int centerX, int centerY, int color) {
-        final FontRenderer fontRenderer = getFontRenderer();
-        text = translate(text);
-        fontRenderer.drawString(text, centerX - fontRenderer.getStringWidth(text) / 2, centerY, color);
-    }
-
-    protected final void drawString(String text, int x, int y, int color) {
-        getFontRenderer().drawString(translate(text), x, y, color);
-    }
-
 
     /**
      * Called when the mouse is clicked.

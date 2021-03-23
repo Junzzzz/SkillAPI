@@ -4,6 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.client.resources.I18n;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -83,5 +84,19 @@ public abstract class GenericGui {
      */
     protected final TextureManager getTextureManager() {
         return GuiApi.minecraft.renderEngine;
+    }
+
+    protected final void drawCenteredString(String text, int centerX, int centerY, int color) {
+        final FontRenderer fontRenderer = getFontRenderer();
+        text = translate(text);
+        fontRenderer.drawString(text, centerX - fontRenderer.getStringWidth(text) / 2, centerY, color);
+    }
+
+    protected final void drawString(String text, int x, int y, int color) {
+        getFontRenderer().drawString(translate(text), x, y, color);
+    }
+
+    protected String translate(String text) {
+        return text.startsWith("$") ? I18n.format(text.substring(1)) : text;
     }
 }
