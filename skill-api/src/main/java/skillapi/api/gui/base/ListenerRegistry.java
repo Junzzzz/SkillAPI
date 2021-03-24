@@ -36,20 +36,28 @@ public final class ListenerRegistry {
         this.local.clear();
     }
 
-//    private List<Pair<Class<? extends GenericListener>, List<GenericListener>>> extractListener() {
-//        return this.local.entrySet().stream()
-//                .filter(e -> !LocalListener.class.isAssignableFrom(e.getKey()))
-//                .map(e -> new Pair<Class<? extends GenericListener>, List<GenericListener>>(e.getKey(), e.getValue().values().stream().flatMap(Collection::stream).collect(Collectors.toList())))
-//                .collect(Collectors.toList());
-//    }
+    public void removeListener(BaseComponent component) {
+        for (var value : GLOBAL.values()) {
+            value.remove(component);
+        }
+        for (var value : this.local.values()) {
+            value.remove(component);
+        }
+    }
 
-//    protected void onChild() {
-//        for (var e : mappingComponent.listenerRegistry.extractListener()) {
-//            local.computeIfAbsent(e.getKey(), k -> new HashMap<>(8))
-//                    .computeIfAbsent(mappingComponent, k -> new LinkedList<>())
-//                    .addAll(e.getValue());
-//        }
-//    }
+    public void removeListeners(List<BaseComponent> component) {
+        for (var v : GLOBAL.values()) {
+            for (BaseComponent c : component) {
+                v.remove(c);
+            }
+        }
+        for (var v : this.local.values()) {
+            for (BaseComponent c : component) {
+                v.remove(c);
+            }
+        }
+    }
+
 
     @SuppressWarnings("unchecked")
     public void on(GenericListener listener) {

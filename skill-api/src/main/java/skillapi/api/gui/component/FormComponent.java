@@ -6,6 +6,7 @@ import lombok.Setter;
 import skillapi.api.gui.base.BaseComponent;
 import skillapi.api.gui.base.Layout;
 import skillapi.api.gui.base.ListenerRegistry;
+import skillapi.api.util.Pair;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -21,7 +22,7 @@ public class FormComponent extends BaseComponent {
     private final int labelWidth;
     private final List<ParamTextField> params = new LinkedList<>();
 
-    protected FormComponent(Layout layout, int labelWidth) {
+    public FormComponent(Layout layout, int labelWidth) {
         super(layout);
         this.labelWidth = labelWidth;
     }
@@ -42,14 +43,27 @@ public class FormComponent extends BaseComponent {
 
     }
 
-    public void addParam(String param) {
+    public void addParam(String param, String initialValue) {
         final Layout textfield = Layout.builder()
                 .x(this.layout.getLeft() + 10 + labelWidth)
                 .y(this.layout.getTop() + this.params.size() * 25)
                 .height(20)
                 .width(this.layout.getWidth() - 10 - labelWidth - 5)
                 .build();
-        this.params.add(new ParamTextField(param, new TextFieldComponent(textfield)));
+        final TextFieldComponent component = new TextFieldComponent(textfield);
+        component.setText(initialValue);
+        this.params.add(new ParamTextField(param, addComponent(component)));
+    }
+
+    public void addParams(List<Pair<String, String>> params) {
+        for (Pair<String, String> param : params) {
+            addParam(param.getKey(), param.getValue());
+        }
+    }
+
+    public void clear() {
+        removeComponents(this.params.stream().map(p -> p.textField).collect(Collectors.toList()));
+        this.params.clear();
     }
 
     public List<Param> getForm() {

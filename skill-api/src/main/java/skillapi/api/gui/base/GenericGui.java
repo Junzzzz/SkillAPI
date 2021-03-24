@@ -22,10 +22,20 @@ public abstract class GenericGui {
 
     protected final <T extends BaseComponent> T addComponent(T component) {
         component.parent = this;
-        components.add(component);
-        listenerRegistry.onComponent(component);
-        component.listener(listenerRegistry);
+        this.components.add(component);
+        this.listenerRegistry.onComponent(component);
+        component.listener(this.listenerRegistry);
         return component;
+    }
+
+    protected final void removeComponent(BaseComponent component) {
+        this.components.remove(component);
+        this.listenerRegistry.removeListener(component);
+    }
+
+    protected final void removeComponents(List<BaseComponent> components) {
+        this.components.removeAll(components);
+        this.listenerRegistry.removeListeners(components);
     }
 
     /**

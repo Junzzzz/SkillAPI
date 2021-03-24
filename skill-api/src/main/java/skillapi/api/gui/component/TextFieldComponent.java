@@ -56,6 +56,14 @@ public class TextFieldComponent extends BaseComponent {
         return this.textField.getText();
     }
 
+    public void setText(String text) {
+        this.textField.setText(text);
+    }
+
+    public boolean isFocused() {
+        return this.textField.isFocused();
+    }
+
     public void setEnabled(boolean enabled) {
         this.textField.setEnabled(enabled);
     }
