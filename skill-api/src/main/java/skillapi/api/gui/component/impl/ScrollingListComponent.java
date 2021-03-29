@@ -34,7 +34,7 @@ public class ScrollingListComponent<T> extends AbstractScrollingListComponent<T>
     }
 
     @Override
-    protected void elementClicked(int index) {
+    protected void elementChosen(int index) {
         if (clickEvent != null) {
             clickEvent.click(this.getList().get(index), index);
         }

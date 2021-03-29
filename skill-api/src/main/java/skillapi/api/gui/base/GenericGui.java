@@ -28,6 +28,15 @@ public abstract class GenericGui {
         return component;
     }
 
+    protected final void addComponent(BaseComponent... component) {
+        for (BaseComponent c : component) {
+            c.parent = this;
+            this.components.add(c);
+            this.listenerRegistry.onComponent(c);
+            c.listener(this.listenerRegistry);
+        }
+    }
+
     protected final void removeComponent(BaseComponent component) {
         this.components.remove(component);
         this.listenerRegistry.removeListener(component);
@@ -45,7 +54,7 @@ public abstract class GenericGui {
      * @param mouseY       Mouse y axis
      * @param partialTicks Time tick
      */
-    protected abstract void render(int mouseX, int mouseY, float partialTicks);
+    public abstract void render(int mouseX, int mouseY, float partialTicks);
 
     /**
      * Listener registration function

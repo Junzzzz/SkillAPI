@@ -83,7 +83,7 @@ public class SliderComponent extends BaseComponent {
     }
 
     @Override
-    protected void render(int mouseX, int mouseY, float partialTicks) {
+    public void render(int mouseX, int mouseY, float partialTicks) {
         if (isDragging && moveDistanceMax > 0) {
             // Slider button exists
             int y = mouseY - buttonClickPosY + buttonInitialY;

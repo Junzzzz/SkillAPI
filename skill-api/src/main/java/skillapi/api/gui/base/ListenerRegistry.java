@@ -14,9 +14,11 @@ import java.util.stream.Collectors;
  */
 @SideOnly(Side.CLIENT)
 public final class ListenerRegistry {
+    private static Map<Class<? extends GenericListener>, Map<BaseComponent, List<GenericListener>>> GLOBAL;
+
     private final GenericGui base;
-    private final Map<Class<? extends GenericListener>, Map<BaseComponent, List<GenericListener>>> local = new HashMap<>(8);
-    private static final Map<Class<? extends GenericListener>, Map<BaseComponent, List<GenericListener>>> GLOBAL = new HashMap<>(8);
+    private final Map<Class<? extends GenericListener>, Map<BaseComponent, List<GenericListener>>> local =
+            new HashMap<>(8);
 
     private BaseComponent mappingComponent;
 
@@ -26,6 +28,15 @@ public final class ListenerRegistry {
 
     protected void onComponent(BaseComponent mappingComponent) {
         this.mappingComponent = mappingComponent;
+    }
+
+    protected static void init() {
+        GLOBAL = new HashMap<>(8);
+    }
+
+    protected static void clean() {
+        GLOBAL.clear();
+        GLOBAL = null;
     }
 
     /**

@@ -17,17 +17,15 @@ import skillapi.api.gui.base.listener.UpdateScreenListener;
 public class TextFieldComponent extends BaseComponent {
     private final GuiTextField textField;
 
-    private final boolean canLoseFocus;
-
     public TextFieldComponent(Layout layout) {
         super(layout);
-        this.textField = new GuiTextField(getFontRenderer(), layout.getX(), layout.getY(), layout.getWidth(), layout.getHeight());
+        this.textField = new GuiTextField(getFontRenderer(), layout.getX(), layout.getY(), layout.getWidth(),
+                layout.getHeight());
         this.textField.setCanLoseFocus(true);
-        this.canLoseFocus = true;
     }
 
     @Override
-    protected void render(int mouseX, int mouseY, float partialTicks) {
+    public void render(int mouseX, int mouseY, float partialTicks) {
         if (this.visible) {
             this.textField.drawTextBox();
         }
@@ -37,10 +35,8 @@ public class TextFieldComponent extends BaseComponent {
     protected void listener(ListenerRegistry listener) {
         MousePressedListener press = (x, y) -> this.textField.mouseClicked(x, y, 0);
         FocusChangedListener focus = f -> {
-            if (this.canLoseFocus) {
-                this.textField.setFocused(f);
-                Keyboard.enableRepeatEvents(f);
-            }
+            this.textField.setFocused(f);
+            Keyboard.enableRepeatEvents(f);
         };
         KeyTypedListener keyType = this.textField::textboxKeyTyped;
         UpdateScreenListener update = this.textField::updateCursorCounter;
@@ -62,6 +58,10 @@ public class TextFieldComponent extends BaseComponent {
 
     public boolean isFocused() {
         return this.textField.isFocused();
+    }
+
+    public void setFocused(boolean focus) {
+        this.textField.setFocused(focus);
     }
 
     public void setEnabled(boolean enabled) {

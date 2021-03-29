@@ -65,7 +65,7 @@ public class ButtonComponent extends BaseComponent {
     }
 
     @Override
-    protected void render(int mouseX, int mouseY, float partialTicks) {
+    public void render(int mouseX, int mouseY, float partialTicks) {
         if (!visible) {
             return;
         }

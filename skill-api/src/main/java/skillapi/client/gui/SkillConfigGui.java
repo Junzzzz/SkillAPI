@@ -98,7 +98,7 @@ public final class SkillConfigGui extends BaseGui implements GuiYesNoCallback {
     }
 
     @Override
-    protected void render(int mouseX, int mouseY, float partialTicks) {
+    public void render(int mouseX, int mouseY, float partialTicks) {
         GL11.glEnable(GL11.GL_BLEND);
         super.drawDefaultBackground();
 

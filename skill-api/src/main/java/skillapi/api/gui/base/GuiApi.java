@@ -83,6 +83,7 @@ public final class GuiApi extends GuiScreen {
         if (mc.currentScreen instanceof GuiApi) {
             ((GuiApi) mc.currentScreen).switchGui(gui);
         } else {
+            ListenerRegistry.init();
             mc.displayGuiScreen(new GuiApi(gui));
         }
     }
@@ -90,5 +91,7 @@ public final class GuiApi extends GuiScreen {
     public static void closeGui() {
         minecraft.displayGuiScreen(null);
         minecraft.setIngameFocus();
+        // Clean memory
+        ListenerRegistry.clean();
     }
 }

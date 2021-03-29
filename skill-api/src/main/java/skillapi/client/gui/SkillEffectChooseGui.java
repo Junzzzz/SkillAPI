@@ -74,7 +74,7 @@ public class SkillEffectChooseGui extends BaseGui {
     }
 
     @Override
-    protected void render(int mouseX, int mouseY, float partialTicks) {
+    public void render(int mouseX, int mouseY, float partialTicks) {
         this.drawBackground();
 
         this.drawCenteredString("Choose Effect", width / 2, 15, 0xFFFFFF);

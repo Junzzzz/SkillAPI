@@ -70,7 +70,7 @@ public abstract class AbstractScrollingListComponent<T> extends BaseComponent {
      *
      * @param index Element index
      */
-    protected abstract void elementClicked(int index);
+    protected abstract void elementChosen(int index);
 
     public int getSelectedIndex() {
         return this.selectedIndex;
@@ -176,7 +176,7 @@ public abstract class AbstractScrollingListComponent<T> extends BaseComponent {
 
 
     @Override
-    protected void render(int mouseX, int mouseY, float partialTicks) {
+    public void render(int mouseX, int mouseY, float partialTicks) {
         renderListBackground();
         renderEdgeShadow();
         if (this.movableWindowHeight > 0) {
@@ -191,9 +191,18 @@ public abstract class AbstractScrollingListComponent<T> extends BaseComponent {
     protected void listener(ListenerRegistry listener) {
         MouseReleasedListener release = (x, y) -> {
             if (this.elementsLayout.isIn(x, y)) {
-                this.selectedIndex = ((int) (slider.getRatio() * this.movableWindowHeight) + y - this.elementsLayout.getY()) / this.slotHeight;
-                refreshCachedTexture();
-                elementClicked(this.selectedIndex);
+                int tempIndex =
+                        ((int) (slider.getRatio() * this.movableWindowHeight) + y - this.elementsLayout.getY()) / this.slotHeight;
+                if (tempIndex >= this.dataList.size()) {
+                    tempIndex = -1;
+                }
+                if (this.selectedIndex != tempIndex) {
+                    this.selectedIndex = tempIndex;
+                    refreshCachedTexture();
+                    if (this.selectedIndex > -1) {
+                        elementChosen(this.selectedIndex);
+                    }
+                }
             }
         };
 
