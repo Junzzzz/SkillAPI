@@ -3,11 +3,9 @@ package genericskill.skill.effect;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.DamageSource;
-import skillapi.annotation.SkillParam;
 import skillapi.api.annotation.SkillEffect;
+import skillapi.api.annotation.SkillParam;
 import skillapi.skill.BaseSkillToLivingEntityEffect;
-
-import java.util.Map;
 
 /**
  * @author Jun

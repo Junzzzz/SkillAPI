@@ -308,4 +308,14 @@ public class ClassUtils {
             throw new SkillRuntimeException(e, msgFormat, msgArgs);
         }
     }
+
+    public static Class<?> getCallerClass() {
+        final Class<?>[] caller = new Class<?>[1];
+        new SecurityManager() {
+            {
+                caller[0] = getClassContext()[3];
+            }
+        };
+        return caller[0];
+    }
 }

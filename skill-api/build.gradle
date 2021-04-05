@@ -44,14 +44,6 @@ dependencies {
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: jacksonVersion
 }
 
-//sourceSets.main.java {
-//    srcDirs project(':skill-processor').projectDir.getPath()
-//}
-
-//compileJava {
-//    options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
-//}
-
 runClient {
     args '--username', 'Junzzzz'
 }

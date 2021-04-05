@@ -7,7 +7,7 @@ import net.minecraft.network.NetHandlerPlayServer;
 import skillapi.api.annotation.SkillEvent;
 import skillapi.event.base.BaseSkillEvent;
 import skillapi.newpacket.SkillConfigPacket;
-import skillapi.skill.SkillConfig;
+import skillapi.skill.SkillLocalConfig;
 
 /**
  * @author Jun
@@ -17,7 +17,8 @@ import skillapi.skill.SkillConfig;
 public class PlayerConnectEvent extends BaseSkillEvent<ServerConnectionFromClientEvent> {
     @Override
     protected void onServer(ServerConnectionFromClientEvent event) {
-        final FMLProxyPacket fmlProxyPacket = new SkillConfigPacket(SkillConfig.SERVER_CONFIG).processPacket(Side.CLIENT);
+        final FMLProxyPacket fmlProxyPacket =
+                new SkillConfigPacket(SkillLocalConfig.SERVER_CONFIG).processPacket(Side.CLIENT);
         System.out.println(fmlProxyPacket.channel());
         ((NetHandlerPlayServer) event.handler).sendPacket(fmlProxyPacket);
     }

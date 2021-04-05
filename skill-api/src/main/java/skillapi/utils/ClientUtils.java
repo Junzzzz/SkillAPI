@@ -25,6 +25,7 @@ public class ClientUtils {
         Vec3 vec32 = vec3.addVector(vec31.xCoord * distance, vec31.yCoord * distance, vec31.zCoord * distance);
         Entity pointedEntity = null;
         double f1 = 1.0D;
+        @SuppressWarnings("rawtypes")
         List list = MC.theWorld.getEntitiesWithinAABBExcludingEntity(MC.renderViewEntity, MC.renderViewEntity.boundingBox.addCoord(vec31.xCoord * distance, vec31.yCoord * distance, vec31.zCoord * distance).expand(f1, f1, f1));
         double minDistance = distance;
 

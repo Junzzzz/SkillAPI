@@ -2,7 +2,8 @@ package skillapi.skill;
 
 import javafx.util.Pair;
 import lombok.val;
-import skillapi.annotation.SkillParam;
+import skillapi.api.annotation.SkillParam;
+import skillapi.api.util.Pair;
 import skillapi.common.SkillLog;
 import skillapi.common.SkillRuntimeException;
 import skillapi.utils.ClassUtils;
