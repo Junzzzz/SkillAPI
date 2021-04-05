@@ -14,8 +14,8 @@ import skillapi.api.gui.base.RenderUtils;
 import skillapi.api.gui.base.listener.MousePressedListener;
 import skillapi.api.gui.component.ButtonComponent;
 import skillapi.common.PageHelper;
-import skillapi.skill.SkillConfig;
-import skillapi.skill.SkillConfig.DynamicSkillConfig;
+import skillapi.skill.SkillLocalConfig;
+import skillapi.skill.SkillLocalConfig.DynamicSkillConfig;
 
 import java.awt.*;
 import java.util.List;
@@ -51,7 +51,8 @@ public final class SkillConfigGui extends BaseGui implements GuiYesNoCallback {
     private ButtonComponent deleteSkillButton;
     private ButtonComponent editSkillButton;
 
-    private final PageHelper<DynamicSkillConfig> page = new PageHelper<>(SkillConfig.SERVER_CONFIG.getCustoms(), 7);
+    private final PageHelper<DynamicSkillConfig> page = new PageHelper<>(SkillLocalConfig.SERVER_CONFIG.getCustoms(),
+            7);
 
     private int selectedLine = -1;
 

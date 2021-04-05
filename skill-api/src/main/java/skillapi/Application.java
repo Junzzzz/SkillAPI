@@ -12,8 +12,8 @@ import cpw.mods.fml.relauncher.FMLLaunchHandler;
 import skillapi.api.SkillApi;
 import skillapi.common.SkillProxy;
 import skillapi.packets.SkillPacketHandler;
-import skillapi.skill.SkillConfig;
 import skillapi.skill.SkillHandler;
+import skillapi.skill.SkillLocalConfig;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -34,7 +34,7 @@ public final class Application {
     public void pre(FMLPreInitializationEvent event) {
         proxy.preInit(event);
 
-        SkillConfig.load(event);
+        SkillLocalConfig.load(event);
 
         SkillApi.init(event);
         channels = new HashMap<>(16);
@@ -56,7 +56,7 @@ public final class Application {
 
     @EventHandler
     public void serverStart(FMLServerStartingEvent event) {
-        SkillHandler.register(SkillConfig.SERVER_CONFIG);
+        SkillHandler.register(SkillLocalConfig.SERVER_CONFIG);
         event.registerServerCommand(new SkillCommand());
     }
 }

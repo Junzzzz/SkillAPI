@@ -1,95 +1,41 @@
 package skillapi.skill;
 
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import skillapi.common.SkillLog;
-import skillapi.utils.JsonUtils;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.LinkedList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
+ * Scheme of configuration skill execution
+ *
  * @author Jun
- * @date 2020/9/4.
+ * @date 2021/4/5.
  */
 public final class SkillConfig {
-    private static final String DEFAULT_CONFIG_NAME = "SkillConfig.json";
+    private final BaseSkill[] skills;
+    private final Map<String, BaseSkill> nameIndex;
 
-    public static SkillConfig SERVER_CONFIG;
-
-    private List<DynamicSkillConfig> customs;
-
-    public SkillConfig() {
-        this.customs = new LinkedList<>();
-    }
-
-    public List<DynamicSkillConfig> getCustoms() {
-        return customs;
-    }
-
-    public void setCustoms(List<DynamicSkillConfig> customs) {
-        this.customs = customs;
-    }
-
-    public static SkillConfig load(FMLPreInitializationEvent event) {
-        SERVER_CONFIG = loadFromDir(event.getModConfigurationDirectory());
-        return SERVER_CONFIG;
-    }
-
-    public static SkillConfig loadFromDir(File configurationDirectory) {
-        if (!configurationDirectory.isDirectory()) {
-            return new SkillConfig();
-        }
-        return loadFromFile(new File(configurationDirectory, DEFAULT_CONFIG_NAME));
-    }
-
-    public static SkillConfig loadFromFile(File config) {
-        if (!config.exists()) {
-            return new SkillConfig();
-        }
-        try {
-            return JsonUtils.getMapper().readValue(config, SkillConfig.class);
-        } catch (IOException e) {
-            SkillLog.error("Load skill config failed! Path:%s", e, config.getAbsolutePath());
-        }
-        return new SkillConfig();
-    }
-
-    public static SkillConfig loadFromJson(String json) {
-        try {
-            return JsonUtils.getMapper().readValue(json, SkillConfig.class);
-        } catch (IOException e) {
-            SkillLog.error("Load skill config failed! Json:%s", e, json);
-        }
-        return new SkillConfig();
-    }
-
-    @Setter
-    @Getter
-    @NoArgsConstructor
-    public static class DynamicSkillConfig {
-        private String name;
-        private List<SkillEffectConfig> effects;
-
-        public DynamicSkillConfig(String name) {
-            this.name = name;
-            this.effects = new LinkedList<>();
+    public SkillConfig(List<BaseSkill> skills) {
+        this.skills = skills.toArray(new BaseSkill[0]);
+        this.nameIndex = new HashMap<>(skills.size());
+        for (BaseSkill skill : skills) {
+            nameIndex.put(skill.getName(), skill);
         }
     }
 
-    @Setter
-    @Getter
-    @NoArgsConstructor
-    public static class SkillEffectConfig {
-        /**
-         * Effect name
-         */
-        private String name;
-        private Map<String, Number> params;
+    public BaseSkill getSkill(int index) {
+        // In order to read quickly, no verification is done
+        return this.skills[index];
+    }
+
+    public BaseSkill getSkill(String name) {
+        return this.nameIndex.get(name);
+    }
+
+    public boolean contains(int index) {
+        return this.skills.length > index && index > -1;
+    }
+
+    public boolean contains(String name) {
+        return this.nameIndex.containsKey(name);
     }
 }

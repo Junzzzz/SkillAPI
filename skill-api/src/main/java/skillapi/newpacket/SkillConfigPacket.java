@@ -3,8 +3,8 @@ package skillapi.newpacket;
 import net.minecraft.entity.player.EntityPlayer;
 import skillapi.api.annotation.SkillPacket;
 import skillapi.newpacket.base.BaseSkillPacket;
-import skillapi.skill.SkillConfig;
 import skillapi.skill.SkillHandler;
+import skillapi.skill.SkillLocalConfig;
 
 /**
  * @author Jun
@@ -12,9 +12,9 @@ import skillapi.skill.SkillHandler;
  */
 @SkillPacket
 public class SkillConfigPacket extends BaseSkillPacket {
-    private SkillConfig config;
+    private final SkillLocalConfig config;
 
-    public SkillConfigPacket(SkillConfig config) {
+    public SkillConfigPacket(SkillLocalConfig config) {
         this.config = config;
     }
 

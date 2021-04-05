@@ -1,7 +1,5 @@
 package skillapi.skill;
 
-import skillapi.utils.ListUtils;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,12 +28,13 @@ public final class SkillHandler {
         }
     }
 
-    public static void register(SkillConfig config) {
+    public static void register(SkillLocalConfig config) {
         SkillHandler.init();
 
-        for (SkillConfig.DynamicSkillConfig dynamicSkillConfig : config.getCustoms()) {
+        for (SkillLocalConfig.DynamicSkillConfig dynamicSkillConfig : config.getCustoms()) {
             final List<BaseSkillEffect> skillEffects = dynamicSkillConfig.getEffects().stream()
-                    .map(skillEffectConfig -> SkillEffectHandler.getEffect(skillEffectConfig.getName(), skillEffectConfig.getParams()))
+                    .map(skillEffectConfig -> SkillEffectHandler.getEffect(skillEffectConfig.getName(),
+                            skillEffectConfig.getParams()))
                     .collect(Collectors.toList());
 
             register(new DynamicSkill(dynamicSkillConfig.getName(), skillEffects));
@@ -50,7 +49,6 @@ public final class SkillHandler {
             // 填充上一个删除的技能
             final int id = lastRemovedId == -1 ? size++ : lastRemovedId;
 
-            skill.setId(id);
             SKILLS.add(id, skill);
             SKILL_MAP.put(skill.getName(), id);
 
