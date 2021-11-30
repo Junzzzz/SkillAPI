@@ -6,13 +6,14 @@ import cpw.mods.fml.common.eventhandler.Event;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
 import org.apache.logging.log4j.Level;
+import skillapi.Application;
 import skillapi.api.annotation.SkillAnnotation;
 import skillapi.api.annotation.SkillAnnotationRegister;
 import skillapi.api.annotation.SkillEvent;
-import skillapi.event.base.BaseSkillEvent;
-import skillapi.common.SkillRuntimeException;
-import skillapi.utils.ClassUtils;
 import skillapi.common.EventBusHandler;
+import skillapi.common.SkillRuntimeException;
+import skillapi.event.base.BaseSkillEvent;
+import skillapi.utils.ClassUtils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -42,6 +43,19 @@ public final class SkillEventAnnotationImpl implements SkillAnnotationRegister<S
 
     @Override
     public void register(Class<?> target, SkillEvent annotation, ModMetadata mod) {
+        if (Application.isPhysicalServer) {
+            boolean server = false;
+            for (Side side : annotation.value()) {
+                if (side == Side.SERVER) {
+                    server = true;
+                    break;
+                }
+            }
+            // Skip only client
+            if (!server) {
+                return;
+            }
+        }
         if (BaseSkillEvent.class.isAssignableFrom(target)) {
             registerClass(target, annotation);
         } else {

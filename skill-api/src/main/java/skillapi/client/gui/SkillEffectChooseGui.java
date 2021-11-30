@@ -6,8 +6,8 @@ import skillapi.api.gui.base.Layout;
 import skillapi.api.gui.base.ListenerRegistry;
 import skillapi.api.gui.component.ButtonComponent;
 import skillapi.client.gui.component.SkillEffectListComponent;
-import skillapi.skill.SkillEffectBuilder;
-import skillapi.skill.SkillEffectHandler;
+import skillapi.skill.SkillEffect;
+import skillapi.skill.Skills;
 
 import java.util.stream.Collectors;
 
@@ -41,8 +41,9 @@ public class SkillEffectChooseGui extends BaseGui {
         });
 
         finishButton = addButton(width / 2 - 40, height - 30, 80, 20, "$gui.done", () -> {
-            parent.selectedEffects.clear();
-            parent.selectedEffects.addAll(this.rightSelectList.getList());
+            for (String s : this.rightSelectList.getList()) {
+                parent.skillBuilder.addEffect(Skills.getSkillEffect(s));
+            }
             displayGui(parent);
         });
 
@@ -51,13 +52,16 @@ public class SkillEffectChooseGui extends BaseGui {
         final Layout rightListBox = new Layout(width - listWidth - 10, 30, listWidth, height - 30 - 40);
         final Layout leftListBox = new Layout(10, 30, listWidth, height - 30 - 40);
 
-        val leftList = SkillEffectHandler.getEffects().stream()
-                .map(SkillEffectBuilder::new)
-                .filter(e -> !parent.effectList.contains(e))
+        val rightList = parent.effectList.getList().stream()
+                .map(SkillEffect::getName)
+                .collect(Collectors.toList());
+
+        val leftList = Skills.getEffectNames().stream()
+                .filter(e -> !rightList.contains(e))
                 .collect(Collectors.toList());
 
         this.leftSelectList = new SkillEffectListComponent(leftListBox, 25, leftList);
-        this.rightSelectList = new SkillEffectListComponent(rightListBox, 25, parent.effectList.getList());
+        this.rightSelectList = new SkillEffectListComponent(rightListBox, 25, rightList);
 
         this.leftSelectList.setAssociatedButton(addButton);
         this.rightSelectList.setAssociatedButton(removeButton);

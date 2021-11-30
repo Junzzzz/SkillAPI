@@ -1,37 +1,52 @@
 package skillapi.skill;
 
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author Jun
- * @date 2020/8/23.
  */
-public final class DynamicSkill extends BaseSkill {
-    private List<BaseSkillEffect> skillEffects;
+public class DynamicSkill extends AbstractSkill {
+    private final int uniqueId;
+    protected final SkillEffect[] effects;
 
-    public DynamicSkill(String name, Collection<BaseSkillEffect> effects) {
-        super.setName(name);
-        this.setEffects(effects);
+    public DynamicSkill(int uniqueId, SkillEffect[] effects) {
+        this.uniqueId = uniqueId;
+        this.effects = effects;
     }
 
-    public void setEffects(Collection<BaseSkillEffect> effects) {
-        this.skillEffects = new LinkedList<>(effects);
-    }
-
-    @Override
-    public boolean canUse(EntityPlayer player) {
-        return true;
+    public int getUniqueId() {
+        return uniqueId;
     }
 
     @Override
-    public void doSkill(EntityPlayer player) {
-        for (BaseSkillEffect effect : skillEffects) {
-            effect.effect(player);
+    public String getName() {
+        return Skills.getSkillName(this);
+    }
+
+    @Override
+    public void unleash(EntityPlayer player, EntityLivingBase entity) {
+        for (SkillEffect effect : effects) {
+            effect.unleash(player, entity);
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        DynamicSkill that = (DynamicSkill) o;
+
+        return uniqueId == that.uniqueId;
+    }
+
+    @Override
+    public int hashCode() {
+        return uniqueId;
     }
 }

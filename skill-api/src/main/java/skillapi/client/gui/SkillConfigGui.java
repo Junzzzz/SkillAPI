@@ -14,8 +14,8 @@ import skillapi.api.gui.base.RenderUtils;
 import skillapi.api.gui.base.listener.MousePressedListener;
 import skillapi.api.gui.component.ButtonComponent;
 import skillapi.common.PageHelper;
-import skillapi.skill.SkillLocalConfig;
-import skillapi.skill.SkillLocalConfig.DynamicSkillConfig;
+import skillapi.skill.DynamicSkillBuilder;
+import skillapi.skill.Skills;
 
 import java.awt.*;
 import java.util.List;
@@ -51,8 +51,7 @@ public final class SkillConfigGui extends BaseGui implements GuiYesNoCallback {
     private ButtonComponent deleteSkillButton;
     private ButtonComponent editSkillButton;
 
-    private final PageHelper<DynamicSkillConfig> page = new PageHelper<>(SkillLocalConfig.SERVER_CONFIG.getCustoms(),
-            7);
+    private final PageHelper<DynamicSkillBuilder> page = new PageHelper<>(Skills.getDynamicSkillBuilders(), 7);
 
     private int selectedLine = -1;
 
@@ -79,7 +78,11 @@ public final class SkillConfigGui extends BaseGui implements GuiYesNoCallback {
                 });
         // Add skill button
         addSkillButton = addButton(this.guiPositionX + 5, this.guiPositionY + 145, 18, 20, "+",
-                () -> this.page.addAndToLastPage(new DynamicSkillConfig("Temporary skill name#" + this.page.dataSize()))
+                () -> {
+                    DynamicSkillBuilder skillBuilder = new DynamicSkillBuilder();
+                    skillBuilder.setName("Unnamed skill #" + skillBuilder.getUniqueId());
+                    this.page.addAndToLastPage(skillBuilder);
+                }
         );
         // Delete skill button
         deleteSkillButton = addButton(this.guiPositionX + 26, this.guiPositionY + 145, 18, 20, "-",
@@ -92,7 +95,7 @@ public final class SkillConfigGui extends BaseGui implements GuiYesNoCallback {
         );
         // Edit skill button
         editSkillButton = addButton(this.guiPositionX + 85, this.guiPositionY + 145, 30, 20, "Edit",
-                () -> displayGui(new SkillEditGui(this))
+                () -> displayGui(new SkillEditGui(this, getSelectedSkill()))
         );
 
         checkPageStatus();
@@ -133,25 +136,32 @@ public final class SkillConfigGui extends BaseGui implements GuiYesNoCallback {
     }
 
     private void drawSkill(int mouseX, int mouseY) {
-        final List<DynamicSkillConfig> skills = this.page.getCurrentPage();
+        List<DynamicSkillBuilder> skills = this.page.getCurrentPage();
 
         // Draw background
         for (int i = 0; i < skills.size(); i++) {
-            RenderUtils.drawTexturedModalRect(this.skillListPositionX, this.skillListPositionY + i * SKILL_LIST_ITEM_HEIGHT, 0, 169, SKILL_LIST_ITEM_WIDTH, SKILL_LIST_ITEM_HEIGHT);
+            RenderUtils.drawTexturedModalRect(this.skillListPositionX,
+                    this.skillListPositionY + i * SKILL_LIST_ITEM_HEIGHT, 0, 169, SKILL_LIST_ITEM_WIDTH,
+                    SKILL_LIST_ITEM_HEIGHT);
         }
 
         final int mouseOver = getMouseOver(mouseX, mouseY);
         if (mouseOver != -1 && mouseOver < skills.size()) {
-            RenderUtils.drawTexturedModalRect(this.skillListPositionX, this.skillListPositionY + mouseOver * SKILL_LIST_ITEM_HEIGHT, 0, 207, SKILL_LIST_ITEM_WIDTH, SKILL_LIST_ITEM_HEIGHT);
+            RenderUtils.drawTexturedModalRect(this.skillListPositionX,
+                    this.skillListPositionY + mouseOver * SKILL_LIST_ITEM_HEIGHT, 0, 207, SKILL_LIST_ITEM_WIDTH,
+                    SKILL_LIST_ITEM_HEIGHT);
         }
 
         if (selectedLine != -1) {
-            RenderUtils.drawTexturedModalRect(this.skillListPositionX, this.skillListPositionY + selectedLine * SKILL_LIST_ITEM_HEIGHT, 108, 169, SKILL_LIST_ITEM_WIDTH, SKILL_LIST_ITEM_HEIGHT);
+            RenderUtils.drawTexturedModalRect(this.skillListPositionX,
+                    this.skillListPositionY + selectedLine * SKILL_LIST_ITEM_HEIGHT, 108, 169, SKILL_LIST_ITEM_WIDTH,
+                    SKILL_LIST_ITEM_HEIGHT);
         }
 
         // Draw text
         for (int i = 0; i < skills.size(); i++) {
-           getFontRenderer().drawString(skills.get(i).getName(), this.skillListPositionX + 2, this.skillListPositionY + i * SKILL_LIST_ITEM_HEIGHT + 2, Color.WHITE.getRGB());
+            getFontRenderer().drawString(skills.get(i).getName(), this.skillListPositionX + 2,
+                    this.skillListPositionY + i * SKILL_LIST_ITEM_HEIGHT + 2, Color.WHITE.getRGB());
         }
     }
 
@@ -188,7 +198,7 @@ public final class SkillConfigGui extends BaseGui implements GuiYesNoCallback {
         return -1;
     }
 
-    private DynamicSkillConfig getSelectedSkill() {
+    private DynamicSkillBuilder getSelectedSkill() {
         return this.page.getCurrentPage().get(this.selectedLine);
     }
 }

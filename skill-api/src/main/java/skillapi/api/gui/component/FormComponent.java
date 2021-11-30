@@ -63,8 +63,8 @@ public class FormComponent extends BaseComponent {
         this.params.add(new ParamTextField(param, addComponent(component)));
     }
 
-    public void addParams(List<Pair<String, String>> params) {
-        for (Pair<String, String> param : params) {
+    public void addParams(List<Map.Entry<String, String>> params) {
+        for (Map.Entry<String, String> param : params) {
             addParam(param.getKey(), param.getValue());
         }
     }

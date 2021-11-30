@@ -1,22 +1,21 @@
 package skillapi.skill;
 
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import skillapi.annotation.SkillParam;
+import net.minecraft.util.ChatComponentText;
 import skillapi.api.annotation.SkillEffect;
-
-import java.util.Map;
+import skillapi.api.annotation.SkillParam;
 
 /**
  * @author Jun
- * @date 2020/11/3.
  */
 @SkillEffect
-public class TestSkillEffect extends BaseSkillEffect {
+public class TestSkillEffect extends AbstractSkillEffect {
     @SkillParam
     private int testParam;
 
     @Override
-    protected void effect(EntityPlayer player) {
-        System.out.println(player.getDisplayName() + ": " + testParam);
+    public void unleash(EntityPlayer player, EntityLivingBase entity) {
+        player.addChatComponentMessage(new ChatComponentText("param: " + testParam));
     }
 }

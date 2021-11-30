@@ -16,4 +16,5 @@ skill.gui.title=已学技能
 skill.gui.config.delete.title=是否删除技能[%1$s]？
 skill.gui.config.delete.tip=技能将无法被恢复！
 
-skill.effect.skillapi.TestSkill=测试技能
+skill.effect.skillapi.TestSkillEffect=测试技能效果
+skill.effect.skillapi.TestSkillEffect.testParam=测试参数

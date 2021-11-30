@@ -223,7 +223,7 @@ public class ClassUtils {
                     Object key = visibleAnnotation.values.get(x);
                     Object value = visibleAnnotation.values.get(x + 1);
 
-                    if (!(key instanceof String && "value".equals(key))) {
+                    if (!("value".equals(key))) {
                         continue;
                     }
 
@@ -297,6 +297,10 @@ public class ClassUtils {
         }
     }
 
+    public static String getClassPackage(Class<?> clz) {
+        return getClassPackage(clz.getName());
+    }
+
     public static String getClassPackage(String className) {
         return className.substring(0, className.lastIndexOf("."));
     }
@@ -304,7 +308,7 @@ public class ClassUtils {
     public static <T> T newEmptyInstance(Class<T> target, String msgFormat, Object... msgArgs) {
         try {
             return target.newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
+        } catch (Exception e) {
             throw new SkillRuntimeException(e, msgFormat, msgArgs);
         }
     }

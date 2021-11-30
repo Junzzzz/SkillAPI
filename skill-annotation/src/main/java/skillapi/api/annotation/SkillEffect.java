@@ -12,5 +12,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface SkillEffect {
-//    String value() default "";
+    String value() default "";
+
+    boolean repeatable() default false;
 }

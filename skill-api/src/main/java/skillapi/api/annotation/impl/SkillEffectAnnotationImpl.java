@@ -5,8 +5,7 @@ import skillapi.api.annotation.SkillAnnotation;
 import skillapi.api.annotation.SkillAnnotationRegister;
 import skillapi.api.annotation.SkillEffect;
 import skillapi.common.SkillRuntimeException;
-import skillapi.skill.BaseSkillEffect;
-import skillapi.skill.SkillEffectHandler;
+import skillapi.skill.Skills;
 
 /**
  * @author Jun
@@ -17,9 +16,12 @@ public final class SkillEffectAnnotationImpl implements SkillAnnotationRegister<
     @Override
     @SuppressWarnings("unchecked")
     public void register(Class<?> target, SkillEffect annotation, ModMetadata mod) {
-        if (!BaseSkillEffect.class.isAssignableFrom(target)) {
-            throw new SkillRuntimeException("Skill effect registration failed. The skill effect class does not inherit the base class BaseSkillEffect. Class: %s", target.getName());
+        if (!skillapi.skill.SkillEffect.class.isAssignableFrom(target)) {
+            throw new SkillRuntimeException("Skill effect registration failed. The skill effect class does not " +
+                    "implement SkillEffect. Class: %s", target.getName());
         }
-        SkillEffectHandler.register(mod.modId + "." + target.getSimpleName(), (Class<? extends BaseSkillEffect>) target);
+
+        Class<? extends skillapi.skill.SkillEffect> effect = (Class<? extends skillapi.skill.SkillEffect>) target;
+        Skills.register("skill.effect." + mod.modId + "." + effect.getSimpleName(), effect);
     }
 }

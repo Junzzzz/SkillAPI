@@ -1,4 +1,4 @@
-package skillapi.newskill;
+package skillapi.skill;
 
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -8,4 +8,9 @@ import net.minecraft.entity.player.EntityPlayer;
  */
 public interface SkillEffect {
     void unleash(EntityPlayer player, EntityLivingBase entity);
+
+    /**
+     * Fully qualified name
+     */
+    String getName();
 }

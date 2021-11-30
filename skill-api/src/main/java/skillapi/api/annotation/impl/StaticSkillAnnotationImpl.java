@@ -5,8 +5,8 @@ import skillapi.api.annotation.SkillAnnotation;
 import skillapi.api.annotation.SkillAnnotationRegister;
 import skillapi.api.annotation.StaticSkill;
 import skillapi.common.SkillRuntimeException;
-import skillapi.skill.BaseStaticSkill;
-import skillapi.skill.StaticSkillManager;
+import skillapi.skill.AbstractStaticSkill;
+import skillapi.skill.Skills;
 import skillapi.utils.ClassUtils;
 
 /**
@@ -17,13 +17,13 @@ import skillapi.utils.ClassUtils;
 public class StaticSkillAnnotationImpl implements SkillAnnotationRegister<StaticSkill> {
     @Override
     public void register(Class<?> target, StaticSkill annotation, ModMetadata mod) {
-        if (!BaseStaticSkill.class.isAssignableFrom(target)) {
+        if (!AbstractStaticSkill.class.isAssignableFrom(target)) {
             throw new SkillRuntimeException("Static skill registration failed. The skill class does not inherit the " +
-                    "base class BaseStaticSkill. Class: %s", target.getName());
+                    "base class AbstractStaticSkill. Class: %s", target.getName());
         }
-        final BaseStaticSkill staticSkill = (BaseStaticSkill) ClassUtils.newEmptyInstance(target, "Static skill " +
+        AbstractStaticSkill staticSkill = (AbstractStaticSkill) ClassUtils.newEmptyInstance(target, "Static skill " +
                 "initialize failed. Class: %s", target.getName());
 
-        StaticSkillManager.register(staticSkill);
+        Skills.register(staticSkill);
     }
 }
