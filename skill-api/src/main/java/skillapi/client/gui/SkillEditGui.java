@@ -16,7 +16,6 @@ import skillapi.api.gui.component.impl.ScrollingListComponent;
 import skillapi.client.gui.component.SkillEditFormComponent;
 import skillapi.skill.DynamicSkillBuilder;
 import skillapi.skill.SkillEffect;
-import skillapi.skill.Skills;
 
 /**
  * @author Jun
@@ -127,12 +126,14 @@ public final class SkillEditGui extends BaseGui {
 
                 val originList = this.skillBuilder.getParams(this.effectIndex);
 
-                boolean flag = this.skillBuilder.getMana() != Integer.parseInt(this.mana.getText());
-
-                if (this.skillBuilder.getCooldown() != Integer.parseInt(this.cooldown.getText())) {
+                boolean flag = !this.name.getText().equals(this.skillBuilder.getName());
+                if (!flag && this.skillBuilder.getMana() != Integer.parseInt(this.mana.getText())) {
                     flag = true;
                 }
-                if (this.skillBuilder.getCharge() != Integer.parseInt(this.charge.getText())) {
+                if (!flag && this.skillBuilder.getCooldown() != Integer.parseInt(this.cooldown.getText())) {
+                    flag = true;
+                }
+                if (!flag && this.skillBuilder.getCharge() != Integer.parseInt(this.charge.getText())) {
                     flag = true;
                 }
 
@@ -160,7 +161,12 @@ public final class SkillEditGui extends BaseGui {
     private void clickSave() {
         this.form.getForm()
                 .forEach(param -> this.skillBuilder.setParam(this.effectIndex, param.getKey(), param.getValue()));
+        this.skillBuilder.setName(this.name.getText());
+        this.skillBuilder.setMana(Integer.parseInt(this.mana.getText()));
+        this.skillBuilder.setCooldown(Integer.parseInt(this.cooldown.getText()));
+        this.skillBuilder.setCharge(Integer.parseInt(this.charge.getText()));
         this.saveButton.setEnable(false);
+        parent.saveSkill(this.skillBuilder);
     }
 
     private boolean checkEmpty(TextFieldComponent component) {
@@ -184,6 +190,6 @@ public final class SkillEditGui extends BaseGui {
         if (checkEmpty(name, mana, cooldown, charge)) {
             return;
         }
-        Skills.register(this.skillBuilder);
+        displayGui(parent);
     }
 }

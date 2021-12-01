@@ -15,6 +15,7 @@ import skillapi.api.gui.base.listener.MousePressedListener;
 import skillapi.api.gui.component.ButtonComponent;
 import skillapi.common.PageHelper;
 import skillapi.skill.DynamicSkillBuilder;
+import skillapi.skill.DynamicSkillConfig;
 import skillapi.skill.Skills;
 
 import java.awt.*;
@@ -50,10 +51,18 @@ public final class SkillConfigGui extends BaseGui implements GuiYesNoCallback {
     private ButtonComponent addSkillButton;
     private ButtonComponent deleteSkillButton;
     private ButtonComponent editSkillButton;
+    private ButtonComponent applySkillButton;
+    private boolean enableApply = false;
 
-    private final PageHelper<DynamicSkillBuilder> page = new PageHelper<>(Skills.getDynamicSkillBuilders(), 7);
+    private final PageHelper<DynamicSkillBuilder> page;
+    private final DynamicSkillConfig editingConfig;
 
     private int selectedLine = -1;
+
+    public SkillConfigGui() {
+        this.editingConfig = Skills.getConfigCopy();
+        this.page = new PageHelper<>(this.editingConfig.getDynamicSkillBuilders(), 7);
+    }
 
     @Override
     protected void init() {
@@ -96,6 +105,15 @@ public final class SkillConfigGui extends BaseGui implements GuiYesNoCallback {
         // Edit skill button
         editSkillButton = addButton(this.guiPositionX + 85, this.guiPositionY + 145, 30, 20, "Edit",
                 () -> displayGui(new SkillEditGui(this, getSelectedSkill()))
+        );
+
+        applySkillButton = addButton(this.guiPositionX + 52, this.guiPositionY + 145, 30, 20, "Apply",
+                () -> {
+                    // TODO 应用方案
+                    Skills.switchConfig(this.editingConfig);
+                    this.enableApply = false;
+                    checkPageStatus();
+                }
         );
 
         checkPageStatus();
@@ -180,6 +198,7 @@ public final class SkillConfigGui extends BaseGui implements GuiYesNoCallback {
         // Check if selected
         this.editSkillButton.setEnable(this.selectedLine != -1);
         this.deleteSkillButton.setEnable(this.editSkillButton.isEnable());
+        this.applySkillButton.setEnable(enableApply);
     }
 
     /**
@@ -200,5 +219,11 @@ public final class SkillConfigGui extends BaseGui implements GuiYesNoCallback {
 
     private DynamicSkillBuilder getSelectedSkill() {
         return this.page.getCurrentPage().get(this.selectedLine);
+    }
+
+    public void saveSkill(DynamicSkillBuilder builder) {
+        this.editingConfig.put(builder);
+        this.enableApply = true;
+        // TODO 保存到临时文件
     }
 }

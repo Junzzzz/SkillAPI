@@ -2,7 +2,7 @@ package skillapi.common;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -32,12 +32,12 @@ public final class PageHelper<T> {
 
     public List<T> getPage(int pageNum) {
         if (!rangeCheck(pageNum)) {
-            return cache(new LinkedList<>());
+            return cache(Collections.emptyList());
         }
 
         int size = Math.min(pageNum * pageSize, this.data.size());
         if (size == 0) {
-            return cache(new LinkedList<>());
+            return cache(Collections.emptyList());
         }
 
         return cache(this.data.subList((pageNum - 1) * pageSize, size));

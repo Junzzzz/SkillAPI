@@ -2,6 +2,7 @@ package skillapi.skill;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.TreeNode;
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -9,10 +10,12 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.node.TextNode;
 import skillapi.api.annotation.SkillParam;
 import skillapi.common.SkillRuntimeException;
+import skillapi.utils.JsonUtils;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author Jun
@@ -24,10 +27,20 @@ public class DynamicSkillConfig {
      * Skill config name
      */
     protected String name;
-    protected final Map<String, String> constant = new HashMap<>(32);
-    protected final Set<DynamicSkill> dynamicSkills = new HashSet<>();
+    protected final Map<String, String> constant;
+    protected final Set<DynamicSkill> dynamicSkills;
 
-    public DynamicSkill put(DynamicSkillBuilder builder) {
+    public DynamicSkillConfig() {
+        this.constant = new HashMap<>(32);
+        this.dynamicSkills = new HashSet<>(16);
+    }
+
+    public DynamicSkillConfig(Map<String, String> constant, Set<DynamicSkill> dynamicSkills) {
+        this.constant = constant;
+        this.dynamicSkills = dynamicSkills;
+    }
+
+    public synchronized DynamicSkill put(DynamicSkillBuilder builder) {
         DynamicSkill skill = builder.build();
         this.dynamicSkills.remove(skill);
         this.dynamicSkills.add(skill);
@@ -44,8 +57,29 @@ public class DynamicSkillConfig {
         return this.constant.get(skill.getUniqueId() + ".description");
     }
 
-    public void setName(String name) {
+    public synchronized void setName(String name) {
         this.name = name;
+    }
+
+    public List<DynamicSkillBuilder> getDynamicSkillBuilders() {
+        return Collections.unmodifiableList(
+                this.dynamicSkills.stream()
+                        .map(e -> new DynamicSkillBuilder(this, e)).collect(Collectors.toList())
+        );
+    }
+
+    protected DynamicSkillConfig copy() {
+        DynamicSkillConfig c = new DynamicSkillConfig(new HashMap<>(this.constant), new HashSet<>(this.dynamicSkills));
+        c.name = this.name;
+        return c;
+    }
+
+    public static DynamicSkillConfig valueOf(byte[] data) throws IOException {
+        return JsonUtils.getMapper().readValue(data, DynamicSkillConfig.class);
+    }
+
+    public synchronized byte[] getBytes() throws JsonProcessingException {
+        return JsonUtils.getMapper().writeValueAsBytes(this);
     }
 
     static class Serializer extends JsonSerializer<DynamicSkillConfig> {
