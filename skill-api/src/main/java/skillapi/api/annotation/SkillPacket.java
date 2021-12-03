@@ -1,5 +1,8 @@
 package skillapi.api.annotation;
 
+import skillapi.packet.JsonPacketSerializer;
+import skillapi.packet.PacketSerializer;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -12,10 +15,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface SkillPacket {
-    /**
-     * Skill packet name
-     *
-     * @return Custom package name. If it is empty, use the class name as the name.
-     */
-    String value() default "";
+    Class<? extends PacketSerializer> serializer() default JsonPacketSerializer.class;
 }

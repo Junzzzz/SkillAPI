@@ -9,8 +9,7 @@ group 'com.github.junzzzz'
 version '0.1'
 
 dependencies {
-    implementation project(':skill-annotation')
     implementation files("${System.getenv('JAVA_HOME')}/lib/tools.jar")
 
-    implementation group: 'com.google.auto.service', name: 'auto-service', version: '1.0-rc4'
+    implementation group: 'com.google.auto.service', name: 'auto-service', version: '1.0.1'
 }
