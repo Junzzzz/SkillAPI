@@ -10,7 +10,6 @@ import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.tree.TreeTranslator;
 import com.sun.tools.javac.util.*;
-import skillapi.api.annotation.SkillEffect;
 import skillapi.api.annotation.SkillPacket;
 
 import javax.annotation.processing.*;
@@ -26,12 +25,12 @@ import java.util.Set;
  * @author Jun
  * @date 2020/8/31.
  */
-@SupportedAnnotationTypes({"skillapi.api.annotation.SkillPacket", "skillapi.api.annotation.SkillEffect"})
+@SupportedAnnotationTypes({"skillapi.api.annotation.SkillPacket"})
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
 @AutoService(Processor.class)
 public class NoArgsConstructorAnnotationProcessor extends AbstractProcessor {
     @SuppressWarnings("unchecked")
-    private final Class<? extends Annotation>[] annotations = new Class[]{SkillPacket.class, SkillEffect.class};
+    private final Class<? extends Annotation>[] annotations = new Class[]{SkillPacket.class};
 
     private Messager messager;
     private JavacTrees trees;

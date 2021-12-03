@@ -7,7 +7,8 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import skillapi.SkillRegistry;
-import skillapi.newpacket.TestPacket;
+import skillapi.packet.PacketHandler;
+import skillapi.packet.TestPacket;
 
 import java.util.List;
 
@@ -16,7 +17,7 @@ import java.util.List;
  * @date 2020/8/18.
  */
 public class ItemLearnBook extends Item {
-    private String skillName;
+    private final String skillName;
 
     public ItemLearnBook(String skillName) {
         super();
@@ -41,7 +42,7 @@ public class ItemLearnBook extends Item {
         }
 
         if (player instanceof EntityPlayerMP) {
-            new TestPacket(itemStack.getDisplayName()).sendToClient((EntityPlayerMP) player);
+            PacketHandler.sendToClient(new TestPacket(itemStack.getDisplayName()), (EntityPlayerMP) player);
         }
         return itemStack;
     }

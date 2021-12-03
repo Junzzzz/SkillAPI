@@ -31,11 +31,9 @@ public final class Application {
 
     @EventHandler
     public void pre(FMLPreInitializationEvent event) {
+        SkillApi.preInit(event);
         proxy.preInit(event);
 
-//        SkillLocalConfig.load(event);
-
-        SkillApi.init(event);
         channels = new HashMap<>(16);
         FMLEventChannel channel;
         for (int i = 0; i < SkillPacketHandler.CHANNELS.length; i++) {
@@ -47,6 +45,7 @@ public final class Application {
 
     @EventHandler
     public void init(FMLInitializationEvent event) {
+        SkillApi.init(event);
         proxy.init(event);
 
         oldProxy.loadSkillKeyBindings();
