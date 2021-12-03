@@ -1,6 +1,7 @@
 package skillapi.utils;
 
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.storage.SaveFormatOld;
 import skillapi.skill.Skills;
 
 import java.io.File;
@@ -18,6 +19,6 @@ public final class SkillServer {
     }
 
     public static File getWorldDirectory() {
-        return server.getActiveAnvilConverter().getSaveLoader(server.getFolderName(), false).getWorldDirectory();
+        return new File(((SaveFormatOld) server.getActiveAnvilConverter()).savesDirectory, server.getFolderName());
     }
 }
