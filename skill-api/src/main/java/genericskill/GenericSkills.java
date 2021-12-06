@@ -18,9 +18,8 @@ import genericskill.skill.*;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import skillapi.SkillRegistry;
-import skillapi.api.SkillApi;
 
-import static genericskill.item.ItemLoader.*;
+import static skillapi.item.SkillItemLoader.*;
 
 @Mod(modid = "genericskills", name = "Generic Skills Pack", useMetadata = true, dependencies = "required-after:skillapi")
 public final class GenericSkills {

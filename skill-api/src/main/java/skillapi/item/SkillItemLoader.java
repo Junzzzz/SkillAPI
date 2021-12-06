@@ -1,9 +1,12 @@
-package genericskill.item;
+package skillapi.item;
 
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.registry.GameRegistry;
-import genericskill.creativetab.CreativeTabsLoader;
+import genericskill.item.ItemHeritageAmulet;
+import genericskill.item.ItemManaPotion;
+import genericskill.item.ItemSkillBook;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
+import skillapi.client.tab.SkillCreativeTabs;
 
 import static genericskill.GenericSkills.skills;
 
@@ -11,24 +14,21 @@ import static genericskill.GenericSkills.skills;
  * @author Jun
  * @date 2020/8/19.
  */
-public class ItemLoader {
+public class SkillItemLoader {
+    public static final CreativeTabs TAB = new SkillCreativeTabs();
+
     public static Item genSkillBook = new ItemSkillBook().addSkills(skills);
     public static Item heritageAmulet = new ItemHeritageAmulet();
     public static Item manaPotion = new ItemManaPotion(5);
 
-    public static Item learnBook = new ItemLearnBook("none");
-
-    public ItemLoader(FMLPreInitializationEvent event) {
-        register(learnBook, "generic_learn_book");
+    public static void preInit() {
         register(genSkillBook, "generic_skill_book");
         register(heritageAmulet, "heritage_amulet");
         register(manaPotion, "mana_potion");
-
-
     }
 
-    private static void register(Item item, String name) {
-        item.setCreativeTab(CreativeTabsLoader.tabSkill);
+    public static void register(Item item, String name) {
+        item.setCreativeTab(TAB);
         GameRegistry.registerItem(item, name);
     }
 }
