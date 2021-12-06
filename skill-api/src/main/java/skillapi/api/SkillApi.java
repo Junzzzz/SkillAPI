@@ -7,6 +7,7 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import org.apache.logging.log4j.Level;
 import skillapi.api.annotation.SkillAnnotation;
 import skillapi.api.annotation.SkillAnnotationRegister;
+import skillapi.item.SkillItemLoader;
 import skillapi.packet.PacketHandler;
 import skillapi.utils.ClassUtils;
 import skillapi.utils.ListUtils;
@@ -27,13 +28,15 @@ public final class SkillApi {
     private static final Map<Class<? extends Annotation>, SkillAnnotationRegister<Annotation>> ANNOTATION_MAP =
             new HashMap<>(16);
 
-    private static final Map<Class<?>, String> MOD_MAP = new HashMap<>(16);
-
     public static void preInit(FMLPreInitializationEvent event) {
         preInit(event, null);
     }
 
     public static void preInit(FMLPreInitializationEvent event, String packageName) {
+        // Other action
+        SkillItemLoader.preInit();
+
+        // Load annotation
         List<Class<?>> classes = ClassUtils.scanLocalClasses(event.getSourceFile(), packageName, true);
         final List<Class<?>> remainClass = new LinkedList<>();
         classes = ListUtils.filter(classes, clz -> clz.isAnnotationPresent(SkillAnnotation.class), remainClass);
@@ -57,7 +60,6 @@ public final class SkillApi {
                     function.register(clz, annotation, modMetadata);
                 }
             }
-            MOD_MAP.put(clz, modMetadata.modId);
         }
     }
 
@@ -95,10 +97,5 @@ public final class SkillApi {
                 }
             }
         }
-    }
-
-    public static String getModId(Class<?> clz) {
-        final String s = MOD_MAP.get(clz);
-        return s == null ? "" : s;
     }
 }

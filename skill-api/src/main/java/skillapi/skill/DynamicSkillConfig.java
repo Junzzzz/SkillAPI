@@ -28,32 +28,37 @@ public class DynamicSkillConfig {
      */
     protected String name;
     protected final Map<String, String> constant;
-    protected final Set<DynamicSkill> dynamicSkills;
+    protected final Map<String, DynamicSkill> dynamicSkills;
 
     public DynamicSkillConfig() {
         this.constant = new HashMap<>(32);
-        this.dynamicSkills = new HashSet<>(16);
+        this.dynamicSkills = new HashMap<>(16);
     }
 
-    public DynamicSkillConfig(Map<String, String> constant, Set<DynamicSkill> dynamicSkills) {
+    public DynamicSkillConfig(Map<String, String> constant, Map<String, DynamicSkill> dynamicSkills) {
         this.constant = constant;
         this.dynamicSkills = dynamicSkills;
     }
 
     public synchronized DynamicSkill put(DynamicSkillBuilder builder) {
         DynamicSkill skill = builder.build();
-        this.dynamicSkills.remove(skill);
-        this.dynamicSkills.add(skill);
+        this.dynamicSkills.put(skill.getUnlocalizedName(), skill);
         this.constant.put(skill.getUniqueId() + ".name", builder.getName());
         this.constant.put(skill.getUniqueId() + ".description", builder.getDescription());
         return skill;
     }
 
-    public String getSkillName(DynamicSkill skill) {
+    public synchronized void remove(DynamicSkillBuilder builder) {
+        this.dynamicSkills.remove(Skills.PREFIX_DYNAMIC + builder.getUniqueId());
+        this.constant.remove(builder.getUniqueId() + ".name");
+        this.constant.remove(builder.getUniqueId() + ".description");
+    }
+
+    public String getLocalizedName(DynamicSkill skill) {
         return this.constant.get(skill.getUniqueId() + ".name");
     }
 
-    public String getSkillDescription(DynamicSkill skill) {
+    public String getDescription(DynamicSkill skill) {
         return this.constant.get(skill.getUniqueId() + ".description");
     }
 
@@ -63,13 +68,15 @@ public class DynamicSkillConfig {
 
     public List<DynamicSkillBuilder> getDynamicSkillBuilders() {
         return Collections.unmodifiableList(
-                this.dynamicSkills.stream()
-                        .map(e -> new DynamicSkillBuilder(this, e)).collect(Collectors.toList())
+                this.dynamicSkills.values().stream()
+                        .map(e -> new DynamicSkillBuilder(this, e))
+                        .sorted(Comparator.comparingInt(DynamicSkillBuilder::getUniqueId))
+                        .collect(Collectors.toList())
         );
     }
 
     protected DynamicSkillConfig copy() {
-        DynamicSkillConfig c = new DynamicSkillConfig(new HashMap<>(this.constant), new HashSet<>(this.dynamicSkills));
+        DynamicSkillConfig c = new DynamicSkillConfig(new HashMap<>(this.constant), new HashMap<>(this.dynamicSkills));
         c.name = this.name;
         return c;
     }
@@ -92,7 +99,7 @@ public class DynamicSkillConfig {
             jsonGenerator.writeObjectField("constant", dynamicSkillConfig.constant);
 
             jsonGenerator.writeArrayFieldStart("skills");
-            for (DynamicSkill skill : dynamicSkillConfig.dynamicSkills) {
+            for (DynamicSkill skill : dynamicSkillConfig.dynamicSkills.values()) {
                 jsonGenerator.writeStartObject();
                 jsonGenerator.writeNumberField("id", skill.getUniqueId());
                 jsonGenerator.writeNumberField("mana", skill.getMana());
@@ -102,7 +109,7 @@ public class DynamicSkillConfig {
                 jsonGenerator.writeArrayFieldStart("effects");
                 for (SkillEffect effect : skill.effects) {
                     jsonGenerator.writeStartObject();
-                    jsonGenerator.writeStringField("name", effect.getName());
+                    jsonGenerator.writeStringField("name", effect.getUnlocalizedName());
                     jsonGenerator.writeObjectFieldStart("fields");
                     Class<? extends SkillEffect> clz = effect.getClass();
                     for (Field field : clz.getDeclaredFields()) {

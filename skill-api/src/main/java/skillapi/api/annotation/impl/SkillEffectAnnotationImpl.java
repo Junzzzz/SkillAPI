@@ -22,6 +22,7 @@ public final class SkillEffectAnnotationImpl implements SkillAnnotationRegister<
         }
 
         Class<? extends skillapi.skill.SkillEffect> effect = (Class<? extends skillapi.skill.SkillEffect>) target;
-        Skills.register("skill.effect." + mod.modId + "." + effect.getSimpleName(), effect);
+        Skills.putModId(effect, mod.modId);
+        Skills.register(Skills.PREFIX_EFFECT + mod.modId + "." + effect.getSimpleName(), effect);
     }
 }

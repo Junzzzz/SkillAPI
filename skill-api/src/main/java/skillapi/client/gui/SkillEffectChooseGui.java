@@ -53,7 +53,7 @@ public class SkillEffectChooseGui extends BaseGui {
         final Layout leftListBox = new Layout(10, 30, listWidth, height - 30 - 40);
 
         val rightList = parent.effectList.getList().stream()
-                .map(SkillEffect::getName)
+                .map(SkillEffect::getUnlocalizedName)
                 .collect(Collectors.toList());
 
         val leftList = Skills.getEffectNames().stream()

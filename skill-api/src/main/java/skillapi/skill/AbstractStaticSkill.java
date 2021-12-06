@@ -1,6 +1,5 @@
 package skillapi.skill;
 
-import skillapi.api.SkillApi;
 import skillapi.common.SkillRuntimeException;
 
 /**
@@ -11,7 +10,7 @@ public abstract class AbstractStaticSkill extends AbstractSkill {
         init(new StaticSkillBuilder());
 
         // Default name
-        this.name = "skill.static." + SkillApi.getModId(this.getClass()) + "." + this.getClass().getSimpleName();
+        this.name = Skills.PREFIX_STATIC + Skills.getModId(this.getClass()) + "." + this.getClass().getSimpleName();
     }
 
     protected abstract void init(StaticSkillBuilder builder);

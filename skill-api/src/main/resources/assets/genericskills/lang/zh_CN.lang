@@ -1,11 +1,6 @@
-﻿
-itemGroup.GenericSkillPack=通用技能
-
-item.genSkillBook.name=通用技能书
+﻿item.genSkillBook.name=通用技能书
 item.heritageAmulet.name=遗物护身符
 item.manaPotion.name=法力药水
-
-item.genLearnBook.name=测试书
 
 skill.description.creeperblast=引出你内心中苦力怕的力量！
 skill.description.levitate=将法力向下释放使您悬浮

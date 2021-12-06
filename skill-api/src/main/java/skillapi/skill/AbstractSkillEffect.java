@@ -1,17 +1,15 @@
 package skillapi.skill;
 
-import skillapi.api.SkillApi;
-
 import java.util.Objects;
 
 /**
  * @author Jun
  */
 public abstract class AbstractSkillEffect implements SkillEffect {
-    private final String name = "skill.effect." + SkillApi.getModId(getClass()) + "." + getClass().getSimpleName();
+    private final String name = "skill.effect." + Skills.getModId(getClass()) + "." + getClass().getSimpleName();
 
     @Override
-    public String getName() {
+    public String getUnlocalizedName() {
         return name;
     }
 
@@ -35,6 +33,6 @@ public abstract class AbstractSkillEffect implements SkillEffect {
 
     @Override
     public int hashCode() {
-        return getName().hashCode();
+        return getUnlocalizedName().hashCode();
     }
 }

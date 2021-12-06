@@ -50,7 +50,7 @@ public final class SkillEditGui extends BaseGui {
         final Layout listLayout = new Layout(10, 10, 100, this.height - 10 - 30);
 
         ScrollingListComponent.SlotRenderer<SkillEffect> renderer = (data, x, y) -> {
-            drawString(I18n.format(data.getName()), x + 2, y + 5, 0xFFFFFF);
+            drawString(I18n.format(data.getUnlocalizedName()), x + 2, y + 5, 0xFFFFFF);
         };
 
         this.effectList = new ScrollingListComponent<>(listLayout, 25, skillBuilder.getEffects(), renderer);

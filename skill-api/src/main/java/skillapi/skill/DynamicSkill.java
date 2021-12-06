@@ -20,8 +20,8 @@ public class DynamicSkill extends AbstractSkill {
     }
 
     @Override
-    public String getName() {
-        return Skills.getSkillName(this);
+    public String getUnlocalizedName() {
+        return Skills.PREFIX_DYNAMIC + uniqueId;
     }
 
     @Override

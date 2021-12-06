@@ -22,6 +22,8 @@ import java.awt.*;
 import java.util.List;
 
 /**
+ * TODO 多人编辑加锁
+ *
  * @author Jun
  * @date 2020/10/4.
  */
@@ -186,7 +188,10 @@ public final class SkillConfigGui extends BaseGui implements GuiYesNoCallback {
     @Override
     public void confirmClicked(boolean clickYes, int select) {
         if (clickYes) {
-            this.page.removeInCurrentPage(select);
+            this.selectedLine = -1;
+            DynamicSkillBuilder removed = this.page.removeInCurrentPage(select);
+            this.editingConfig.remove(removed);
+            this.enableApply = true;
         }
         displayGui(this);
     }

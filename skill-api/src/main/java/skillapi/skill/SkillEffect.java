@@ -12,5 +12,5 @@ public interface SkillEffect {
     /**
      * Fully qualified name
      */
-    String getName();
+    String getUnlocalizedName();
 }

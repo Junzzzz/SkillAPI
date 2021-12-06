@@ -1,11 +1,7 @@
 ﻿
-itemGroup.GenericSkillPack=Generic Skill Pack
-
 item.genSkillBook.name=Generic Skill Book
 item.heritageAmulet.name=Heritage Amulet
 item.manaPotion.name=Mana Potion
-
-item.genLearnBook.name=Test Book
 
 skill.description.creeperblast=Channels your inner creeper\noutwards into an explosive\nforce.
 skill.description.levitate=Projects your mana downward\ncausing you to levitate.

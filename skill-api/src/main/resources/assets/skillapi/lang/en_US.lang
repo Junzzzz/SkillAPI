@@ -1,4 +1,9 @@
-﻿key.categories.gui=Generics Skill
+﻿
+itemGroup.SkillAPI=Skill
+
+item.skillLearnBook.name=Skill Book
+
+key.categories.gui=Generics Skill
 key.skillGui=Skill GUI
 key.skill1=Skill 1
 key.skill2=Skill 2
@@ -16,4 +21,9 @@ skill.gui.title=Known Skills
 skill.gui.config.delete.title=Whether to delete the skill [%1$s]?
 skill.gui.config.delete.tip=The skills will not be restored!
 
-skill.effect.skillapi.TestSkill=Test Skill
+skill.constant.invalidLeanBook=Invalid Book
+skill.constant.skillBook=Skill Book:
+
+skill.static.skillapi.TestStaticSkill=Test Static Skill
+skill.effect.skillapi.TestSkillEffect=Test Skill Effect
+skill.effect.skillapi.TestSkillEffect.testParam=Test Skill Effect Param

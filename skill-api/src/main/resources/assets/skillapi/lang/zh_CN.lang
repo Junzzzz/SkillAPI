@@ -1,4 +1,9 @@
-﻿key.categories.gui=通用技能
+﻿
+itemGroup.SkillAPI=技能
+
+item.skillLearnBook.name=技能书
+
+key.categories.gui=通用技能
 key.skillGui=查看技能列表
 key.skill1=技能 1
 key.skill2=技能 2
@@ -16,5 +21,9 @@ skill.gui.title=已学技能
 skill.gui.config.delete.title=是否删除技能[%1$s]？
 skill.gui.config.delete.tip=技能将无法被恢复！
 
+skill.constant.invalidLeanBook=无效技能书
+skill.constant.skillBook=技能书:
+
+skill.static.skillapi.TestStaticSkill=测试静态技能
 skill.effect.skillapi.TestSkillEffect=测试技能效果
 skill.effect.skillapi.TestSkillEffect.testParam=测试参数

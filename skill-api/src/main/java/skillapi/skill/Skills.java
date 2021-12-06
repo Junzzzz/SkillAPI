@@ -5,15 +5,13 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.StatCollector;
 import skillapi.common.SkillLog;
 import skillapi.common.SkillRuntimeException;
 import skillapi.utils.SkillNBT;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Jun
@@ -23,9 +21,15 @@ public final class Skills {
     private static final String CONFIG_PROFILE_CURRENT = "current";
     private static final String CONFIG_NAME_DEFAULT = "default";
 
-    private static final Map<String, Class<? extends SkillEffect>> effectMap = new HashMap<>(16);
-    private static final Map<String, AbstractSkill> skillMap = new HashMap<>(16);
+    public static final String PREFIX_STATIC = "skill.static.";
+    public static final String PREFIX_EFFECT = "skill.effect.";
+    public static final String PREFIX_DYNAMIC = "skill.dynamic.";
+
+    private static final Map<String, Class<? extends SkillEffect>> EFFECT_MAP = new HashMap<>(16);
+    private static final Map<String, AbstractSkill> SKILL_MAP = new HashMap<>(16);
     private static DynamicSkillConfig dynamicSkillConfig;
+
+    private static final Map<Class<? extends SkillEffect>, String> MOD_ID_MAP = new HashMap<>(32);
 
     public static synchronized void init() {
         // Init dynamic skill
@@ -62,7 +66,7 @@ public final class Skills {
         if (skill instanceof DynamicSkill) {
             throw new SkillRuntimeException("Please use DynamicSkillBuilder");
         }
-        skillMap.put(skill.getName(), skill);
+        SKILL_MAP.put(skill.getUnlocalizedName(), skill);
     }
 
     public static synchronized void register(DynamicSkillBuilder builder) {
@@ -70,10 +74,11 @@ public final class Skills {
     }
 
     public static synchronized void register(String name, Class<? extends SkillEffect> effect) {
-        effectMap.put(name, effect);
+        EFFECT_MAP.put(name, effect);
     }
 
     public static synchronized void switchConfig(DynamicSkillConfig config) {
+        // TODO 服务器同步
         DynamicSkillConfig tmp = dynamicSkillConfig;
 
         dynamicSkillConfig = config;
@@ -95,27 +100,66 @@ public final class Skills {
         return dynamicSkillConfig.copy();
     }
 
+    public static AbstractSkill get(String unlocalizedName) {
+        if (unlocalizedName.startsWith(PREFIX_STATIC)) {
+            return SKILL_MAP.get(unlocalizedName);
+        } else if (unlocalizedName.startsWith(PREFIX_DYNAMIC)) {
+            return dynamicSkillConfig.dynamicSkills.get(unlocalizedName);
+        }
+        return null;
+    }
+
+    public static List<AbstractSkill> getAll() {
+        return getAll(true);
+    }
+
+    public static List<AbstractSkill> getAll(boolean sort) {
+        List<AbstractSkill> skills = new ArrayList<>(SKILL_MAP.values());
+        if (sort) {
+            List<DynamicSkill> dynamicSkills = new ArrayList<>(dynamicSkillConfig.dynamicSkills.values());
+            dynamicSkills.sort(Comparator.comparingInt(DynamicSkill::getUniqueId));
+            skills.addAll(dynamicSkills);
+        } else {
+            skills.addAll(dynamicSkillConfig.dynamicSkills.values());
+        }
+
+        return Collections.unmodifiableList(skills);
+    }
+
     public static List<String> getEffectNames() {
-        return new ArrayList<>(effectMap.keySet());
+        return new ArrayList<>(EFFECT_MAP.keySet());
     }
 
     public static Class<? extends SkillEffect> getSkillEffect(String name) {
-        return effectMap.get(name);
+        return EFFECT_MAP.get(name);
     }
 
     @SideOnly(Side.CLIENT)
     public static String getI18nName(SkillEffect skill) {
         if (skill instanceof DynamicSkill) {
-            return dynamicSkillConfig.getSkillName((DynamicSkill) skill);
+            return dynamicSkillConfig.getLocalizedName((DynamicSkill) skill);
         }
-        return I18n.format(skill.getName());
+        return I18n.format(skill.getUnlocalizedName());
     }
 
-    public static String getSkillName(DynamicSkill skill) {
-        return dynamicSkillConfig.getSkillName(skill);
+
+    public static String getLocalizedName(AbstractSkill skill) {
+        if (skill instanceof DynamicSkill) {
+            return dynamicSkillConfig.getLocalizedName((DynamicSkill) skill);
+        }
+        return StatCollector.translateToLocal(skill.getUnlocalizedName());
     }
 
     public static String getSkillDescription(DynamicSkill skill) {
-        return dynamicSkillConfig.getSkillDescription(skill);
+        return dynamicSkillConfig.getDescription(skill);
+    }
+
+    public static void putModId(Class<? extends SkillEffect> clz, String modId) {
+        MOD_ID_MAP.put(clz, modId);
+    }
+
+    public static String getModId(Class<? extends SkillEffect> clz) {
+        String s = MOD_ID_MAP.get(clz);
+        return s == null ? "" : s;
     }
 }

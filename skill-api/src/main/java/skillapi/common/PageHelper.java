@@ -96,18 +96,19 @@ public final class PageHelper<T> {
         this.data.add(object);
     }
 
-    public void remove(int index) {
-        this.data.remove(index);
+    public T remove(int index) {
+        T o = this.data.remove(index);
 
         if ((this.data.size() + this.pageSize - 1) / this.pageSize >= this.pageNow) {
             cachePageNow();
         } else {
             prevPage();
         }
+        return o;
     }
 
-    public void removeInCurrentPage(int index) {
-        this.remove((this.pageNow - 1) * this.pageSize + index);
+    public T removeInCurrentPage(int index) {
+        return this.remove((this.pageNow - 1) * this.pageSize + index);
     }
 
     public List<T> toLastPage() {
