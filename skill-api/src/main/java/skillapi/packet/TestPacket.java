@@ -1,6 +1,7 @@
 package skillapi.packet;
 
 import cpw.mods.fml.relauncher.Side;
+import lombok.AllArgsConstructor;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ChatComponentText;
 import skillapi.api.annotation.SkillPacket;
@@ -10,12 +11,9 @@ import skillapi.api.annotation.SkillPacket;
  * @date 2020/8/26.
  */
 @SkillPacket
+@AllArgsConstructor
 public class TestPacket extends AbstractPacket {
-    private final String testString;
-
-    public TestPacket(String testString) {
-        this.testString = testString;
-    }
+    private String testString;
 
     @Override
     void run(EntityPlayer player, Side from) {
