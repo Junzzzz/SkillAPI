@@ -7,8 +7,7 @@ import skillapi.skill.DynamicSkillConfig;
 import skillapi.utils.JsonUtils;
 
 import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
-import java.util.zip.GZIPInputStream;
+import java.io.InputStream;
 
 /**
  * @author Jun
@@ -35,7 +34,7 @@ public class InitPacketSerializer implements PacketSerializer<ClientSkillInitPac
         length = buffer.readInt();
         byte[] properties = new byte[length];
         buffer.readBytes(properties);
-        DataInputStream inputStream = new DataInputStream(new GZIPInputStream(new ByteArrayInputStream(properties)));
+        InputStream inputStream = new ByteArrayInputStream(properties);
         NBTTagCompound tag = CompressedStreamTools.readCompressed(inputStream);
 
         packet.setConfig(dynamicSkillConfig);
