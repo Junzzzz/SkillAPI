@@ -1,5 +1,6 @@
 package skillapi.api.annotation;
 
+import skillapi.packet.AbstractPacket;
 import skillapi.packet.JsonPacketSerializer;
 import skillapi.packet.PacketSerializer;
 
@@ -15,5 +16,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface SkillPacket {
-    Class<? extends PacketSerializer> serializer() default JsonPacketSerializer.class;
+    Class<? extends PacketSerializer<? extends AbstractPacket>> serializer() default JsonPacketSerializer.class;
 }

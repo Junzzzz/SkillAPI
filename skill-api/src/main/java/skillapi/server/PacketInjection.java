@@ -7,7 +7,7 @@ import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 import net.sf.cglib.proxy.NoOp;
 import skillapi.packet.PacketHandler;
-import skillapi.packet.TestPacket;
+import skillapi.skill.Skills;
 
 import java.lang.reflect.Method;
 
@@ -31,7 +31,7 @@ public class PacketInjection extends CallbackHelper {
         @Override
         public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) throws Throwable {
             EntityPlayerMP player = (EntityPlayerMP) args[1];
-            PacketHandler.sendToClient(new TestPacket("233"), player);
+            PacketHandler.sendToClient(Skills.getInitPacket(player), player);
             return proxy.invokeSuper(obj, args);
         }
     }

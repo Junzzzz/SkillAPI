@@ -4,10 +4,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.StatCollector;
 import skillapi.common.SkillLog;
 import skillapi.common.SkillRuntimeException;
+import skillapi.packet.ClientSkillInitPacket;
 import skillapi.utils.SkillNBT;
 
 import java.io.IOException;
@@ -24,6 +26,8 @@ public final class Skills {
     public static final String PREFIX_STATIC = "skill.static.";
     public static final String PREFIX_EFFECT = "skill.effect.";
     public static final String PREFIX_DYNAMIC = "skill.dynamic.";
+
+    public static final int MAX_MANA = 20;
 
     private static final Map<String, Class<? extends SkillEffect>> EFFECT_MAP = new HashMap<>(16);
     private static final Map<String, AbstractSkill> SKILL_MAP = new HashMap<>(16);
@@ -77,8 +81,12 @@ public final class Skills {
         EFFECT_MAP.put(name, effect);
     }
 
-    public static synchronized void switchConfig(DynamicSkillConfig config) {
-        // TODO 服务器同步
+    @SideOnly(Side.CLIENT)
+    public static synchronized void clientSwitchConfig(DynamicSkillConfig config) {
+        dynamicSkillConfig = config;
+    }
+
+    public static synchronized void serverSwitchConfig(DynamicSkillConfig config) {
         DynamicSkillConfig tmp = dynamicSkillConfig;
 
         dynamicSkillConfig = config;
@@ -161,5 +169,12 @@ public final class Skills {
     public static String getModId(Class<? extends SkillEffect> clz) {
         String s = MOD_ID_MAP.get(clz);
         return s == null ? "" : s;
+    }
+
+    public static ClientSkillInitPacket getInitPacket(EntityPlayerMP player) {
+        PlayerSkillProperties properties = PlayerSkillProperties.get(player);
+        NBTTagCompound tag = new NBTTagCompound();
+        properties.saveNBTData(tag);
+        return new ClientSkillInitPacket(dynamicSkillConfig, tag);
     }
 }

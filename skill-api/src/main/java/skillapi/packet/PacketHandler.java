@@ -27,7 +27,8 @@ public final class PacketHandler {
     private static final String CHANNEL_NAME = "SkillPacketChannel";
     private static final FMLEventChannel CHANNEL;
 
-    private static final Map<Class<? extends PacketSerializer>, PacketSerializer> SERIALIZER_MAP = new HashMap<>(4);
+    private static final Map<Class<? extends PacketSerializer<? extends AbstractPacket>>, PacketSerializer<?
+            extends AbstractPacket>> SERIALIZER_MAP = new HashMap<>(4);
     private static final Map<Class<? extends AbstractPacket>, Packet> PACKET_MAP = new HashMap<>(16);
     private static Packet[] packets;
 
@@ -44,8 +45,8 @@ public final class PacketHandler {
     }
 
     public static void register(Class<? extends AbstractPacket> clz, SkillPacket annotation) {
-        Class<? extends PacketSerializer> serializerClass = annotation.serializer();
-        PacketSerializer packetSerializer = SERIALIZER_MAP.get(serializerClass);
+        Class<? extends PacketSerializer<? extends AbstractPacket>> serializerClass = annotation.serializer();
+        PacketSerializer<? extends AbstractPacket> packetSerializer = SERIALIZER_MAP.get(serializerClass);
         if (packetSerializer == null) {
             packetSerializer = ClassUtils.newEmptyInstance(serializerClass, "Failed to create serializer: %s",
                     serializerClass.getName());
@@ -54,7 +55,7 @@ public final class PacketHandler {
         PACKET_MAP.put(clz, new Packet(clz, packetSerializer));
     }
 
-    public static PacketSerializer getSerializer(Class<? extends AbstractPacket> clz) {
+    public static PacketSerializer<? extends AbstractPacket> getSerializer(Class<? extends AbstractPacket> clz) {
         return SERIALIZER_MAP.get(clz);
     }
 
@@ -103,6 +104,7 @@ public final class PacketHandler {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private static FMLProxyPacket proxy(AbstractPacket packet, Side target) {
         Packet packetInfo = PACKET_MAP.get(packet.getClass());
         if (packetInfo == null) {
@@ -112,7 +114,7 @@ public final class PacketHandler {
         ByteBuf buffer = Unpooled.buffer();
         buffer.writeInt(packetInfo.index);
         try {
-            buffer.writeBytes(packetInfo.serializer.serialize(packet));
+            packetInfo.serializer.serialize(packet, buffer);
         } catch (Exception e) {
             SkillLog.error("Failed to serialize packet data. Packet class: %s", e, packet.getClass());
             return null;
@@ -125,9 +127,11 @@ public final class PacketHandler {
     static final class Packet {
         int index;
         Class<? extends AbstractPacket> clz;
+
+        @SuppressWarnings("rawtypes")
         PacketSerializer serializer;
 
-        public Packet(Class<? extends AbstractPacket> clz, PacketSerializer serializer) {
+        public Packet(Class<? extends AbstractPacket> clz, PacketSerializer<? extends AbstractPacket> serializer) {
             this.clz = clz;
             this.serializer = serializer;
         }
@@ -145,6 +149,7 @@ public final class PacketHandler {
             process(event.packet.payload(), ((NetHandlerPlayServer) event.handler).playerEntity, Side.CLIENT);
         }
 
+        @SuppressWarnings("unchecked")
         private void process(ByteBuf buffer, EntityPlayer player, Side from) {
             int packetIndex = buffer.readInt();
             if (packetIndex < 0 || packetIndex >= packets.length) {

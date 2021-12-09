@@ -30,16 +30,14 @@ minecraft {
 ext {
     jacksonVersion = '2.6.7'
     lombokVersion = '1.18.22'
-//    asmVersion = '6.2.1'
     cglibVersion = '3.2.1'
 }
 
 dependencies {
     compileOnly group: 'org.projectlombok', name: 'lombok', version: lombokVersion
     annotationProcessor group: 'org.projectlombok', name: 'lombok', version: lombokVersion
-    annotationProcessor project(':skill-processor')
+//    annotationProcessor project(':skill-processor')
 
-//    implementation group: 'org.ow2.asm', name: 'asm', version: asmVersion
     implementation group: 'cglib', name: 'cglib', version: cglibVersion
 
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: jacksonVersion
