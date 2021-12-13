@@ -3,6 +3,7 @@ package skillapi.utils;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.AxisAlignedBB;
@@ -69,5 +70,9 @@ public class ClientUtils {
 
     public static boolean isInGame() {
         return MC.renderViewEntity != null && MC.theWorld != null;
+    }
+
+    public static EntityClientPlayerMP getPlayer() {
+        return MC.thePlayer;
     }
 }

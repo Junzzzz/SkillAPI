@@ -122,6 +122,8 @@ public final class SkillEditGui extends BaseGui {
     protected void listener(ListenerRegistry listener) {
         KeyTypedListener ktl = (c, key) -> {
             if (key == Keyboard.KEY_BACK || checkNumber(c)) {
+                // TODO Integer.parseInt(this.cooldown.getText()) 空文本有BUG
+                // TODO 校验不完善
                 val map = this.form.getFormMap();
 
                 val originList = this.skillBuilder.getParams(this.effectIndex);

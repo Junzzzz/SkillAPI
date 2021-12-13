@@ -1,5 +1,9 @@
 package skillapi.skill;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.client.resources.I18n;
+
 import java.util.Objects;
 
 /**
@@ -27,6 +31,16 @@ public abstract class AbstractSkill extends AbstractSkillEffect {
     @Override
     public String getUnlocalizedName() {
         return this.name;
+    }
+
+    @SideOnly(Side.CLIENT)
+    public String getLocalizedName() {
+        return I18n.format(this.name);
+    }
+
+    @SideOnly(Side.CLIENT)
+    public String getDescription() {
+        return I18n.format(this.name + ".description");
     }
 
     @Override

@@ -24,14 +24,15 @@ public final class HudSkills {
             player = PlayerSkills.get(game.thePlayer);
         }
         if (player != null) {
-            GL11.glEnable(3042 /* GL_BLEND */);
-            GL11.glBlendFunc(770, 771);
-            drawManaBar(scaledWidth, scaledHeight);
+            GL11.glEnable(GL11.GL_BLEND);
+            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+//            drawManaBar(scaledWidth, scaledHeight);
+            game.renderEngine.bindTexture(GuiKnownSkills.GUI);
             drawSkillBar(scaledWidth, scaledHeight);
             drawChargeup(scaledWidth, scaledHeight);
             drawActiveSkills(scaledWidth, scaledHeight);
             drawSkillGet(scaledWidth, scaledHeight);
-            GL11.glDisable(3042 /* GL_BLEND */);
+            GL11.glDisable(GL11.GL_BLEND);
         }
     }
 

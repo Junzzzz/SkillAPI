@@ -25,6 +25,16 @@ public class DynamicSkill extends AbstractSkill {
     }
 
     @Override
+    public String getLocalizedName() {
+        return Skills.getLocalizedName(this);
+    }
+
+    @Override
+    public String getDescription() {
+        return Skills.getSkillDescription(this);
+    }
+
+    @Override
     public void unleash(EntityPlayer player, EntityLivingBase entity) {
         for (SkillEffect effect : effects) {
             effect.unleash(player, entity);

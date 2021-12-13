@@ -1,8 +1,11 @@
 package skillapi.api.gui.base;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.Tessellator;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import skillapi.api.gui.base.listener.*;
 import skillapi.api.gui.component.ButtonComponent;
@@ -12,6 +15,7 @@ import skillapi.api.util.function.EventFunction;
  * @author Jun
  * @date 2020/11/3.
  */
+@SideOnly(Side.CLIENT)
 public abstract class BaseGui extends GenericGui {
     protected int width;
     protected int height;
@@ -79,12 +83,7 @@ public abstract class BaseGui extends GenericGui {
     protected void mouseClicked(int mouseX, int mouseY, int button) {
         // Left mouse button down
         if (button == MouseButton.LEFT.button) {
-            listenerRegistry.call(FocusChangedListener.class, (c, l) -> {
-                if (c.parent.focusComponent == c && !c.layout.isIn(mouseX, mouseY)) {
-                    ListenerRegistry.call(c, FocusChangedListener.class, fl -> fl.onFocus(false));
-                    c.focusComponent = null;
-                }
-            });
+            loseFocus(mouseX, mouseY);
             listenerRegistry.call(MousePressedListener.class, (c, l) -> {
                 if (c != null) {
                     final GenericGui parent = c.parent;
@@ -107,12 +106,7 @@ public abstract class BaseGui extends GenericGui {
 
     protected void mouseMovedOrUp(int mouseX, int mouseY, int which) {
         if (which == 0) {
-            listenerRegistry.call(FocusChangedListener.class, (c, l) -> {
-                if (c.parent.focusComponent == c && !c.layout.isIn(mouseX, mouseY)) {
-                    ListenerRegistry.call(c, FocusChangedListener.class, fl -> fl.onFocus(false));
-                    c.focusComponent = null;
-                }
-            });
+            loseFocus(mouseX, mouseY);
             listenerRegistry.call(MouseReleasedListener.class, (c, l) -> {
                 if (c != null) {
                     if (c.layout.isIn(mouseX, mouseY)) {
@@ -127,6 +121,21 @@ public abstract class BaseGui extends GenericGui {
                 }
             });
         }
+    }
+
+    protected void loseFocus(int mouseX, int mouseY) {
+        listenerRegistry.call(FocusChangedListener.class, (c, l) -> {
+            if (c != null) {
+                if (c.parent.focusComponent == c && !c.layout.isIn(mouseX, mouseY)) {
+                    ListenerRegistry.call(c, FocusChangedListener.class, fl -> fl.onFocus(false));
+                    c.focusComponent = null;
+                }
+            } else {
+                if (!Mouse.isInsideWindow()) {
+                    this.listenerRegistry.call(FocusChangedListener.class, fl -> fl.onFocus(false));
+                }
+            }
+        });
     }
 
     /**

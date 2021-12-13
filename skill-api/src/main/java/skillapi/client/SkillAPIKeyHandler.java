@@ -10,8 +10,10 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.settings.KeyBinding;
-import skillapi.PlayerSkills;
 import skillapi.Application;
+import skillapi.PlayerSkills;
+import skillapi.api.gui.base.GuiApi;
+import skillapi.client.gui.KnownSkillsGui;
 import skillapi.packets.SkillPacket;
 import skillapi.packets.TriggerSkillPacket;
 
@@ -67,7 +69,8 @@ public class SkillAPIKeyHandler {
             // 打开技能面板
             if (kb == SkillAPIClientProxy.skillGuiKeyBinding) {
                 if (Minecraft.getMinecraft().currentScreen == null) {
-                    Minecraft.getMinecraft().displayGuiScreen(new GuiKnownSkills(PlayerSkills.get(player)));
+//                    Minecraft.getMinecraft().displayGuiScreen(new GuiKnownSkills(PlayerSkills.get(player)));
+                    GuiApi.displayGui(new KnownSkillsGui());
                 }
             }
         }

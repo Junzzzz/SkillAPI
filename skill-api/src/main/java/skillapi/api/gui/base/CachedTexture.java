@@ -125,8 +125,10 @@ public class CachedTexture {
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         GL11.glEnable(GL11.GL_COLOR_MATERIAL);
 
+        textureX *= this.scaleFactor;
         // Flip
-        textureY = this.height * this.scaleFactor - textureY;
+        textureY = this.height - textureY;
+        textureY *= this.scaleFactor;
 
         // Calculate u, v
         final double u0 = (double) textureX / this.framebuffer.framebufferTextureWidth;

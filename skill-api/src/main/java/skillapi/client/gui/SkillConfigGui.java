@@ -112,7 +112,7 @@ public final class SkillConfigGui extends BaseGui implements GuiYesNoCallback {
         applySkillButton = addButton(this.guiPositionX + 52, this.guiPositionY + 145, 30, 20, "Apply",
                 () -> {
                     // TODO 应用方案
-                    Skills.switchConfig(this.editingConfig);
+                    Skills.serverSwitchConfig(this.editingConfig);
                     this.enableApply = false;
                     checkPageStatus();
                 }
@@ -126,7 +126,6 @@ public final class SkillConfigGui extends BaseGui implements GuiYesNoCallback {
         GL11.glEnable(GL11.GL_BLEND);
         super.drawDefaultBackground();
 
-        getTextureManager().bindTexture(SKILL_LIST_TEXTURES);
         drawBackground();
         drawSkill(mouseX, mouseY);
 
@@ -152,6 +151,7 @@ public final class SkillConfigGui extends BaseGui implements GuiYesNoCallback {
 
     @Override
     protected void drawBackground() {
+        getTextureManager().bindTexture(SKILL_LIST_TEXTURES);
         RenderUtils.drawTexturedModalRect(guiPositionX, guiPositionY, 0, 0, SKILL_LIST_WIDTH, SKILL_LIST_HEIGHT);
     }
 

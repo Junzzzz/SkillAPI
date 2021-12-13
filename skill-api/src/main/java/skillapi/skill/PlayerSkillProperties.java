@@ -1,5 +1,6 @@
 package skillapi.skill;
 
+import lombok.Getter;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -22,10 +23,27 @@ public class PlayerSkillProperties implements IExtendedEntityProperties {
     private static final String TAG_TIME = "lastUpdateTime";
 
     private EntityPlayer player;
+    private final AbstractSkill[] skillBar = new AbstractSkill[5];
     private final Set<AbstractSkill> knownSkills = new LinkedHashSet<>();
 
+    @Getter
     private int mana;
     private long lastUpdateTime;
+
+    public void restoreMana(int num) {
+        this.mana += num;
+    }
+
+    public AbstractSkill[] getSkillBar() {
+        return skillBar;
+    }
+
+    public void setSkillBar(int index, AbstractSkill skill) {
+        // TODO save skill bar data
+        if (index < skillBar.length && index >= 0) {
+            this.skillBar[index] = skill;
+        }
+    }
 
     @Override
     public void saveNBTData(NBTTagCompound compound) {

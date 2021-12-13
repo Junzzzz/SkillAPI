@@ -23,10 +23,10 @@ import skillapi.packets.UpdateSkillPacket;
 
 @SideOnly(Side.CLIENT)
 public final class GuiKnownSkills extends GuiScreen {
-    public static final ResourceLocation GUI = new ResourceLocation(Application.MOD_ID, "skills-gui.png");
+    public static final ResourceLocation GUI = new ResourceLocation(Application.MOD_ID, "textures/gui/skill-gui.png");
     private final PlayerSkills skills;
-    private EntityClientPlayerMP player = Minecraft.getMinecraft().thePlayer;
-    private String[] skillKeys = new String[5];
+    private final EntityClientPlayerMP player = Minecraft.getMinecraft().thePlayer;
+    private final String[] skillKeys = new String[5];
     private boolean isScrollPressed = false;
     private int scrollPos = 0; //up to 93
     private Skill heldSkill;

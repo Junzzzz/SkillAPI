@@ -1,5 +1,7 @@
 package skillapi.api.gui.base;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.gui.FontRenderer;
@@ -13,6 +15,7 @@ import java.util.List;
  * @author Jun
  * @date 2021/3/8.
  */
+@SideOnly(Side.CLIENT)
 public abstract class GenericGui {
     protected GenericGui parent;
     protected final List<BaseComponent> components = new LinkedList<>();
@@ -105,10 +108,10 @@ public abstract class GenericGui {
         return GuiApi.minecraft.renderEngine;
     }
 
-    protected final void drawCenteredString(String text, int centerX, int centerY, int color) {
+    protected final void drawCenteredString(String text, int centerX, int y, int color) {
         final FontRenderer fontRenderer = getFontRenderer();
         text = translate(text);
-        fontRenderer.drawString(text, centerX - fontRenderer.getStringWidth(text) / 2, centerY, color);
+        fontRenderer.drawString(text, centerX - fontRenderer.getStringWidth(text) / 2, y, color);
     }
 
     protected final void drawString(String text, int x, int y, int color) {

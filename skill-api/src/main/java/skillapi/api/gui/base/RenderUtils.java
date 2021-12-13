@@ -2,9 +2,11 @@ package skillapi.api.gui.base;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
 /**
@@ -15,6 +17,9 @@ import org.lwjgl.opengl.GL11;
 public final class RenderUtils {
     /**
      * Draws a rectangle with a vertical gradient between the specified colors.
+     *
+     * @param colorTop    (RGBA) The color of top
+     * @param colorBottom (RGBA) The color of bottom
      */
     public static void drawGradientRect(int left, int top, int right, int bottom, int colorTop, int colorBottom) {
         float f = (float) (colorTop >> 24 & 255) / 255.0F;
@@ -28,7 +33,7 @@ public final class RenderUtils {
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glDisable(GL11.GL_ALPHA_TEST);
-        OpenGlHelper.glBlendFunc(770, 771, 1, 0);
+        OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
         GL11.glShadeModel(GL11.GL_SMOOTH);
         Tessellator tessellator = Tessellator.instance;
         tessellator.startDrawingQuads();
@@ -43,6 +48,28 @@ public final class RenderUtils {
         GL11.glDisable(GL11.GL_BLEND);
         GL11.glEnable(GL11.GL_ALPHA_TEST);
         GL11.glEnable(GL11.GL_TEXTURE_2D);
+    }
+
+    public static void drawRect(int mode, int left, int top, int right, int bottom, int rgba) {
+        float f = (float) (rgba >> 24 & 255) / 255.0F;
+        float f1 = (float) (rgba >> 16 & 255) / 255.0F;
+        float f2 = (float) (rgba >> 8 & 255) / 255.0F;
+        float f3 = (float) (rgba & 255) / 255.0F;
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glDisable(GL11.GL_TEXTURE_2D);
+        GL11.glDisable(GL11.GL_ALPHA_TEST);
+        OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
+        Tessellator tessellator = Tessellator.instance;
+        tessellator.startDrawing(mode);
+        tessellator.setColorRGBA_F(f1, f2, f3, f);
+        tessellator.addVertex(right, top, 0.0D);
+        tessellator.addVertex(left, top, 0.0D);
+        tessellator.addVertex(left, bottom, 0.0D);
+        tessellator.addVertex(right, bottom, 0.0D);
+        tessellator.draw();
+        GL11.glEnable(GL11.GL_ALPHA_TEST);
+        GL11.glEnable(GL11.GL_TEXTURE_2D);
+        GL11.glDisable(GL11.GL_BLEND);
     }
 
     /**
@@ -88,5 +115,9 @@ public final class RenderUtils {
     public static void drawCenteredString(String text, int x, int y, int color) {
         final FontRenderer fontRenderer = GuiApi.minecraft.fontRenderer;
         fontRenderer.drawStringWithShadow(text, x - fontRenderer.getStringWidth(text) / 2, y, color);
+    }
+
+    public static void bindTexture(ResourceLocation resourceLocation) {
+        Minecraft.getMinecraft().getTextureManager().bindTexture(resourceLocation);
     }
 }
