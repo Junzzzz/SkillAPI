@@ -2,6 +2,7 @@ package skillapi.utils;
 
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.storage.SaveFormatOld;
+import skillapi.skill.SkillExecutor;
 import skillapi.skill.Skills;
 
 import java.io.File;
@@ -14,6 +15,7 @@ public final class SkillServer {
 
     public static void init(MinecraftServer server) {
         SkillServer.server = server;
+        SkillExecutor.init();
         SkillNBT.init();
         Skills.init();
     }
