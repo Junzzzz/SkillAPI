@@ -14,16 +14,20 @@ import skillapi.api.gui.base.listener.MouseReleasedListener;
 import skillapi.client.GuiKnownSkills;
 import skillapi.client.SkillAPIClientProxy;
 import skillapi.client.gui.component.KnownSkillListComponent;
+import skillapi.packet.PacketHandler;
+import skillapi.packet.SkillBarSyncPacket;
 import skillapi.skill.AbstractSkill;
 import skillapi.skill.PlayerSkillProperties;
 import skillapi.skill.Skills;
 import skillapi.utils.ClientUtils;
 
+import static skillapi.skill.PlayerSkillProperties.MAX_SKILL_BAR;
+
 /**
  * @author Jun
  */
 public class KnownSkillsGui extends BaseGui {
-    private final String[] skillKeys = new String[5];
+    private final String[] skillKeys = new String[MAX_SKILL_BAR];
     private KnownSkillListComponent skillListComponent;
     private PlayerSkillProperties properties;
 
@@ -53,9 +57,7 @@ public class KnownSkillsGui extends BaseGui {
     public void render(int mouseX, int mouseY, float partialTicks) {
         drawDefaultBackground();
         drawBackground();
-
-        // TODO Render skill bar
-
+        renderSkillBar();
         // Dragging
         if (isDragging) {
             renderDragging(mouseX, mouseY);
@@ -73,11 +75,6 @@ public class KnownSkillsGui extends BaseGui {
         // Title
         FontRenderer fontRenderer = getFontRenderer();
         fontRenderer.drawStringWithShadow(I18n.format("skill.gui.title"), width / 2 - 73, height / 2 - 61, 0xFCFC80);
-
-        for (int i = 0; i < skillKeys.length; i++) {
-            drawCenteredString(skillKeys[i], width / 2 - 88, height / 2 - 44 + (23 * i), 0xE2E2E9);
-        }
-        GL11.glDisable(GL11.GL_BLEND);
     }
 
     @Override
@@ -104,8 +101,11 @@ public class KnownSkillsGui extends BaseGui {
                     if (layouts[i].isIn(x, y)) {
                         // Set skill bar
                         properties.setSkillBar(i, draggingSkill);
+                        break;
                     }
                 }
+                // Sync
+                PacketHandler.sendToServer(new SkillBarSyncPacket(properties.getSkillBar()));
             }
         };
         FocusChangedListener focus = f -> {
@@ -116,6 +116,18 @@ public class KnownSkillsGui extends BaseGui {
             }
         };
         listener.on(pressed, release, focus);
+    }
+
+    private void renderSkillBar() {
+        AbstractSkill[] skillBar = properties.getSkillBar();
+        for (int i = 0; i < MAX_SKILL_BAR; i++) {
+            if (skillBar[i] == null) {
+                drawCenteredString(skillKeys[i], width / 2 - 88, height / 2 - 44 + (23 * i), 0xE2E2E9);
+            } else {
+                String firstName = skillBar[i].getLocalizedName().substring(0, 1);
+                drawCenteredString(firstName, width / 2 - 88, height / 2 - 44 + (23 * i), 0xE2E2E9);
+            }
+        }
     }
 
     private void renderDragging(int x, int y) {

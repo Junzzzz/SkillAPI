@@ -89,16 +89,17 @@ public final class RenderUtils {
     /**
      * Draw a textured rectangle at the zero point of the Z axis
      *
-     * @param x      Window coordinate X
-     * @param y      Window coordinate Y
-     * @param u      Texture coordinate X
-     * @param v      Texture coordinate Y
-     * @param width  The width to be drawn in the window
-     * @param height The height to be drawn in the window
-     * @param uWidth The width to be drawn in the window
+     * @param x       Window coordinate X
+     * @param y       Window coordinate Y
+     * @param u       Texture coordinate X
+     * @param v       Texture coordinate Y
+     * @param width   The width to be drawn in the window
+     * @param height  The height to be drawn in the window
+     * @param uWidth  The width to be drawn in the window
      * @param vHeight The height to be drawn in the texture
      */
-    public static void drawTexturedModalRect(int x, int y, int u, int v, int width, int height, int uWidth, int vHeight) {
+    public static void drawTexturedModalRect(int x, int y, int u, int v, int width, int height, int uWidth,
+                                             int vHeight) {
         double f = 0.00390625F;
         Tessellator tessellator = Tessellator.instance;
         tessellator.startDrawingQuads();
@@ -113,7 +114,7 @@ public final class RenderUtils {
      * Renders the specified text to the screen, center-aligned.
      */
     public static void drawCenteredString(String text, int x, int y, int color) {
-        final FontRenderer fontRenderer = GuiApi.minecraft.fontRenderer;
+        FontRenderer fontRenderer = GuiApi.minecraft.fontRenderer;
         fontRenderer.drawStringWithShadow(text, x - fontRenderer.getStringWidth(text) / 2, y, color);
     }
 

@@ -18,7 +18,7 @@ public final class ListenerRegistry {
 
     private final GenericGui base;
     private final Map<Class<? extends GenericListener>, Map<BaseComponent, List<GenericListener>>> local =
-            new HashMap<>(8);
+            new LinkedHashMap<>(8);
 
     private BaseComponent mappingComponent;
 
@@ -31,7 +31,7 @@ public final class ListenerRegistry {
     }
 
     protected static void init() {
-        GLOBAL = new HashMap<>(8);
+        GLOBAL = new LinkedHashMap<>(8);
     }
 
     protected static void clean() {
@@ -104,6 +104,9 @@ public final class ListenerRegistry {
             }
             map = this.local;
         }
+        if (map == null) {
+            return;
+        }
         final Map<BaseComponent, List<GenericListener>> m = map.get(clz);
         if (m == null) {
             return;
@@ -124,11 +127,14 @@ public final class ListenerRegistry {
             }
             map = this.local;
         }
-        final Map<BaseComponent, List<GenericListener>> m = map.get(clz);
+        if (map == null) {
+            return;
+        }
+        Map<BaseComponent, List<GenericListener>> m = map.get(clz);
         if (m == null) {
             return;
         }
-        final List<T> listeners = (List<T>) m.values().stream().flatMap(Collection::stream).collect(Collectors.toList());
+        List<T> listeners = (List<T>) m.values().stream().flatMap(Collection::stream).collect(Collectors.toList());
         for (T listener : listeners) {
             caller.call(listener);
         }
@@ -138,6 +144,9 @@ public final class ListenerRegistry {
     public static <T extends GenericListener> void call(BaseComponent component, Class<T> clz, Caller<T> caller) {
         if (LocalListener.class.isAssignableFrom(clz)) {
             throw new SkillRuntimeException("Not supported.");
+        }
+        if (GLOBAL == null) {
+            return;
         }
         // Global only
         final Map<BaseComponent, List<GenericListener>> m = GLOBAL.get(clz);

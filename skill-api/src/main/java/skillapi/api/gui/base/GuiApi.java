@@ -12,7 +12,7 @@ import net.minecraft.client.gui.ScaledResolution;
  */
 @SideOnly(Side.CLIENT)
 public final class GuiApi extends GuiScreen {
-    protected static Minecraft minecraft;
+    protected static Minecraft minecraft = Minecraft.getMinecraft();
     protected static int scaleFactor;
 
     private BaseGui currentGui;
@@ -76,6 +76,10 @@ public final class GuiApi extends GuiScreen {
         this.currentGui.onClose();
         this.currentGui = gui;
         initGui();
+    }
+
+    public static void handleUserInput(boolean allow) {
+        minecraft.currentScreen.allowUserInput = allow;
     }
 
     public static void displayGui(BaseGui gui) {

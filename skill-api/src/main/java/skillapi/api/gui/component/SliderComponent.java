@@ -25,12 +25,24 @@ public class SliderComponent extends BaseComponent {
     private int buttonMinY;
     private int buttonMaxY;
 
+    private boolean movable = true;
+
+    private SliderRenderer renderer = (c, b, x, y) -> defaultSliderRenderer(c, b);
+
     public SliderComponent(Layout sliderBox) {
         super(sliderBox);
         this.sliderButton = new Layout(sliderBox.getX(), sliderBox.getY(), sliderBox.getWidth(), sliderBox.getHeight());
 
         this.isDragging = false;
         this.buttonClickPosY = -1;
+    }
+
+    public void setMovable(boolean movable) {
+        this.movable = movable;
+    }
+
+    public void setRenderer(SliderRenderer renderer) {
+        this.renderer = renderer;
     }
 
     public int getButtonHeight() {
@@ -53,7 +65,7 @@ public class SliderComponent extends BaseComponent {
      * @return Value of ratio
      */
     public double getRatio() {
-        if (this.layout.getHeight() == this.sliderButton.getHeight()) {
+        if (this.layout.getHeight() == this.sliderButton.getHeight() || !this.movable) {
             return 1.0;
         }
         return 1.0 * (this.sliderButton.getY() - this.layout.getY()) / (this.layout.getHeight() - this.sliderButton.getHeight());
@@ -63,9 +75,11 @@ public class SliderComponent extends BaseComponent {
     protected void listener(ListenerRegistry listener) {
         MousePressedListener press = (x, y) -> {
             // Click slider button -> Start dragging
-            isDragging = true;
-            buttonClickPosY = y;
-            buttonInitialY = this.sliderButton.getY();
+            if (this.movable && sliderButton.isIn(x, y)) {
+                isDragging = true;
+                buttonClickPosY = y;
+                buttonInitialY = this.sliderButton.getY();
+            }
         };
         MouseReleasedListener release = (x, y) -> {
             if (isDragging) {
@@ -96,23 +110,25 @@ public class SliderComponent extends BaseComponent {
             this.sliderButton.setY(y);
         }
         // Render button
-        renderSlider();
+        renderer.render(layout, sliderButton, mouseX, mouseY);
     }
 
-    private void renderSlider() {
+    private static void defaultSliderRenderer(Layout layout, Layout sliderButton) {
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         OpenGlHelper.glBlendFunc(770, 771, 1, 0);
 
         drawRect(layout.getX(), layout.getY(), layout.getRight(), layout.getBottom(), 0x000000);
         drawRect(sliderButton.getX(), sliderButton.getY(), sliderButton.getRight(), sliderButton.getBottom(), 0x808080);
-        drawRect(sliderButton.getX(), sliderButton.getY(), sliderButton.getRight() - 1, sliderButton.getBottom() - 1, 0xC0C0C0);
+        drawRect(sliderButton.getX(), sliderButton.getY(), sliderButton.getRight() - 1, sliderButton.getBottom() - 1,
+                0xC0C0C0);
 
         GL11.glEnable(GL11.GL_TEXTURE_2D);
         GL11.glDisable(GL11.GL_BLEND);
     }
 
-    private void drawRect(int x1, int y1, int x2, int y2, int color) {
+
+    private static void drawRect(int x1, int y1, int x2, int y2, int color) {
         float r = (float) (color >> 16 & 255) / 255.0F;
         float g = (float) (color >> 8 & 255) / 255.0F;
         float b = (float) (color & 255) / 255.0F;
@@ -125,5 +141,18 @@ public class SliderComponent extends BaseComponent {
         tessellator.addVertex(x2, y1, 0.0D);
         tessellator.addVertex(x1, y1, 0.0D);
         tessellator.draw();
+    }
+
+    @FunctionalInterface
+    public interface SliderRenderer {
+        /**
+         * Called when rendering slider button
+         *
+         * @param component Component layout
+         * @param button    Slider button layout
+         * @param x         Mouse X
+         * @param y         Mouse Y
+         */
+        void render(Layout component, Layout button, int x, int y);
     }
 }

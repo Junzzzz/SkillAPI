@@ -14,8 +14,6 @@ public class SkillPacketHandler {
     public static final String[] CHANNELS = {"APISKILLINIT", "APISKILLGET", "APISKILLUPDATE", "APISKILLTRIGGER", "APISKILLACTIVATE", "APISKILLTICK", "APISKILLMANA"};
     public static Map<String, SkillPacket> packets = new HashMap<String, SkillPacket>();
 
-    private int count = 0;
-
     static {
         packets.put(CHANNELS[0], new InitSkillPacket());
         packets.put(CHANNELS[1], new LearnSkillPacket());
@@ -28,7 +26,6 @@ public class SkillPacketHandler {
 
     @SubscribeEvent
     public void onServerPacket(FMLNetworkEvent.ServerCustomPacketEvent event) {
-        System.out.println(Thread.currentThread().getName() + " " + event.packet.channel() + " " + (++count));
         SkillPacket skpacket = packets.get(event.packet.channel());
         if (skpacket != null) {
             skpacket.fromBytes(event.packet.payload());
@@ -42,7 +39,6 @@ public class SkillPacketHandler {
 
     @SubscribeEvent
     public void onClientPacket(FMLNetworkEvent.ClientCustomPacketEvent event) {
-        System.out.println(Thread.currentThread().getName() + " " + event.packet.channel() + " " + (++count));
         SkillPacket skpacket = packets.get(event.packet.channel());
         if (skpacket != null) {
             skpacket.fromBytes(event.packet.payload());

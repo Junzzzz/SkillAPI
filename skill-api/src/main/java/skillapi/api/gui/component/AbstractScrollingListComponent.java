@@ -15,11 +15,11 @@ import java.util.List;
  */
 public abstract class AbstractScrollingListComponent<T> extends BaseComponent {
     private CachedTexture cachedTexture;
-    private final SliderComponent slider;
+    protected final SliderComponent slider;
 
     private final Layout elementsLayout;
     private final int slotHeight;
-    private int movableWindowHeight;
+    protected int movableWindowHeight;
     private final ArrayList<T> dataList;
 
     protected int selectedIndex = -1;
@@ -109,8 +109,8 @@ public abstract class AbstractScrollingListComponent<T> extends BaseComponent {
     }
 
     public void refresh() {
-        setSliderButtonHeight();
         refreshCachedTexture();
+        setSliderButtonHeight();
     }
 
     public List<T> getList() {
@@ -262,17 +262,17 @@ public abstract class AbstractScrollingListComponent<T> extends BaseComponent {
         GL11.glEnable(GL11.GL_TEXTURE_2D);
     }
 
-    private void renderList() {
+    protected void renderList() {
         final int y = (int) (slider.getRatio() * this.movableWindowHeight);
-        final int fromY = y * getScaleFactor();
 
-        final int showHeight = this.movableWindowHeight > 0 ? this.layout.getHeight() - 2 : this.cachedTexture.getHeight();
+        final int showHeight = this.movableWindowHeight > 0 ? this.layout.getHeight() - 2 :
+                this.cachedTexture.getHeight();
 
         // Render elements
         this.cachedTexture.render(elementsLayout.getX(),
                 elementsLayout.getY(),
                 0,
-                fromY,
+                y,
                 this.cachedTexture.getWidth(),
                 showHeight);
     }
