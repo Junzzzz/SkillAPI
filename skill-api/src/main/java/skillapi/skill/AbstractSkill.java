@@ -13,14 +13,14 @@ public abstract class AbstractSkill extends AbstractSkillEffect {
     protected String name;
 
     protected int mana;
-    protected int cooldown;
+    protected long cooldown;
     protected int charge;
 
     public final int getMana() {
         return mana;
     }
 
-    public final int getCooldown() {
+    public final long getCooldown() {
         return cooldown;
     }
 

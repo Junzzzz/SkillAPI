@@ -24,7 +24,7 @@ public abstract class AbstractStaticSkill extends AbstractSkill {
             return this;
         }
 
-        StaticSkillBuilder cooldown(int cooldown) {
+        StaticSkillBuilder cooldown(long cooldown) {
             if (cooldown < 0) {
                 throw new SkillRuntimeException("Invalid skill parameter [cooldown]: %d", cooldown);
             }

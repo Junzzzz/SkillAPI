@@ -35,7 +35,7 @@ public class DynamicSkillBuilder {
 
     @Getter
     @Setter
-    private int cooldown;
+    private long cooldown;
 
     @Getter
     @Setter

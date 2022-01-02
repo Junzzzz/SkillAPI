@@ -28,6 +28,7 @@ public class PlayerSkillProperties implements IExtendedEntityProperties {
 
     private EntityPlayer player;
     private AbstractSkill[] skillBar;
+    private Cooldown[] cooldowns;
     private Set<AbstractSkill> knownSkills;
 
     @Getter
@@ -45,6 +46,14 @@ public class PlayerSkillProperties implements IExtendedEntityProperties {
     public void setSkillBar(int index, AbstractSkill skill) {
         if (index < skillBar.length && index >= 0) {
             this.skillBar[index] = skill;
+
+            // Reset cooldown
+            if (this.cooldowns[index] == null) {
+                this.cooldowns[index] = Cooldown.get(player, skill.getCooldown());
+            } else {
+                this.cooldowns[index].setCooldown(skill.cooldown);
+            }
+            this.cooldowns[index].setCooling();
         }
     }
 
@@ -87,14 +96,17 @@ public class PlayerSkillProperties implements IExtendedEntityProperties {
             }
         }
         list = tag.getTagList(TAG_SKILL_BAR, 8);
-        if (list.tagCount() <= 5) {
+        if (list.tagCount() <= MAX_SKILL_BAR) {
             for (int i = 0; i < list.tagCount(); i++) {
                 AbstractSkill skill = Skills.get(list.getStringTagAt(i));
                 if (skill != null) {
+                    cooldowns[i] = Cooldown.get(player, skill.getCooldown());
+                    cooldowns[i].setCooling();
                     skillBar[i] = skill;
                 }
             }
         }
+
         this.mana = tag.getInteger(TAG_MANA);
         this.lastUpdateTime = tag.getLong(TAG_TIME);
     }
@@ -104,6 +116,7 @@ public class PlayerSkillProperties implements IExtendedEntityProperties {
         if (entity instanceof EntityPlayer) {
             this.player = (EntityPlayer) entity;
             this.skillBar = new AbstractSkill[MAX_SKILL_BAR];
+            this.cooldowns = new Cooldown[MAX_SKILL_BAR];
             this.knownSkills = new LinkedHashSet<>();
             this.mana = Skills.MAX_MANA;
             this.lastUpdateTime = System.currentTimeMillis();

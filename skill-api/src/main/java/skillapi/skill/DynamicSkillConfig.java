@@ -151,7 +151,7 @@ public class DynamicSkillConfig {
             node.get("skills").elements().forEachRemaining(skillNode -> {
                 DynamicSkillBuilder builder = new DynamicSkillBuilder(skillNode.get("id").intValue());
                 builder.setMana(skillNode.get("mana").intValue());
-                builder.setCooldown(skillNode.get("cooldown").intValue());
+                builder.setCooldown(skillNode.get("cooldown").longValue());
                 builder.setCharge(skillNode.get("charge").intValue());
                 builder.setName(constant.get(builder.getUniqueId() + ".name"));
                 builder.setDescription(constant.get(builder.getUniqueId() + ".description"));
