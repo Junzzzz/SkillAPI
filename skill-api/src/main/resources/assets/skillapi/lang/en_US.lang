@@ -21,6 +21,7 @@ skill.gui.title=Known Skills
 skill.gui.config.delete.title=Whether to delete the skill [%1$s]?
 skill.gui.config.delete.tip=The skills will not be restored!
 
+skill.constant.error.sync=Data is out of sync
 skill.constant.invalidLeanBook=Invalid Book
 skill.constant.skillBook=Skill Book:
 skill.constant.noDescription=No description

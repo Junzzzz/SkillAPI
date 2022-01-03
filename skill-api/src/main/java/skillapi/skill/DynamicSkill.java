@@ -13,15 +13,11 @@ public class DynamicSkill extends AbstractSkill {
     public DynamicSkill(int uniqueId, SkillEffect[] effects) {
         this.uniqueId = uniqueId;
         this.effects = effects;
+        this.name = Skills.PREFIX_DYNAMIC + uniqueId;
     }
 
     public int getUniqueId() {
         return uniqueId;
-    }
-
-    @Override
-    public String getUnlocalizedName() {
-        return Skills.PREFIX_DYNAMIC + uniqueId;
     }
 
     @Override

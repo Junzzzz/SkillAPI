@@ -3,6 +3,7 @@ package skillapi.utils;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import skillapi.common.SkillLog;
+import skillapi.server.SkillServer;
 
 import java.io.File;
 import java.io.FileInputStream;

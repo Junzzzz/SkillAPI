@@ -54,7 +54,7 @@ public abstract class AbstractSkill extends AbstractSkillEffect {
 
         AbstractSkill that = (AbstractSkill) o;
 
-        return Objects.equals(name, that.name);
+        return Objects.equals(getUnlocalizedName(), that.getUnlocalizedName());
     }
 
     @Override

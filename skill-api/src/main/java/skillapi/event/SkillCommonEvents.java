@@ -7,7 +7,7 @@ import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import skillapi.Application;
 import skillapi.api.annotation.SkillEvent;
-import skillapi.skill.PlayerSkillProperties;
+import skillapi.skill.PlayerSkills;
 
 /**
  * @author Jun
@@ -17,7 +17,7 @@ public class SkillCommonEvents {
     @SubscribeEvent
     public void onConstructing(EntityEvent.EntityConstructing event) {
         if (event.entity instanceof EntityPlayer) {
-            event.entity.registerExtendedProperties(Application.MOD_ID, new PlayerSkillProperties());
+            event.entity.registerExtendedProperties(Application.MOD_ID, new PlayerSkills());
         }
     }
 
@@ -26,8 +26,7 @@ public class SkillCommonEvents {
         if (event.entityLiving instanceof AbstractClientPlayer) {
             // About 1 second
             if (event.entityLiving.ticksExisted % 20 == 0) {
-                PlayerSkillProperties skill = PlayerSkillProperties.get((AbstractClientPlayer) event.entityLiving);
-                skill.restoreMana(1);
+                PlayerSkills skill = PlayerSkills.get((AbstractClientPlayer) event.entityLiving);
             }
         }
     }

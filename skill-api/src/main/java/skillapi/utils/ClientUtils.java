@@ -8,8 +8,11 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.Timer;
 import net.minecraft.util.Vec3;
+import skillapi.common.SkillRuntimeException;
 
+import java.lang.reflect.Field;
 import java.util.List;
 
 /**
@@ -18,7 +21,23 @@ import java.util.List;
  */
 @SideOnly(Side.CLIENT)
 public class ClientUtils {
-    private static final Minecraft MC = Minecraft.getMinecraft();
+    private static final Minecraft MC;
+    private static final Timer TIMER;
+
+    static {
+        MC = Minecraft.getMinecraft();
+        try {
+            Field timer = MC.getClass().getDeclaredField("timer");
+            timer.setAccessible(true);
+            TIMER = (Timer) timer.get(MC);
+        } catch (Exception e) {
+            throw new SkillRuntimeException("Failed to init skill", e);
+        }
+    }
+
+    public static EntityLivingBase getPointedLivingEntity(double distance) {
+        return getPointedLivingEntity(distance, TIMER.renderPartialTicks);
+    }
 
     public static EntityLivingBase getPointedLivingEntity(double distance, float renderTickTime) {
         Vec3 vec3 = MC.renderViewEntity.getPosition(renderTickTime);
@@ -27,7 +46,9 @@ public class ClientUtils {
         Entity pointedEntity = null;
         double f1 = 1.0D;
         @SuppressWarnings("rawtypes")
-        List list = MC.theWorld.getEntitiesWithinAABBExcludingEntity(MC.renderViewEntity, MC.renderViewEntity.boundingBox.addCoord(vec31.xCoord * distance, vec31.yCoord * distance, vec31.zCoord * distance).expand(f1, f1, f1));
+        List list = MC.theWorld.getEntitiesWithinAABBExcludingEntity(MC.renderViewEntity,
+                MC.renderViewEntity.boundingBox.addCoord(vec31.xCoord * distance, vec31.yCoord * distance,
+                        vec31.zCoord * distance).expand(f1, f1, f1));
         double minDistance = distance;
 
         for (Object o : list) {
@@ -74,5 +95,9 @@ public class ClientUtils {
 
     public static EntityClientPlayerMP getPlayer() {
         return MC.thePlayer;
+    }
+
+    public static long getTotalTime() {
+        return MC.theWorld.getTotalWorldTime();
     }
 }

@@ -5,18 +5,13 @@ import net.minecraftforge.client.GuiIngameForge;
 import org.lwjgl.opengl.GL11;
 import skillapi.api.gui.base.RenderUtils;
 import skillapi.skill.AbstractSkill;
-import skillapi.skill.PlayerSkillProperties;
+
+import static skillapi.client.SkillClient.SKILL;
 
 /**
  * @author Jun
  */
 public class SkillHud {
-    private static PlayerSkillProperties SKILL;
-
-    public static void init(PlayerSkillProperties properties) {
-        SKILL = properties;
-    }
-
     public static void drawHud(int width, int height) {
         if (SKILL == null) {
             // After initialization

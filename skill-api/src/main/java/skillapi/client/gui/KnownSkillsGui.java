@@ -12,16 +12,16 @@ import skillapi.api.gui.base.listener.FocusChangedListener;
 import skillapi.api.gui.base.listener.MousePressedListener;
 import skillapi.api.gui.base.listener.MouseReleasedListener;
 import skillapi.client.GuiKnownSkills;
-import skillapi.client.SkillAPIClientProxy;
+import skillapi.client.SkillClient;
 import skillapi.client.gui.component.KnownSkillListComponent;
 import skillapi.packet.PacketHandler;
 import skillapi.packet.SkillBarSyncPacket;
 import skillapi.skill.AbstractSkill;
-import skillapi.skill.PlayerSkillProperties;
+import skillapi.skill.PlayerSkills;
 import skillapi.skill.Skills;
 import skillapi.utils.ClientUtils;
 
-import static skillapi.skill.PlayerSkillProperties.MAX_SKILL_BAR;
+import static skillapi.skill.PlayerSkills.MAX_SKILL_BAR;
 
 /**
  * @author Jun
@@ -29,7 +29,7 @@ import static skillapi.skill.PlayerSkillProperties.MAX_SKILL_BAR;
 public class KnownSkillsGui extends BaseGui {
     private final String[] skillKeys = new String[MAX_SKILL_BAR];
     private KnownSkillListComponent skillListComponent;
-    private PlayerSkillProperties properties;
+    private PlayerSkills properties;
 
     private boolean isDragging = false;
     private int draggingOffsetX;
@@ -39,9 +39,9 @@ public class KnownSkillsGui extends BaseGui {
     @Override
     protected void init() {
         for (int i = 0; i < skillKeys.length; i++) {
-            skillKeys[i] = Keyboard.getKeyName(SkillAPIClientProxy.skillKeyBindings[i].getKeyCode());
+            skillKeys[i] = Keyboard.getKeyName(SkillClient.unleashSkillKey[i].getKeyCode());
         }
-        this.properties = PlayerSkillProperties.get(ClientUtils.getPlayer());
+        this.properties = PlayerSkills.get(ClientUtils.getPlayer());
         Layout listLayout = new Layout(width / 2 - 75, height / 2 - 49, 154, 108);
         Layout sliderLayout = new Layout(width / 2 + 83, height / 2 - 49, 12, 108);
 

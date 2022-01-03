@@ -1,16 +1,15 @@
 package skillapi.api.annotation.impl;
 
-import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.ModMetadata;
 import cpw.mods.fml.common.eventhandler.Event;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
-import org.apache.logging.log4j.Level;
 import skillapi.Application;
 import skillapi.api.annotation.SkillAnnotation;
 import skillapi.api.annotation.SkillAnnotationRegister;
 import skillapi.api.annotation.SkillEvent;
 import skillapi.common.EventBusHandler;
+import skillapi.common.SkillLog;
 import skillapi.common.SkillRuntimeException;
 import skillapi.event.base.BaseSkillEvent;
 import skillapi.utils.ClassUtils;
@@ -124,14 +123,14 @@ public final class SkillEventAnnotationImpl implements SkillAnnotationRegister<S
     private void registerEvent(Class<?> target, Method method, Class<?> eventClass, String eventName, String eventPackage, Object instance) {
         if (eventPackage.startsWith("cpw.mods.fml.common.gameevent") || eventName.startsWith("cpw.mods.fml.common.network.FMLNetworkEvent$")) {
             if (!EventBusHandler.forceRegisterFmlEvent(instance, method, eventClass)) {
-                FMLLog.log(Level.ERROR, "FML event registration failed. From: %s", target.getName());
+                SkillLog.error("FML event registration failed. From: %s", target.getName());
             }
         } else if (eventPackage.startsWith("net.minecraftforge.event") || eventPackage.startsWith("net.minecraftforge.client.event")) {
             if (!EventBusHandler.forceRegisterMcEvent(instance, method, eventClass)) {
-                FMLLog.log(Level.ERROR, "Minecraft event registration failed From: %s", target.getName());
+                SkillLog.error("Minecraft event registration failed From: %s", target.getName());
             }
         } else {
-            FMLLog.log(Level.ERROR, "Unable to register event: %s", eventName);
+            SkillLog.error("Unable to register event: %s", eventName);
         }
     }
 

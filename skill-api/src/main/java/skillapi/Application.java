@@ -3,20 +3,16 @@ package skillapi;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.SidedProxy;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.event.FMLServerAboutToStartEvent;
-import cpw.mods.fml.common.event.FMLServerStartingEvent;
+import cpw.mods.fml.common.event.*;
 import cpw.mods.fml.common.network.FMLEventChannel;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.relauncher.FMLLaunchHandler;
 import net.minecraft.server.management.ServerConfigurationManager;
 import net.sf.cglib.proxy.Enhancer;
-import skillapi.api.SkillApi;
 import skillapi.common.SkillProxy;
 import skillapi.packets.SkillPacketHandler;
 import skillapi.server.PacketInjection;
-import skillapi.utils.SkillServer;
+import skillapi.server.SkillServer;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,7 +31,6 @@ public final class Application {
 
     @EventHandler
     public void pre(FMLPreInitializationEvent event) {
-        SkillApi.preInit(event);
         proxy.preInit(event);
 
         channels = new HashMap<>(16);
@@ -49,11 +44,14 @@ public final class Application {
 
     @EventHandler
     public void init(FMLInitializationEvent event) {
-        SkillApi.init(event);
         proxy.init(event);
-
-        oldProxy.loadSkillKeyBindings();
+//        oldProxy.loadSkillKeyBindings();
         oldProxy.register();
+    }
+
+    @EventHandler
+    public void postInit(FMLPostInitializationEvent event) {
+        proxy.postInit(event);
     }
 
     @EventHandler

@@ -6,58 +6,66 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.ChatComponentText;
 import skillapi.api.annotation.SkillPacket;
 import skillapi.skill.AbstractSkill;
+import skillapi.skill.Cooldown;
+import skillapi.skill.PlayerSkills;
 import skillapi.skill.SkillExecutor;
-import skillapi.skill.Skills;
-
-import java.nio.charset.StandardCharsets;
 
 /**
  * @author Jun
  */
 @SkillPacket(serializer = PlayerUnleashSkillPacket.Serializer.class)
 public class PlayerUnleashSkillPacket extends AbstractPacket {
-    private final AbstractSkill skill;
+    private final int skillIndex;
     private final int targetEntityId;
 
-    public PlayerUnleashSkillPacket(AbstractSkill skill, EntityLivingBase target) {
-        this.skill = skill;
-        this.targetEntityId = target.getEntityId();
+    public PlayerUnleashSkillPacket(int skill) {
+        this(skill, null);
     }
 
-    public PlayerUnleashSkillPacket(AbstractSkill skill, int targetEntityId) {
-        this.skill = skill;
+    public PlayerUnleashSkillPacket(int skill, EntityLivingBase target) {
+        this.skillIndex = skill;
+        this.targetEntityId = target == null ? -1 : target.getEntityId();
+    }
+
+    public PlayerUnleashSkillPacket(int skill, int targetEntityId) {
+        this.skillIndex = skill;
         this.targetEntityId = targetEntityId;
     }
 
     @Override
     void run(EntityPlayer player, Side from) {
-        if (targetEntityId < 0) {
-            SkillExecutor.execute(skill, player, null);
-        } else {
-            Entity entity = player.getEntityWorld().getEntityByID(targetEntityId);
-            SkillExecutor.execute(skill, player, (EntityLivingBase) entity);
+        PlayerSkills skills = PlayerSkills.get(player);
+        AbstractSkill skill = skills.getSkill(skillIndex);
+        Cooldown cooldown = skills.getSkillCooldown(skillIndex);
+        if (skill == null || cooldown == null) {
+            return;
+        }
+        if (skills.getMana() > skill.getMana() && cooldown.isCooledDown()) {
+            skills.consumeMana(skill.getMana());
+            player.addChatComponentMessage(new ChatComponentText("consume: " + skill.getMana()));
+            player.addChatComponentMessage(new ChatComponentText("current: " + skills.getMana()));
+            if (targetEntityId < 0) {
+                SkillExecutor.execute(skill, player, null);
+            } else {
+                Entity entity = player.getEntityWorld().getEntityByID(targetEntityId);
+                SkillExecutor.execute(skill, player, (EntityLivingBase) entity);
+            }
         }
     }
 
     static class Serializer implements PacketSerializer<PlayerUnleashSkillPacket> {
         @Override
-        public void serialize(PlayerUnleashSkillPacket packet, ByteBuf buffer) throws Exception {
-            byte[] name = packet.skill.getUnlocalizedName().getBytes(StandardCharsets.UTF_8);
-            buffer.writeInt(name.length);
-            buffer.writeBytes(name);
+        public void serialize(PlayerUnleashSkillPacket packet, ByteBuf buffer) {
+            buffer.writeInt(packet.skillIndex);
             buffer.writeInt(packet.targetEntityId);
         }
 
         @Override
-        public PlayerUnleashSkillPacket deserialize(Class<PlayerUnleashSkillPacket> packetClass, ByteBuf buffer) throws Exception {
-            int i = buffer.readInt();
-            byte[] bytes = new byte[i];
-            buffer.readBytes(bytes);
-            String skillName = new String(bytes, StandardCharsets.UTF_8);
-            i = buffer.readInt();
-            return new PlayerUnleashSkillPacket(Skills.get(skillName), i);
+        public PlayerUnleashSkillPacket deserialize(Class<PlayerUnleashSkillPacket> packetClass, ByteBuf buffer) {
+            return new PlayerUnleashSkillPacket(buffer.readInt(), buffer.readInt());
         }
     }
 }

@@ -82,13 +82,16 @@ public final class GuiApi extends GuiScreen {
         minecraft.currentScreen.allowUserInput = allow;
     }
 
+    public static boolean isDisplaying() {
+        return minecraft.currentScreen != null;
+    }
+
     public static void displayGui(BaseGui gui) {
-        final Minecraft mc = Minecraft.getMinecraft();
-        if (mc.currentScreen instanceof GuiApi) {
-            ((GuiApi) mc.currentScreen).switchGui(gui);
+        if (minecraft.currentScreen instanceof GuiApi) {
+            ((GuiApi) minecraft.currentScreen).switchGui(gui);
         } else {
             ListenerRegistry.init();
-            mc.displayGuiScreen(new GuiApi(gui));
+            minecraft.displayGuiScreen(new GuiApi(gui));
         }
     }
 

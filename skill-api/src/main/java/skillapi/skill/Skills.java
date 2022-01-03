@@ -172,7 +172,7 @@ public final class Skills {
     }
 
     public static ClientSkillInitPacket getInitPacket(EntityPlayerMP player) {
-        PlayerSkillProperties properties = PlayerSkillProperties.get(player);
+        PlayerSkills properties = PlayerSkills.get(player);
         NBTTagCompound tag = new NBTTagCompound();
         properties.saveNBTData(tag);
         return new ClientSkillInitPacket(dynamicSkillConfig, tag);

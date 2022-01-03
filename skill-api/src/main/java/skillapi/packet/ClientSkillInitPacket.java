@@ -8,9 +8,9 @@ import lombok.Setter;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import skillapi.api.annotation.SkillPacket;
-import skillapi.client.SkillHud;
+import skillapi.client.SkillClient;
 import skillapi.skill.DynamicSkillConfig;
-import skillapi.skill.PlayerSkillProperties;
+import skillapi.skill.PlayerSkills;
 import skillapi.skill.Skills;
 
 /**
@@ -29,9 +29,9 @@ public class ClientSkillInitPacket extends AbstractPacket {
     void run(EntityPlayer player, Side from) {
         if (from.isServer()) {
             Skills.clientSwitchConfig(config);
-            PlayerSkillProperties skill = PlayerSkillProperties.get(player);
+            PlayerSkills skill = PlayerSkills.get(player);
             skill.loadNBTData(playerSkillProperties);
-            SkillHud.init(skill);
+            SkillClient.initPlayerSkill(skill);
         }
     }
 }

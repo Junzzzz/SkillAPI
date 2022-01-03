@@ -17,30 +17,48 @@ import java.util.Set;
 /**
  * @author Jun
  */
-public class PlayerSkillProperties implements IExtendedEntityProperties {
+public class PlayerSkills implements IExtendedEntityProperties {
     public static final int MAX_SKILL_BAR = 5;
     public static final int MAX_KNOWN_SKILL = 10;
 
     private static final String TAG_KNOWN = "knownSkills";
     private static final String TAG_MANA = "mana";
-    private static final String TAG_TIME = "lastUpdateTime";
+    private static final String TAG_TIME = "lastManaUpdateTime";
     private static final String TAG_SKILL_BAR = "skillBar";
 
+    @Getter
     private EntityPlayer player;
     private AbstractSkill[] skillBar;
     private Cooldown[] cooldowns;
+    @Getter
     private Set<AbstractSkill> knownSkills;
 
-    @Getter
     private int mana;
-    private long lastUpdateTime;
+    private long lastManaUpdateTime;
 
-    public void restoreMana(int num) {
-        this.mana += num;
+    public synchronized void consumeMana(int num) {
+        this.mana = getMana() - num;
+        this.lastManaUpdateTime = player.getEntityWorld().getTotalWorldTime();
+    }
+
+    public int getMana() {
+        return (int) Math.min(mana + (player.getEntityWorld().getTotalWorldTime() - lastManaUpdateTime) / 20, 20);
     }
 
     public AbstractSkill[] getSkillBar() {
         return skillBar;
+    }
+
+    private boolean insureIndex(int index) {
+        return 0 <= index && index < MAX_SKILL_BAR;
+    }
+
+    public AbstractSkill getSkill(int index) {
+        return insureIndex(index) ? this.skillBar[index] : null;
+    }
+
+    public Cooldown getSkillCooldown(int index) {
+        return insureIndex(index) ? this.cooldowns[index] : null;
     }
 
     public void setSkillBar(int index, AbstractSkill skill) {
@@ -80,7 +98,7 @@ public class PlayerSkillProperties implements IExtendedEntityProperties {
         tag.setInteger(TAG_MANA, this.mana);
 
         // Update time
-        tag.setLong(TAG_TIME, this.lastUpdateTime);
+        tag.setLong(TAG_TIME, this.lastManaUpdateTime);
     }
 
     @Override
@@ -108,7 +126,7 @@ public class PlayerSkillProperties implements IExtendedEntityProperties {
         }
 
         this.mana = tag.getInteger(TAG_MANA);
-        this.lastUpdateTime = tag.getLong(TAG_TIME);
+        this.lastManaUpdateTime = tag.getLong(TAG_TIME);
     }
 
     @Override
@@ -119,13 +137,13 @@ public class PlayerSkillProperties implements IExtendedEntityProperties {
             this.cooldowns = new Cooldown[MAX_SKILL_BAR];
             this.knownSkills = new LinkedHashSet<>();
             this.mana = Skills.MAX_MANA;
-            this.lastUpdateTime = System.currentTimeMillis();
+            this.lastManaUpdateTime = System.currentTimeMillis();
         } else {
             throw new SkillRuntimeException("Unsupported operation");
         }
     }
 
-    public static PlayerSkillProperties get(EntityPlayer player) {
-        return (PlayerSkillProperties) player.getExtendedProperties(Application.MOD_ID);
+    public static PlayerSkills get(EntityPlayer player) {
+        return (PlayerSkills) player.getExtendedProperties(Application.MOD_ID);
     }
 }

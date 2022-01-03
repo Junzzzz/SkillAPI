@@ -4,7 +4,6 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.ModContainer;
-import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLMissingMappingsEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
@@ -12,7 +11,6 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.common.registry.GameRegistry;
-import genericskill.common.CommonProxy;
 import genericskill.entity.EntityShockWave;
 import genericskill.skill.*;
 import net.minecraft.init.Items;
@@ -25,13 +23,8 @@ import static skillapi.item.SkillItemLoader.*;
 public final class GenericSkills {
     public static final String[] skills = {"Creeper Blast", "Levitate", "Summon Wolf", "Super Jump", "Healing Breeze", "Binding Signet", "Unrelenting Force", "Barrage"};
 
-    @SidedProxy(clientSide = "genericskill.client.ClientProxy", serverSide = "genericskill.common.CommonProxy")
-    public static CommonProxy proxy;
-
     @EventHandler
     public void init(FMLInitializationEvent event) {
-        proxy.init(event);
-
         SkillRegistry.registerSkill(new SkillCreeperBlast().setName(skills[0]).setTexture("creeperblast"));
         SkillRegistry.registerSkill(new SkillLevitate().setName(skills[1]).setTexture("levitate"));
         SkillRegistry.registerSkill(new SkillSummonWolf().setName(skills[2]).setTexture("summonwolf"));
@@ -48,9 +41,6 @@ public final class GenericSkills {
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
-        proxy.preInit(event);
-
-
         // Update
         if (event.getSourceFile().getName().endsWith(".jar") && event.getSide().isClient()) {
             try {
@@ -66,7 +56,7 @@ public final class GenericSkills {
 
     @EventHandler
     public void postInit(FMLPostInitializationEvent event) {
-        proxy.postInit(event);
+
     }
 
     @EventHandler

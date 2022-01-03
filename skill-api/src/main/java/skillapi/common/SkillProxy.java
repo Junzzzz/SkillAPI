@@ -6,7 +6,6 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 
 /**
  * @author Jun
- * @date 2020/8/20.
  */
 public interface SkillProxy {
     /**

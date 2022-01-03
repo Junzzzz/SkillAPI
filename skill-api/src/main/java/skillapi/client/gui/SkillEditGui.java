@@ -132,7 +132,7 @@ public final class SkillEditGui extends BaseGui {
                 if (!flag && this.skillBuilder.getMana() != Integer.parseInt(this.mana.getText())) {
                     flag = true;
                 }
-                if (!flag && this.skillBuilder.getCooldown() != Integer.parseInt(this.cooldown.getText())) {
+                if (!flag && this.skillBuilder.getCooldown() != (long) (Double.parseDouble(this.cooldown.getText()) * 1000)) {
                     flag = true;
                 }
                 if (!flag && this.skillBuilder.getCharge() != Integer.parseInt(this.charge.getText())) {
@@ -165,7 +165,7 @@ public final class SkillEditGui extends BaseGui {
                 .forEach(param -> this.skillBuilder.setParam(this.effectIndex, param.getKey(), param.getValue()));
         this.skillBuilder.setName(this.name.getText());
         this.skillBuilder.setMana(Integer.parseInt(this.mana.getText()));
-        this.skillBuilder.setCooldown(Integer.parseInt(this.cooldown.getText()));
+        this.skillBuilder.setCooldown((long) (Double.parseDouble(this.cooldown.getText()) * 1000));
         this.skillBuilder.setCharge(Integer.parseInt(this.charge.getText()));
         this.saveButton.setEnable(false);
         parent.saveSkill(this.skillBuilder);
