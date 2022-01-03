@@ -38,7 +38,7 @@ public class SkillHud {
             if (idx < mana) {
                 // Full
                 RenderUtils.drawTexturedModalRect(x, y, 113, 143, 9, 9);
-            } else {
+            } else if (idx == mana) {
                 // Half
                 RenderUtils.drawTexturedModalRect(x, y, 122, 143, 9, 9);
             }
