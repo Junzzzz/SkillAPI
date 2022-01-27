@@ -150,7 +150,7 @@ public class ClassUtils {
             try {
                 bytes = getBytes(jarFile, entry);
             } catch (IOException e) {
-                SkillLog.error("Read class file failed!", e);
+                SkillLog.error(e, "Read class file failed!");
                 continue;
             }
 
@@ -283,7 +283,7 @@ public class ClassUtils {
                 try {
                     bytes = getBytes(file);
                 } catch (IOException e) {
-                    SkillLog.error("Read class file failed!", e);
+                    SkillLog.error(e, "Read class file failed!");
                     continue;
                 }
 

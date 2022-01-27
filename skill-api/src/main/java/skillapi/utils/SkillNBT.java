@@ -46,7 +46,7 @@ public class SkillNBT {
         try {
             CompressedStreamTools.writeCompressed(nbt, new FileOutputStream(file));
         } catch (IOException e) {
-            SkillLog.error("Failed to save skill data.", e);
+            SkillLog.error(e, "Failed to save skill data.");
         }
     }
 }

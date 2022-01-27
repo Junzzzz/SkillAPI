@@ -100,7 +100,7 @@ public final class Skills {
         } catch (JsonProcessingException e) {
             // recover
             dynamicSkillConfig = tmp;
-            SkillLog.error("Failed to save dynamic skill data.", e);
+            SkillLog.error(e, "Failed to save dynamic skill data.");
         }
     }
 
