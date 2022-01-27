@@ -4,9 +4,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.storage.SaveFormatOld;
+import skillapi.common.SkillNBT;
 import skillapi.skill.SkillExecutor;
 import skillapi.skill.Skills;
-import skillapi.utils.SkillNBT;
 
 import java.io.File;
 

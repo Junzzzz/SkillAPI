@@ -8,9 +8,9 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.StatCollector;
 import skillapi.common.SkillLog;
+import skillapi.common.SkillNBT;
 import skillapi.common.SkillRuntimeException;
 import skillapi.packet.ClientSkillInitPacket;
-import skillapi.utils.SkillNBT;
 
 import java.io.IOException;
 import java.util.*;

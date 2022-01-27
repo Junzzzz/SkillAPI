@@ -29,7 +29,6 @@ import java.util.zip.ZipEntry;
 
 /**
  * @author Jun
- * @date 2020/8/21.
  */
 public class ClassUtils {
     private static final LaunchClassLoader LOADER = Launch.classLoader;
@@ -312,7 +311,7 @@ public class ClassUtils {
             Constructor<T> constructor = target.getDeclaredConstructor(empty);
             constructor.setAccessible(true);
             return constructor.newInstance((Object[]) null);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             throw new SkillRuntimeException(e, msgFormat, msgArgs);
         }
     }

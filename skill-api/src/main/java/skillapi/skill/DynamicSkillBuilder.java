@@ -6,9 +6,9 @@ import lombok.val;
 import net.minecraft.nbt.NBTTagCompound;
 import skillapi.api.annotation.SkillParam;
 import skillapi.api.util.Pair;
+import skillapi.common.SkillNBT;
 import skillapi.common.SkillRuntimeException;
 import skillapi.utils.ClassUtils;
-import skillapi.utils.SkillNBT;
 
 import java.lang.reflect.Field;
 import java.util.*;
