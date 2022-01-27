@@ -9,6 +9,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import skillapi.api.annotation.SkillPacket;
 import skillapi.client.SkillClient;
+import skillapi.packet.base.AbstractPacket;
+import skillapi.packet.serializer.InitPacketSerializer;
 import skillapi.skill.DynamicSkillConfig;
 import skillapi.skill.PlayerSkills;
 import skillapi.skill.Skills;
@@ -26,7 +28,7 @@ public class ClientSkillInitPacket extends AbstractPacket {
     private NBTTagCompound playerSkillProperties;
 
     @Override
-    void run(EntityPlayer player, Side from) {
+    protected void run(EntityPlayer player, Side from) {
         if (from.isServer()) {
             Skills.clientSwitchConfig(config);
             PlayerSkills skill = PlayerSkills.get(player);

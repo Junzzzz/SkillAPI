@@ -8,6 +8,8 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ChatComponentText;
 import skillapi.api.annotation.SkillPacket;
+import skillapi.packet.base.AbstractPacket;
+import skillapi.packet.serializer.PacketSerializer;
 import skillapi.skill.AbstractSkill;
 import skillapi.skill.Cooldown;
 import skillapi.skill.PlayerSkills;
@@ -36,7 +38,7 @@ public class PlayerUnleashSkillPacket extends AbstractPacket {
     }
 
     @Override
-    void run(EntityPlayer player, Side from) {
+    protected void run(EntityPlayer player, Side from) {
         PlayerSkills skills = PlayerSkills.get(player);
         AbstractSkill skill = skills.getSkill(skillIndex);
         Cooldown cooldown = skills.getSkillCooldown(skillIndex);

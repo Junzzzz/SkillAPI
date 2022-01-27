@@ -8,10 +8,10 @@ import lombok.Setter;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ChatComponentText;
 import skillapi.api.annotation.SkillPacket;
+import skillapi.packet.base.AbstractPacket;
 
 /**
  * @author Jun
- * @date 2020/8/26.
  */
 @Getter
 @Setter
@@ -22,7 +22,7 @@ public class TestPacket extends AbstractPacket {
     private String testString;
 
     @Override
-    void run(EntityPlayer player, Side from) {
+    protected void run(EntityPlayer player, Side from) {
         player.addChatComponentMessage(new ChatComponentText(testString));
     }
 }

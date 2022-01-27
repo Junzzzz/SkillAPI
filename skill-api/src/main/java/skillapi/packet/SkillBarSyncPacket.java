@@ -7,6 +7,7 @@ import lombok.Setter;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.StatCollector;
 import skillapi.api.annotation.SkillPacket;
+import skillapi.packet.base.AbstractPacket;
 import skillapi.server.SkillServer;
 import skillapi.skill.AbstractSkill;
 import skillapi.skill.PlayerSkills;
@@ -32,7 +33,7 @@ public class SkillBarSyncPacket extends AbstractPacket {
     }
 
     @Override
-    void run(EntityPlayer player, Side from) {
+    protected void run(EntityPlayer player, Side from) {
         PlayerSkills properties = PlayerSkills.get(player);
         Set<AbstractSkill> knownSkills = properties.getKnownSkills();
         for (int i = 0; i < this.skillNames.length; i++) {

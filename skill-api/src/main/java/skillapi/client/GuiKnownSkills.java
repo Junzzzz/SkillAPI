@@ -17,7 +17,6 @@ import skillapi.Skill;
 import skillapi.SkillRegistry;
 import skillapi.api.gui.base.GuiApi;
 import skillapi.client.gui.SkillConfigGui;
-import skillapi.client.gui.TestGui;
 import skillapi.packets.SkillPacket;
 import skillapi.packets.UpdateSkillPacket;
 
@@ -205,7 +204,7 @@ public final class GuiKnownSkills extends GuiScreen {
         if (button.id == 1) {
             GuiApi.displayGui(new SkillConfigGui());
         } else if (button.id == 2) {
-            GuiApi.displayGui(new TestGui());
+//            GuiApi.displayGui(new TestGui());
         }
     }
 

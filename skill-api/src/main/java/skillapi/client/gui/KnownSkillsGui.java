@@ -14,8 +14,8 @@ import skillapi.api.gui.base.listener.MouseReleasedListener;
 import skillapi.client.GuiKnownSkills;
 import skillapi.client.SkillClient;
 import skillapi.client.gui.component.KnownSkillListComponent;
-import skillapi.packet.PacketHandler;
 import skillapi.packet.SkillBarSyncPacket;
+import skillapi.packet.base.Packet;
 import skillapi.skill.AbstractSkill;
 import skillapi.skill.PlayerSkills;
 import skillapi.skill.Skills;
@@ -50,7 +50,6 @@ public class KnownSkillsGui extends BaseGui {
 
         addButton((width - 206) / 2 - 20, (height - 134) / 2, 20, 20, "</>",
                 () -> displayGui(new SkillConfigGui()));
-        addButton((width - 206) / 2 - 20, (height - 134) / 2 + 25, 20, 20, "<?>", () -> displayGui(new TestGui()));
     }
 
     @Override
@@ -105,7 +104,7 @@ public class KnownSkillsGui extends BaseGui {
                     }
                 }
                 // Sync
-                PacketHandler.sendToServer(new SkillBarSyncPacket(properties.getSkillBar()));
+                Packet.sendToServer(new SkillBarSyncPacket(properties.getSkillBar()));
             }
         };
         FocusChangedListener focus = f -> {

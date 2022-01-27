@@ -5,12 +5,11 @@ import skillapi.api.annotation.SkillAnnotation;
 import skillapi.api.annotation.SkillAnnotationRegister;
 import skillapi.api.annotation.SkillPacket;
 import skillapi.common.SkillRuntimeException;
-import skillapi.packet.AbstractPacket;
-import skillapi.packet.PacketHandler;
+import skillapi.packet.base.AbstractPacket;
+import skillapi.packet.base.Packet;
 
 /**
  * @author Jun
- * @date 2020/8/26.
  */
 @SkillAnnotation
 public final class SkillPacketAnnotationImpl implements SkillAnnotationRegister<SkillPacket> {
@@ -20,6 +19,6 @@ public final class SkillPacketAnnotationImpl implements SkillAnnotationRegister<
         if (!AbstractPacket.class.isAssignableFrom(target)) {
             throw new SkillRuntimeException("Skill packet registration failed. Class: %s", target.getName());
         }
-        PacketHandler.register((Class<? extends AbstractPacket>) target, annotation);
+        Packet.register((Class<? extends AbstractPacket>) target, annotation);
     }
 }

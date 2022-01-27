@@ -11,8 +11,8 @@ import org.lwjgl.input.Keyboard;
 import skillapi.api.annotation.SkillEvent;
 import skillapi.api.gui.base.GuiApi;
 import skillapi.client.gui.KnownSkillsGui;
-import skillapi.packet.PacketHandler;
 import skillapi.packet.PlayerUnleashSkillPacket;
+import skillapi.packet.base.Packet;
 import skillapi.skill.AbstractSkill;
 import skillapi.skill.Cooldown;
 import skillapi.skill.PlayerSkills;
@@ -82,7 +82,7 @@ public class SkillClient {
 //            PacketHandler.sendToServer(new WorldTimePacket());
             // TODO distance
             EntityLivingBase target = ClientUtils.getPointedLivingEntity(10.0D);
-            PacketHandler.sendToServer(new PlayerUnleashSkillPacket(index, target));
+            Packet.sendToServer(new PlayerUnleashSkillPacket(index, target));
             SKILL.consumeMana(skill.getMana());
         }
     }

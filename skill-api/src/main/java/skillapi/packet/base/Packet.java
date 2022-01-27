@@ -1,4 +1,4 @@
-package skillapi.packet;
+package skillapi.packet.base;
 
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
@@ -15,6 +15,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.NetHandlerPlayServer;
 import skillapi.api.annotation.SkillPacket;
 import skillapi.common.SkillLog;
+import skillapi.packet.serializer.PacketSerializer;
 import skillapi.utils.ClassUtils;
 
 import java.util.HashMap;
@@ -23,14 +24,14 @@ import java.util.Map;
 /**
  * @author Jun
  */
-public final class PacketHandler {
+public final class Packet {
     private static final String CHANNEL_NAME = "SkillPacketChannel";
     private static final FMLEventChannel CHANNEL;
 
     private static final Map<Class<? extends PacketSerializer<? extends AbstractPacket>>, PacketSerializer<?
             extends AbstractPacket>> SERIALIZER_MAP = new HashMap<>(4);
-    private static final Map<Class<? extends AbstractPacket>, Packet> PACKET_MAP = new HashMap<>(16);
-    private static Packet[] packets;
+    private static final Map<Class<? extends AbstractPacket>, IPacket> PACKET_MAP = new HashMap<>(16);
+    private static IPacket[] packets;
 
     static {
         CHANNEL = NetworkRegistry.INSTANCE.newEventDrivenChannel(CHANNEL_NAME);
@@ -38,7 +39,7 @@ public final class PacketHandler {
     }
 
     public static void init() {
-        packets = PACKET_MAP.values().toArray(new Packet[0]);
+        packets = PACKET_MAP.values().toArray(new IPacket[0]);
         for (int i = 0; i < packets.length; i++) {
             packets[i].index = i;
         }
@@ -52,7 +53,7 @@ public final class PacketHandler {
                     serializerClass.getName());
             SERIALIZER_MAP.put(serializerClass, packetSerializer);
         }
-        PACKET_MAP.put(clz, new Packet(clz, packetSerializer));
+        PACKET_MAP.put(clz, new IPacket(clz, packetSerializer));
     }
 
     public static PacketSerializer<? extends AbstractPacket> getSerializer(Class<? extends AbstractPacket> clz) {
@@ -106,7 +107,7 @@ public final class PacketHandler {
 
     @SuppressWarnings("unchecked")
     private static FMLProxyPacket proxy(AbstractPacket packet, Side target) {
-        Packet packetInfo = PACKET_MAP.get(packet.getClass());
+        IPacket packetInfo = PACKET_MAP.get(packet.getClass());
         if (packetInfo == null) {
             return null;
         }
@@ -116,7 +117,7 @@ public final class PacketHandler {
         try {
             packetInfo.serializer.serialize(packet, buffer);
         } catch (Exception e) {
-            SkillLog.error("Failed to serialize packet data. Packet class: %s", e, packet.getClass());
+            SkillLog.error(e, "Failed to serialize packet data. Packet class: %s", packet.getClass());
             return null;
         }
         FMLProxyPacket fmlProxyPacket = new FMLProxyPacket(buffer, CHANNEL_NAME);
@@ -124,14 +125,14 @@ public final class PacketHandler {
         return fmlProxyPacket;
     }
 
-    static final class Packet {
+    static final class IPacket {
         int index;
         Class<? extends AbstractPacket> clz;
 
         @SuppressWarnings("rawtypes")
         PacketSerializer serializer;
 
-        public Packet(Class<? extends AbstractPacket> clz, PacketSerializer<? extends AbstractPacket> serializer) {
+        public IPacket(Class<? extends AbstractPacket> clz, PacketSerializer<? extends AbstractPacket> serializer) {
             this.clz = clz;
             this.serializer = serializer;
         }
@@ -156,13 +157,13 @@ public final class PacketHandler {
                 // Ignore
                 return;
             }
-            Packet packet = packets[packetIndex];
+            IPacket packet = packets[packetIndex];
             AbstractPacket calledPacket;
             try {
                 calledPacket = packet.serializer.deserialize(packet.clz, buffer);
                 calledPacket.run(player, from);
             } catch (Exception e) {
-                SkillLog.error("Failed to deserialize packet data. Packet class: %s", e, packet.getClass());
+                SkillLog.error(e, "Failed to deserialize packet data. Packet class: %s", packet.getClass());
             }
         }
     }

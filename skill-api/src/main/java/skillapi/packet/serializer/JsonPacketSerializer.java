@@ -1,6 +1,7 @@
-package skillapi.packet;
+package skillapi.packet.serializer;
 
 import io.netty.buffer.ByteBuf;
+import skillapi.packet.base.AbstractPacket;
 import skillapi.utils.JsonUtils;
 
 /**

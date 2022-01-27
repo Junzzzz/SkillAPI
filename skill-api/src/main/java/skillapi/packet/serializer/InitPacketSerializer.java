@@ -1,8 +1,9 @@
-package skillapi.packet;
+package skillapi.packet.serializer;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
+import skillapi.packet.ClientSkillInitPacket;
 import skillapi.skill.DynamicSkillConfig;
 import skillapi.utils.JsonUtils;
 

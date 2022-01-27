@@ -8,7 +8,7 @@ import org.apache.logging.log4j.Level;
 import skillapi.api.annotation.SkillAnnotation;
 import skillapi.api.annotation.SkillAnnotationRegister;
 import skillapi.item.SkillItemLoader;
-import skillapi.packet.PacketHandler;
+import skillapi.packet.base.Packet;
 import skillapi.utils.ClassUtils;
 import skillapi.utils.ListUtils;
 
@@ -22,7 +22,6 @@ import java.util.Map;
 
 /**
  * @author Jun
- * @date 2020/8/26.
  */
 public final class SkillApi {
     private static final Map<Class<? extends Annotation>, SkillAnnotationRegister<Annotation>> ANNOTATION_MAP =
@@ -49,7 +48,7 @@ public final class SkillApi {
         ANNOTATION_MAP.clear();
 
         // Other action after annotation initialization
-        PacketHandler.init();
+        Packet.init();
     }
 
     private static void registerAll(List<Class<?>> classes, ModMetadata modMetadata) {
