@@ -66,7 +66,7 @@ public class PlayerUnleashSkillPacket extends AbstractPacket {
         }
 
         @Override
-        public PlayerUnleashSkillPacket deserialize(Class<PlayerUnleashSkillPacket> packetClass, ByteBuf buffer) {
+        public PlayerUnleashSkillPacket deserialize(Class<?> packetClass, ByteBuf buffer) {
             return new PlayerUnleashSkillPacket(buffer.readInt(), buffer.readInt());
         }
     }

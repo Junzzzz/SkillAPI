@@ -10,8 +10,8 @@ import skillapi.packet.serializer.PacketSerializer;
  */
 public abstract class AbstractPacket {
     @JsonIgnore
-    public final PacketSerializer<? extends AbstractPacket>  getSerializer() {
-        return Packet.getSerializer(this.getClass());
+    public final PacketSerializer<? extends AbstractPacket> getSerializer() {
+        return Packet.getPacketSerializer(this.getClass());
     }
 
     protected abstract void run(EntityPlayer player, Side from);

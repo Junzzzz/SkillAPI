@@ -25,7 +25,7 @@ public class InitPacketSerializer implements PacketSerializer<ClientSkillInitPac
     }
 
     @Override
-    public ClientSkillInitPacket deserialize(Class<ClientSkillInitPacket> packetClass, ByteBuf buffer) throws Exception {
+    public ClientSkillInitPacket deserialize(Class<?> packetClass, ByteBuf buffer) throws Exception {
         ClientSkillInitPacket packet = new ClientSkillInitPacket();
         int length = buffer.readInt();
         byte[] config = new byte[length];

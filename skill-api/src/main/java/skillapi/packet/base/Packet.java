@@ -8,8 +8,10 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.network.internal.FMLProxyPacket;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import cpw.mods.fml.server.FMLServerHandler;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.NetHandlerPlayServer;
@@ -20,6 +22,9 @@ import skillapi.utils.ClassUtils;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 
 /**
  * @author Jun
@@ -32,6 +37,8 @@ public final class Packet {
             extends AbstractPacket>> SERIALIZER_MAP = new HashMap<>(4);
     private static final Map<Class<? extends AbstractPacket>, IPacket> PACKET_MAP = new HashMap<>(16);
     private static IPacket[] packets;
+
+    private static final Map<UUID, Consumer<?>> CALLBACK_MAP = new ConcurrentHashMap<>(4);
 
     static {
         CHANNEL = NetworkRegistry.INSTANCE.newEventDrivenChannel(CHANNEL_NAME);
@@ -56,8 +63,71 @@ public final class Packet {
         PACKET_MAP.put(clz, new IPacket(clz, packetSerializer));
     }
 
-    public static PacketSerializer<? extends AbstractPacket> getSerializer(Class<? extends AbstractPacket> clz) {
+    @SuppressWarnings("unchecked")
+    public static <T extends PacketSerializer<? extends AbstractPacket>> T getSerializer(Class<T> clz) {
+        PacketSerializer<? extends AbstractPacket> packetSerializer = SERIALIZER_MAP.get(clz);
+        if (packetSerializer == null) {
+            packetSerializer = ClassUtils.newEmptyInstance(clz, "Failed to create serializer: %s", clz.getName());
+            SERIALIZER_MAP.put(clz, packetSerializer);
+        }
+        return (T) packetSerializer;
+    }
+
+    public static PacketSerializer<? extends AbstractPacket> getPacketSerializer(Class<? extends AbstractPacket> clz) {
         return SERIALIZER_MAP.get(clz);
+    }
+
+    public static void send(AbstractPacket packet) {
+        sendToServer(packet);
+    }
+
+    public static void send(AbstractPacket packet, EntityPlayerMP player) {
+        sendToClient(packet, player);
+    }
+
+    public static <T> void callback(CallbackPacket<T> packet, Consumer<T> consumer) {
+        callback(packet, consumer, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    static <T> void callback(UUID uuid, T result) {
+        Consumer<T> consumer = (Consumer<T>) CALLBACK_MAP.remove(uuid);
+        if (consumer == null) {
+            return;
+        }
+        consumer.accept(result);
+    }
+
+    /**
+     * Send callback packet
+     *
+     * @param packet   Callback packet
+     * @param consumer Callback function
+     * @param force    Whether to force the execution of the callback function when the server thread is suspended in stand-alone mode
+     * @param <T>      Type of result entity
+     */
+    public static <T> void callback(CallbackPacket<T> packet, Consumer<T> consumer, boolean force) {
+        if (force && Minecraft.getMinecraft().isIntegratedServerRunning()) {
+            String name = FMLClientHandler.instance().getClientPlayerEntity().getCommandSenderName();
+            EntityPlayer player = FMLServerHandler.instance().getServer().getEntityWorld().getPlayerEntityByName(name);
+            T result = packet.returns(player, Side.CLIENT);
+            consumer.accept(result);
+        } else {
+            saveCallback(packet, consumer);
+            sendToServer(packet);
+        }
+
+    }
+
+    public static <T> void callback(CallbackPacket<T> packet, EntityPlayerMP player, Consumer<T> consumer) {
+        saveCallback(packet, consumer);
+        sendToClient(packet, player);
+    }
+
+    private static <T> void saveCallback(CallbackPacket<T> packet, Consumer<T> consumer) {
+        UUID uuid = UUID.randomUUID();
+        packet.setUUid(uuid);
+        CALLBACK_MAP.put(uuid, consumer);
     }
 
     public static void sendToClient(AbstractPacket packet, EntityPlayerMP player) {
