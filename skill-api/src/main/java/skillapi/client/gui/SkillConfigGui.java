@@ -5,9 +5,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.gui.GuiYesNo;
 import net.minecraft.client.gui.GuiYesNoCallback;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
-import skillapi.Application;
 import skillapi.api.gui.base.BaseGui;
 import skillapi.api.gui.base.ListenerRegistry;
 import skillapi.api.gui.base.RenderUtils;
@@ -15,32 +13,21 @@ import skillapi.api.gui.base.listener.MousePressedListener;
 import skillapi.api.gui.component.ButtonComponent;
 import skillapi.common.PageHelper;
 import skillapi.skill.DynamicSkillBuilder;
-import skillapi.skill.DynamicSkillConfig;
+import skillapi.skill.SkillProfile;
 import skillapi.skill.Skills;
 
 import java.awt.*;
 import java.util.List;
 
+import static skillapi.client.gui.SkillProfilesGui.*;
+
 /**
  * TODO 多人编辑加锁
  *
  * @author Jun
- * @date 2020/10/4.
  */
 @SideOnly(Side.CLIENT)
 public final class SkillConfigGui extends BaseGui implements GuiYesNoCallback {
-    protected static final ResourceLocation SKILL_LIST_TEXTURES = new ResourceLocation(Application.MOD_ID, "textures/gui/skill-list.png");
-
-    private static final int SKILL_LIST_WIDTH = 121;
-    private static final int SKILL_LIST_HEIGHT = 169;
-
-    private static final int SKILL_LIST_ITEM_X = 6;
-    private static final int SKILL_LIST_ITEM_Y = 10;
-
-    private static final int SKILL_LIST_ITEM_WIDTH = 108;
-    private static final int SKILL_LIST_ITEM_HEIGHT = 19;
-    private static final int SKILL_LIST_ITEM_HEIGHT_ALL = 19 * 7;
-
     private int guiPositionX;
     private int guiPositionY;
 
@@ -57,13 +44,13 @@ public final class SkillConfigGui extends BaseGui implements GuiYesNoCallback {
     private boolean enableApply = false;
 
     private final PageHelper<DynamicSkillBuilder> page;
-    private final DynamicSkillConfig editingConfig;
+    private final SkillProfile editingProfile;
 
     private int selectedLine = -1;
 
     public SkillConfigGui() {
-        this.editingConfig = Skills.getConfigCopy();
-        this.page = new PageHelper<>(this.editingConfig.getDynamicSkillBuilders(), 7);
+        this.editingProfile = Skills.getConfigCopy();
+        this.page = new PageHelper<>(this.editingProfile.getDynamicSkillBuilders(), 7);
     }
 
     @Override
@@ -112,7 +99,7 @@ public final class SkillConfigGui extends BaseGui implements GuiYesNoCallback {
         applySkillButton = addButton(this.guiPositionX + 52, this.guiPositionY + 145, 30, 20, "Apply",
                 () -> {
                     // TODO 应用方案
-                    Skills.serverSwitchConfig(this.editingConfig);
+                    Skills.serverSwitchConfig(this.editingProfile);
                     this.enableApply = false;
                     checkPageStatus();
                 }
@@ -151,7 +138,7 @@ public final class SkillConfigGui extends BaseGui implements GuiYesNoCallback {
 
     @Override
     protected void drawBackground() {
-        getTextureManager().bindTexture(SKILL_LIST_TEXTURES);
+        getTextureManager().bindTexture(SkillProfilesGui.SKILL_LIST_TEXTURES);
         RenderUtils.drawTexturedModalRect(guiPositionX, guiPositionY, 0, 0, SKILL_LIST_WIDTH, SKILL_LIST_HEIGHT);
     }
 
@@ -190,7 +177,7 @@ public final class SkillConfigGui extends BaseGui implements GuiYesNoCallback {
         if (clickYes) {
             this.selectedLine = -1;
             DynamicSkillBuilder removed = this.page.removeInCurrentPage(select);
-            this.editingConfig.remove(removed);
+            this.editingProfile.remove(removed);
             this.enableApply = true;
         }
         displayGui(this);
@@ -227,7 +214,7 @@ public final class SkillConfigGui extends BaseGui implements GuiYesNoCallback {
     }
 
     public void saveSkill(DynamicSkillBuilder builder) {
-        this.editingConfig.put(builder);
+        this.editingProfile.put(builder);
         this.enableApply = true;
         // TODO 保存到临时文件
     }

@@ -31,7 +31,7 @@ public final class Skills {
 
     private static final Map<String, Class<? extends SkillEffect>> EFFECT_MAP = new HashMap<>(16);
     private static final Map<String, AbstractSkill> SKILL_MAP = new HashMap<>(16);
-    private static DynamicSkillConfig dynamicSkillConfig;
+    private static SkillProfile skillProfile;
 
     private static final Map<Class<? extends SkillEffect>, String> MOD_ID_MAP = new HashMap<>(32);
 
@@ -53,7 +53,7 @@ public final class Skills {
             }
 
             try {
-                dynamicSkillConfig = DynamicSkillConfig.valueOf(profile);
+                skillProfile = SkillProfile.valueOf(profile);
             } catch (IOException e) {
                 SkillLog.warn("Failed to load dynamic skill config. Loading default config.");
                 initDefault();
@@ -62,8 +62,8 @@ public final class Skills {
     }
 
     private static void initDefault() {
-        dynamicSkillConfig = new DynamicSkillConfig();
-        dynamicSkillConfig.setName(CONFIG_NAME_DEFAULT);
+        skillProfile = new SkillProfile();
+        skillProfile.setName(CONFIG_NAME_DEFAULT);
     }
 
     public static synchronized void register(AbstractSkill skill) {
@@ -74,7 +74,7 @@ public final class Skills {
     }
 
     public static synchronized void register(DynamicSkillBuilder builder) {
-        dynamicSkillConfig.put(builder);
+        skillProfile.put(builder);
     }
 
     public static synchronized void register(String name, Class<? extends SkillEffect> effect) {
@@ -82,14 +82,14 @@ public final class Skills {
     }
 
     @SideOnly(Side.CLIENT)
-    public static synchronized void clientSwitchConfig(DynamicSkillConfig config) {
-        dynamicSkillConfig = config;
+    public static synchronized void clientSwitchConfig(SkillProfile config) {
+        skillProfile = config;
     }
 
-    public static synchronized void serverSwitchConfig(DynamicSkillConfig config) {
-        DynamicSkillConfig tmp = dynamicSkillConfig;
+    public static synchronized void serverSwitchConfig(SkillProfile config) {
+        SkillProfile tmp = skillProfile;
 
-        dynamicSkillConfig = config;
+        skillProfile = config;
         NBTTagCompound tag = SkillNBT.getTag(SkillNBT.TAG_DYNAMIC);
         tag.setString(CONFIG_PROFILE_CURRENT, config.name);
         try {
@@ -99,20 +99,20 @@ public final class Skills {
             SkillNBT.save();
         } catch (JsonProcessingException e) {
             // recover
-            dynamicSkillConfig = tmp;
+            skillProfile = tmp;
             SkillLog.error(e, "Failed to save dynamic skill data.");
         }
     }
 
-    public static DynamicSkillConfig getConfigCopy() {
-        return dynamicSkillConfig.copy();
+    public static SkillProfile getConfigCopy() {
+        return skillProfile.copy();
     }
 
     public static AbstractSkill get(String unlocalizedName) {
         if (unlocalizedName.startsWith(PREFIX_STATIC)) {
             return SKILL_MAP.get(unlocalizedName);
         } else if (unlocalizedName.startsWith(PREFIX_DYNAMIC)) {
-            return dynamicSkillConfig.dynamicSkills.get(unlocalizedName);
+            return skillProfile.dynamicSkills.get(unlocalizedName);
         }
         return null;
     }
@@ -124,11 +124,11 @@ public final class Skills {
     public static List<AbstractSkill> getAll(boolean sort) {
         List<AbstractSkill> skills = new ArrayList<>(SKILL_MAP.values());
         if (sort) {
-            List<DynamicSkill> dynamicSkills = new ArrayList<>(dynamicSkillConfig.dynamicSkills.values());
+            List<DynamicSkill> dynamicSkills = new ArrayList<>(skillProfile.dynamicSkills.values());
             dynamicSkills.sort(Comparator.comparingInt(DynamicSkill::getUniqueId));
             skills.addAll(dynamicSkills);
         } else {
-            skills.addAll(dynamicSkillConfig.dynamicSkills.values());
+            skills.addAll(skillProfile.dynamicSkills.values());
         }
 
         return Collections.unmodifiableList(skills);
@@ -145,7 +145,7 @@ public final class Skills {
     @SideOnly(Side.CLIENT)
     public static String getI18nName(SkillEffect skill) {
         if (skill instanceof DynamicSkill) {
-            return dynamicSkillConfig.getLocalizedName((DynamicSkill) skill);
+            return skillProfile.getLocalizedName((DynamicSkill) skill);
         }
         return I18n.format(skill.getUnlocalizedName());
     }
@@ -153,13 +153,13 @@ public final class Skills {
 
     public static String getLocalizedName(AbstractSkill skill) {
         if (skill instanceof DynamicSkill) {
-            return dynamicSkillConfig.getLocalizedName((DynamicSkill) skill);
+            return skillProfile.getLocalizedName((DynamicSkill) skill);
         }
         return StatCollector.translateToLocal(skill.getUnlocalizedName());
     }
 
     public static String getSkillDescription(DynamicSkill skill) {
-        return dynamicSkillConfig.getDescription(skill);
+        return skillProfile.getDescription(skill);
     }
 
     public static void putModId(Class<? extends SkillEffect> clz, String modId) {
@@ -175,6 +175,6 @@ public final class Skills {
         PlayerSkills properties = PlayerSkills.get(player);
         NBTTagCompound tag = new NBTTagCompound();
         properties.saveNBTData(tag);
-        return new ClientSkillInitPacket(dynamicSkillConfig, tag);
+        return new ClientSkillInitPacket(skillProfile, tag);
     }
 }

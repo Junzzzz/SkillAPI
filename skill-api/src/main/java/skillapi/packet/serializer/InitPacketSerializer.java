@@ -4,7 +4,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import skillapi.packet.ClientSkillInitPacket;
-import skillapi.skill.DynamicSkillConfig;
+import skillapi.skill.SkillProfile;
 import skillapi.utils.JsonUtils;
 
 import java.io.ByteArrayInputStream;
@@ -30,7 +30,7 @@ public class InitPacketSerializer implements PacketSerializer<ClientSkillInitPac
         int length = buffer.readInt();
         byte[] config = new byte[length];
         buffer.readBytes(config);
-        DynamicSkillConfig dynamicSkillConfig = JsonUtils.getMapper().readValue(config, DynamicSkillConfig.class);
+        SkillProfile skillProfile = JsonUtils.getMapper().readValue(config, SkillProfile.class);
 
         length = buffer.readInt();
         byte[] properties = new byte[length];
@@ -38,7 +38,7 @@ public class InitPacketSerializer implements PacketSerializer<ClientSkillInitPac
         InputStream inputStream = new ByteArrayInputStream(properties);
         NBTTagCompound tag = CompressedStreamTools.readCompressed(inputStream);
 
-        packet.setConfig(dynamicSkillConfig);
+        packet.setConfig(skillProfile);
         packet.setPlayerSkillProperties(tag);
         return packet;
     }

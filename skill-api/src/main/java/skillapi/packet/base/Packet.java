@@ -8,7 +8,6 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.network.internal.FMLProxyPacket;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import cpw.mods.fml.server.FMLServerHandler;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.minecraft.client.Minecraft;
@@ -109,7 +108,7 @@ public final class Packet {
     public static <T> void callback(CallbackPacket<T> packet, Consumer<T> consumer, boolean force) {
         if (force && Minecraft.getMinecraft().isIntegratedServerRunning()) {
             String name = FMLClientHandler.instance().getClientPlayerEntity().getCommandSenderName();
-            EntityPlayer player = FMLServerHandler.instance().getServer().getEntityWorld().getPlayerEntityByName(name);
+            EntityPlayer player = Minecraft.getMinecraft().getIntegratedServer().getEntityWorld().getPlayerEntityByName(name);
             T result = packet.returns(player, Side.CLIENT);
             consumer.accept(result);
         } else {

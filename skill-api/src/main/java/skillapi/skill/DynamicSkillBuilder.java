@@ -47,7 +47,7 @@ public class DynamicSkillBuilder {
         this.uniqueId = getId();
     }
 
-    public DynamicSkillBuilder(DynamicSkillConfig config, DynamicSkill skill) {
+    public DynamicSkillBuilder(SkillProfile config, DynamicSkill skill) {
         this.uniqueId = skill.getUniqueId();
         this.name = config.getLocalizedName(skill);
         this.description = config.getDescription(skill);

@@ -36,4 +36,8 @@ public final class SkillServer {
             ((EntityPlayerMP) player).playerNetServerHandler.kickPlayerFromServer(message);
         }
     }
+
+    public static boolean hasHighestAuthority(EntityPlayer player) {
+        return server.getConfigurationManager().func_152596_g(player.getGameProfile());
+    }
 }

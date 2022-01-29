@@ -20,9 +20,9 @@ import java.util.stream.Collectors;
 /**
  * @author Jun
  */
-@JsonSerialize(using = DynamicSkillConfig.Serializer.class)
-@JsonDeserialize(using = DynamicSkillConfig.Deserializer.class)
-public class DynamicSkillConfig {
+@JsonSerialize(using = SkillProfile.Serializer.class)
+@JsonDeserialize(using = SkillProfile.Deserializer.class)
+public class SkillProfile {
     /**
      * Skill config name
      */
@@ -30,12 +30,12 @@ public class DynamicSkillConfig {
     protected final Map<String, String> constant;
     protected final Map<String, DynamicSkill> dynamicSkills;
 
-    public DynamicSkillConfig() {
+    public SkillProfile() {
         this.constant = new HashMap<>(32);
         this.dynamicSkills = new HashMap<>(16);
     }
 
-    public DynamicSkillConfig(Map<String, String> constant, Map<String, DynamicSkill> dynamicSkills) {
+    public SkillProfile(Map<String, String> constant, Map<String, DynamicSkill> dynamicSkills) {
         this.constant = constant;
         this.dynamicSkills = dynamicSkills;
     }
@@ -75,31 +75,31 @@ public class DynamicSkillConfig {
         );
     }
 
-    protected DynamicSkillConfig copy() {
-        DynamicSkillConfig c = new DynamicSkillConfig(new HashMap<>(this.constant), new HashMap<>(this.dynamicSkills));
+    protected SkillProfile copy() {
+        SkillProfile c = new SkillProfile(new HashMap<>(this.constant), new HashMap<>(this.dynamicSkills));
         c.name = this.name;
         return c;
     }
 
-    public static DynamicSkillConfig valueOf(byte[] data) throws IOException {
-        return JsonUtils.getMapper().readValue(data, DynamicSkillConfig.class);
+    public static SkillProfile valueOf(byte[] data) throws IOException {
+        return JsonUtils.getMapper().readValue(data, SkillProfile.class);
     }
 
     public synchronized byte[] getBytes() throws JsonProcessingException {
         return JsonUtils.getMapper().writeValueAsBytes(this);
     }
 
-    static class Serializer extends JsonSerializer<DynamicSkillConfig> {
+    static class Serializer extends JsonSerializer<SkillProfile> {
         @Override
-        public void serialize(DynamicSkillConfig dynamicSkillConfig, JsonGenerator jsonGenerator,
+        public void serialize(SkillProfile skillProfile, JsonGenerator jsonGenerator,
                               SerializerProvider serializerProvider) throws IOException {
             jsonGenerator.writeStartObject();
 
-            jsonGenerator.writeStringField("name", dynamicSkillConfig.name);
-            jsonGenerator.writeObjectField("constant", dynamicSkillConfig.constant);
+            jsonGenerator.writeStringField("name", skillProfile.name);
+            jsonGenerator.writeObjectField("constant", skillProfile.constant);
 
             jsonGenerator.writeArrayFieldStart("skills");
-            for (DynamicSkill skill : dynamicSkillConfig.dynamicSkills.values()) {
+            for (DynamicSkill skill : skillProfile.dynamicSkills.values()) {
                 jsonGenerator.writeStartObject();
                 jsonGenerator.writeNumberField("id", skill.getUniqueId());
                 jsonGenerator.writeNumberField("mana", skill.getMana());
@@ -137,10 +137,10 @@ public class DynamicSkillConfig {
         }
     }
 
-    static class Deserializer extends JsonDeserializer<DynamicSkillConfig> {
+    static class Deserializer extends JsonDeserializer<SkillProfile> {
         @Override
-        public DynamicSkillConfig deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
-            DynamicSkillConfig config = new DynamicSkillConfig();
+        public SkillProfile deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
+            SkillProfile config = new SkillProfile();
             JsonNode node = jsonParser.getCodec().readTree(jsonParser);
             config.name = node.get("name").textValue();
             TreeNode constantNode = node.get("constant");

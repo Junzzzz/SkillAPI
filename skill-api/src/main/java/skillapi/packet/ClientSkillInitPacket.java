@@ -11,8 +11,8 @@ import skillapi.api.annotation.SkillPacket;
 import skillapi.client.SkillClient;
 import skillapi.packet.base.AbstractPacket;
 import skillapi.packet.serializer.InitPacketSerializer;
-import skillapi.skill.DynamicSkillConfig;
 import skillapi.skill.PlayerSkills;
+import skillapi.skill.SkillProfile;
 import skillapi.skill.Skills;
 
 /**
@@ -24,7 +24,7 @@ import skillapi.skill.Skills;
 @AllArgsConstructor
 @SkillPacket(serializer = InitPacketSerializer.class)
 public class ClientSkillInitPacket extends AbstractPacket {
-    private DynamicSkillConfig config;
+    private SkillProfile config;
     private NBTTagCompound playerSkillProperties;
 
     @Override

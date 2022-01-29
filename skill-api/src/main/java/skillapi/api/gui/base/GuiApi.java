@@ -8,12 +8,11 @@ import net.minecraft.client.gui.ScaledResolution;
 
 /**
  * @author Jun
- * @date 2021/3/15.
  */
 @SideOnly(Side.CLIENT)
 public final class GuiApi extends GuiScreen {
-    protected static Minecraft minecraft = Minecraft.getMinecraft();
-    protected static int scaleFactor;
+    static Minecraft minecraft = Minecraft.getMinecraft();
+    static int scaleFactor;
 
     private BaseGui currentGui;
 
