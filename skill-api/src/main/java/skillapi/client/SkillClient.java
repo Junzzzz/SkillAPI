@@ -78,7 +78,7 @@ public class SkillClient {
         if (skill == null || cooldown == null) {
             return;
         }
-        if (SKILL.getMana() > skill.getMana() && cooldown.isCooledDown()) {
+        if (SKILL.getMana() >= skill.getMana() && cooldown.isCooledDown()) {
 //            PacketHandler.sendToServer(new WorldTimePacket());
             // TODO distance
             EntityLivingBase target = ClientUtils.getPointedLivingEntity(10.0D);

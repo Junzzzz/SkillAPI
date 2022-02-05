@@ -6,7 +6,6 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.ChatComponentText;
 import skillapi.api.annotation.SkillPacket;
 import skillapi.packet.base.AbstractPacket;
 import skillapi.packet.serializer.PacketSerializer;
@@ -45,10 +44,8 @@ public class PlayerUnleashSkillPacket extends AbstractPacket {
         if (skill == null || cooldown == null) {
             return;
         }
-        if (skills.getMana() > skill.getMana() && cooldown.isCooledDown()) {
+        if (skills.getMana() >= skill.getMana() && cooldown.isCooledDown()) {
             skills.consumeMana(skill.getMana());
-            player.addChatComponentMessage(new ChatComponentText("consume: " + skill.getMana()));
-            player.addChatComponentMessage(new ChatComponentText("current: " + skills.getMana()));
             if (targetEntityId < 0) {
                 SkillExecutor.execute(skill, player, null);
             } else {

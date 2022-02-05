@@ -141,7 +141,7 @@ public class PlayerSkills implements IExtendedEntityProperties {
             this.cooldowns = new Cooldown[MAX_SKILL_BAR];
             this.knownSkills = new LinkedHashSet<>();
             this.mana = Skills.MAX_MANA;
-            this.lastManaUpdateTime = System.currentTimeMillis();
+            this.lastManaUpdateTime = this.player.getEntityWorld().getTotalWorldTime();
         } else {
             throw new SkillRuntimeException("Unsupported operation");
         }
