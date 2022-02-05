@@ -80,8 +80,8 @@ public final class Packet {
         sendToServer(packet);
     }
 
-    public static void send(AbstractPacket packet, EntityPlayerMP player) {
-        sendToClient(packet, player);
+    public static void send(AbstractPacket packet, EntityPlayer player) {
+        sendToClient(packet, (EntityPlayerMP) player);
     }
 
     public static <T> void callback(CallbackPacket<T> packet, Consumer<T> consumer) {
@@ -115,7 +115,6 @@ public final class Packet {
             saveCallback(packet, consumer);
             sendToServer(packet);
         }
-
     }
 
     public static <T> void callback(CallbackPacket<T> packet, EntityPlayerMP player, Consumer<T> consumer) {

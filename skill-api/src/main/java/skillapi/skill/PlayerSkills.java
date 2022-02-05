@@ -49,6 +49,10 @@ public class PlayerSkills implements IExtendedEntityProperties {
         return skillBar;
     }
 
+    public boolean learnSkill(AbstractSkill skill) {
+        return this.knownSkills.add(skill);
+    }
+
     private boolean insureIndex(int index) {
         return 0 <= index && index < MAX_SKILL_BAR;
     }

@@ -16,8 +16,9 @@ import skillapi.packet.SkillBarSyncPacket;
 import skillapi.packet.base.Packet;
 import skillapi.skill.AbstractSkill;
 import skillapi.skill.PlayerSkills;
-import skillapi.skill.Skills;
 import skillapi.utils.ClientUtils;
+
+import java.util.ArrayList;
 
 import static skillapi.skill.PlayerSkills.MAX_SKILL_BAR;
 
@@ -43,7 +44,7 @@ public class KnownSkillsGui extends BaseGui {
         Layout listLayout = new Layout(width / 2 - 75, height / 2 - 49, 154, 108);
         Layout sliderLayout = new Layout(width / 2 + 83, height / 2 - 49, 12, 108);
 
-        skillListComponent = new KnownSkillListComponent(listLayout, sliderLayout, Skills.getAll());
+        skillListComponent = new KnownSkillListComponent(listLayout, sliderLayout, new ArrayList<>(properties.getKnownSkills()));
         addComponent(skillListComponent);
 
         addButton((width - 206) / 2 - 20, (height - 134) / 2, 20, 20, "</>",

@@ -5,8 +5,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.StatCollector;
+import org.apache.commons.lang3.StringUtils;
 import skillapi.api.annotation.SkillPacket;
+import skillapi.common.Translation;
 import skillapi.packet.base.AbstractPacket;
 import skillapi.server.SkillServer;
 import skillapi.skill.AbstractSkill;
@@ -37,12 +38,15 @@ public class SkillBarSyncPacket extends AbstractPacket {
         PlayerSkills properties = PlayerSkills.get(player);
         Set<AbstractSkill> knownSkills = properties.getKnownSkills();
         for (int i = 0; i < this.skillNames.length; i++) {
+            if (StringUtils.isEmpty(skillNames[i])) {
+                continue;
+            }
             AbstractSkill skill = Skills.get(skillNames[i]);
             if (knownSkills.contains(skill)) {
                 properties.setSkillBar(i, skill);
             } else if (from.isClient()) {
                 // Data is out of sync
-                String message = StatCollector.translateToLocal("skill.constant.error.sync");
+                String message = Translation.format("skill.constant.error.sync");
                 SkillServer.kick(player, message);
             }
         }

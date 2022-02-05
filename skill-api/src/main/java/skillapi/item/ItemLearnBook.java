@@ -8,18 +8,20 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
 import skillapi.api.annotation.SkillItem;
+import skillapi.common.Message;
+import skillapi.packet.PlayerLearnSkillPacket;
+import skillapi.packet.base.Packet;
 import skillapi.skill.AbstractSkill;
+import skillapi.skill.PlayerSkills;
 import skillapi.skill.Skills;
 
 import java.util.List;
 
 /**
  * @author Jun
- * @date 2020/8/18.
  */
 @SkillItem("skill_learn_book")
 public class ItemLearnBook extends Item {
@@ -44,8 +46,8 @@ public class ItemLearnBook extends Item {
     public ItemStack onItemRightClick(ItemStack itemStack, World world, EntityPlayer player) {
         if (!hasTag(itemStack)) {
             if (world.isRemote) {
-                // client
-                player.addChatComponentMessage(new ChatComponentText(I18n.format("skill.constant.invalidLeanBook")));
+                // Client
+                Message.sendTranslation(player, "skill.constant.invalidLeanBook");
             }
             itemStack.stackSize = 0;
             return itemStack;
@@ -54,16 +56,24 @@ public class ItemLearnBook extends Item {
         AbstractSkill skill = getSkill(itemStack);
         if (skill == null) {
             if (world.isRemote) {
-                // client
-                player.addChatComponentMessage(new ChatComponentText(I18n.format("skill.constant.invalidLeanBook")));
+                // Client
+                Message.sendTranslation(player, "skill.constant.invalidLeanBook");
             }
             itemStack.stackSize = 0;
             return itemStack;
         }
-        // TODO Learn
+
         if (!world.isRemote) {
-            player.addChatComponentMessage(new ChatComponentText("Learn skill: " + Skills.getLocalizedName(skill)));
+            // Server
+            PlayerSkills playerSkills = PlayerSkills.get(player);
+            if (playerSkills.learnSkill(skill)) {
+                Packet.send(new PlayerLearnSkillPacket(skill.getUnlocalizedName()), player);
+                itemStack.stackSize = 0;
+            } else {
+                Message.sendTranslation(player, "skill.constant.knownSkill");
+            }
         }
+
         return itemStack;
     }
 
