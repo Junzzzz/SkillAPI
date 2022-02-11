@@ -22,12 +22,10 @@ import java.util.List;
 import static skillapi.client.gui.SkillProfilesGui.*;
 
 /**
- * TODO 多人编辑加锁
- *
  * @author Jun
  */
 @SideOnly(Side.CLIENT)
-public final class SkillConfigGui extends BaseGui implements GuiYesNoCallback {
+public final class SkillEditProfileGui extends BaseGui implements GuiYesNoCallback {
     private int guiPositionX;
     private int guiPositionY;
 
@@ -48,7 +46,7 @@ public final class SkillConfigGui extends BaseGui implements GuiYesNoCallback {
 
     private int selectedLine = -1;
 
-    public SkillConfigGui() {
+    public SkillEditProfileGui() {
         this.editingProfile = Skills.getConfigCopy();
         this.page = new PageHelper<>(this.editingProfile.getDynamicSkillBuilders(), 7);
     }

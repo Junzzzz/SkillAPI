@@ -8,12 +8,17 @@ import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.node.TextNode;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 import skillapi.api.annotation.SkillParam;
+import skillapi.common.SkillLog;
 import skillapi.common.SkillRuntimeException;
 import skillapi.utils.JsonUtils;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -27,6 +32,8 @@ public class SkillProfile {
      * Skill config name
      */
     protected String name;
+    protected String lastUpdater;
+    protected long lastUpdateTime;
     protected final Map<String, String> constant;
     protected final Map<String, DynamicSkill> dynamicSkills;
 
@@ -35,7 +42,7 @@ public class SkillProfile {
         this.dynamicSkills = new HashMap<>(16);
     }
 
-    public SkillProfile(Map<String, String> constant, Map<String, DynamicSkill> dynamicSkills) {
+    SkillProfile(Map<String, String> constant, Map<String, DynamicSkill> dynamicSkills) {
         this.constant = constant;
         this.dynamicSkills = dynamicSkills;
     }
@@ -78,15 +85,45 @@ public class SkillProfile {
     protected SkillProfile copy() {
         SkillProfile c = new SkillProfile(new HashMap<>(this.constant), new HashMap<>(this.dynamicSkills));
         c.name = this.name;
+        c.lastUpdater = this.lastUpdater;
+        c.lastUpdateTime = this.lastUpdateTime;
         return c;
     }
 
+    public SkillProfileInfo getInfo() {
+        return new SkillProfileInfo(this.lastUpdater, this.lastUpdateTime);
+    }
+
+    public static SkillProfileInfo getInfo(byte[] jsonBytes) {
+        return getInfo(new String(jsonBytes, StandardCharsets.UTF_8));
+    }
+
+    public static SkillProfileInfo getInfo(String json) {
+        try {
+            JsonNode node = JsonUtils.getMapper().readTree(json);
+            String lastUpdater = node.get("lastUpdater").asText("");
+            long lastUpdateTime = node.get("lastUpdateTime").asLong(System.currentTimeMillis());
+            return new SkillProfileInfo(lastUpdater, lastUpdateTime);
+        } catch (IOException e) {
+            SkillLog.warn("Getting profile information failed. Json: %s", json);
+            return new SkillProfileInfo("", System.currentTimeMillis());
+        }
+    }
+
     public static SkillProfile valueOf(byte[] data) throws IOException {
-        return JsonUtils.getMapper().readValue(data, SkillProfile.class);
+        return JsonUtils.getMapper().readValue(new String(data, StandardCharsets.UTF_8), SkillProfile.class);
     }
 
     public synchronized byte[] getBytes() throws JsonProcessingException {
-        return JsonUtils.getMapper().writeValueAsBytes(this);
+        return JsonUtils.getMapper().writeValueAsString(this).getBytes(StandardCharsets.UTF_8);
+    }
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    static class SkillProfileInfo {
+        private String lastUpdater;
+        private long lastUpdateTime;
     }
 
     static class Serializer extends JsonSerializer<SkillProfile> {
@@ -95,6 +132,9 @@ public class SkillProfile {
                               SerializerProvider serializerProvider) throws IOException {
             jsonGenerator.writeStartObject();
 
+            jsonGenerator.writeStringField("name", skillProfile.name);
+            jsonGenerator.writeStringField("lastUpdater", skillProfile.lastUpdater);
+            jsonGenerator.writeNumberField("lastUpdateTime", skillProfile.lastUpdateTime);
             jsonGenerator.writeStringField("name", skillProfile.name);
             jsonGenerator.writeObjectField("constant", skillProfile.constant);
 
@@ -143,6 +183,9 @@ public class SkillProfile {
             SkillProfile config = new SkillProfile();
             JsonNode node = jsonParser.getCodec().readTree(jsonParser);
             config.name = node.get("name").textValue();
+            config.lastUpdater = node.get("lastUpdater").textValue();
+            config.lastUpdateTime = node.get("lastUpdateTime").longValue();
+
             TreeNode constantNode = node.get("constant");
             Map<String, String> constant = new HashMap<>(32);
             constantNode.fieldNames().forEachRemaining(field ->

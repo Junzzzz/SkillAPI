@@ -1,5 +1,7 @@
 package skillapi.common;
 
+import skillapi.client.gui.SkillEditProfileGui;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -45,7 +47,7 @@ public final class PageHelper<T> {
 
     /**
      * Avoid repeatedly creating multiple List objects in the rendering function.
-     * e.g. {@link skillapi.client.gui.SkillConfigGui}
+     * e.g. {@link SkillEditProfileGui}
      *
      * @param cache Data to be cached
      * @return Cache object

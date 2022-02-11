@@ -23,7 +23,7 @@ import skillapi.skill.SkillEffect;
  */
 @SideOnly(Side.CLIENT)
 public final class SkillEditGui extends BaseGui {
-    private final SkillConfigGui parent;
+    private final SkillEditProfileGui parent;
     private final int labelWidth = 40;
     private Layout formLayout;
 
@@ -39,7 +39,7 @@ public final class SkillEditGui extends BaseGui {
 
     protected final DynamicSkillBuilder skillBuilder;
 
-    public SkillEditGui(SkillConfigGui parent, DynamicSkillBuilder builder) {
+    public SkillEditGui(SkillEditProfileGui parent, DynamicSkillBuilder builder) {
         this.parent = parent;
         this.skillBuilder = builder;
     }

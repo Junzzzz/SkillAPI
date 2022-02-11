@@ -16,10 +16,12 @@ public class SkillNBT {
     public static final String TAG_DYNAMIC = "dynamic";
 
     private static File file;
+    private static File bak;
     private static NBTTagCompound nbt;
 
     public static synchronized void init() {
         file = new File(SkillServer.getWorldDirectory(), "skill.dat");
+        bak = new File(SkillServer.getWorldDirectory(), "skill.dat.bak");
         if (!file.exists()) {
             nbt = new NBTTagCompound();
         } else {
@@ -31,18 +33,34 @@ public class SkillNBT {
         }
     }
 
+    public static synchronized NBTTagCompound getTag(String... name) {
+        NBTTagCompound tag = nbt;
+        for (String str : name) {
+            tag = getTag(nbt, str);
+        }
+        return tag;
+    }
+
     public static synchronized NBTTagCompound getTag(String name) {
-        if (nbt.hasKey(name, 10)) {
-            return nbt.getCompoundTag(name);
+        return getTag(nbt, name);
+    }
+
+    private static synchronized NBTTagCompound getTag(NBTTagCompound tag, String name) {
+        if (tag.hasKey(name, 10)) {
+            return tag.getCompoundTag(name);
         } else {
-            NBTTagCompound tag = new NBTTagCompound();
-            nbt.setTag(name, tag);
-            return tag;
+            NBTTagCompound result = new NBTTagCompound();
+            result.setTag(name, result);
+            return result;
         }
     }
 
     public static synchronized void save() {
         try {
+            if (bak.exists()) {
+                bak.delete();
+            }
+            file.renameTo(bak);
             CompressedStreamTools.writeCompressed(nbt, new FileOutputStream(file));
         } catch (IOException e) {
             SkillLog.error(e, "Failed to save skill data.");

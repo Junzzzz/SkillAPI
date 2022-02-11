@@ -19,9 +19,9 @@ import java.util.*;
  * @author Jun
  */
 public final class Skills {
-    private static final String TAG_DYNAMIC_PROFILES = "profiles";
-    private static final String CONFIG_PROFILE_CURRENT = "current";
-    private static final String CONFIG_NAME_DEFAULT = "default";
+    public static final String TAG_DYNAMIC_PROFILES = "profiles";
+    public static final String CONFIG_PROFILE_CURRENT = "current";
+    public static final String CONFIG_NAME_DEFAULT = "default";
 
     public static final String PREFIX_STATIC = "skill.static.";
     public static final String PREFIX_EFFECT = "skill.effect.";
@@ -31,7 +31,9 @@ public final class Skills {
 
     private static final Map<String, Class<? extends SkillEffect>> EFFECT_MAP = new HashMap<>(16);
     private static final Map<String, AbstractSkill> SKILL_MAP = new HashMap<>(16);
-    private static SkillProfile skillProfile;
+
+    private static final SkillProfileManager profileManager = new SkillProfileManager();
+    private static SkillProfile currentProfile;
 
     private static final Map<Class<? extends SkillEffect>, String> MOD_ID_MAP = new HashMap<>(32);
 
@@ -44,7 +46,13 @@ public final class Skills {
             tag.setString(CONFIG_PROFILE_CURRENT, CONFIG_NAME_DEFAULT);
             SkillNBT.save();
         } else {
-            byte[] profile = tag.getCompoundTag(TAG_DYNAMIC_PROFILES).getByteArray(current);
+            NBTTagCompound profilesTag = tag.getCompoundTag(TAG_DYNAMIC_PROFILES);
+
+            // Init Manager
+            profileManager.init(profilesTag);
+
+            // Load current profile
+            byte[] profile = profilesTag.getByteArray(current);
 
             // Load empty config
             if (profile.length == 0) {
@@ -53,7 +61,7 @@ public final class Skills {
             }
 
             try {
-                skillProfile = SkillProfile.valueOf(profile);
+                currentProfile = SkillProfile.valueOf(profile);
             } catch (IOException e) {
                 SkillLog.warn("Failed to load dynamic skill config. Loading default config.");
                 initDefault();
@@ -62,8 +70,8 @@ public final class Skills {
     }
 
     private static void initDefault() {
-        skillProfile = new SkillProfile();
-        skillProfile.setName(CONFIG_NAME_DEFAULT);
+        currentProfile = new SkillProfile();
+        currentProfile.setName(CONFIG_NAME_DEFAULT);
     }
 
     public static synchronized void register(AbstractSkill skill) {
@@ -74,7 +82,7 @@ public final class Skills {
     }
 
     public static synchronized void register(DynamicSkillBuilder builder) {
-        skillProfile.put(builder);
+        currentProfile.put(builder);
     }
 
     public static synchronized void register(String name, Class<? extends SkillEffect> effect) {
@@ -83,13 +91,13 @@ public final class Skills {
 
     @SideOnly(Side.CLIENT)
     public static synchronized void clientSwitchConfig(SkillProfile config) {
-        skillProfile = config;
+        currentProfile = config;
     }
 
     public static synchronized void serverSwitchConfig(SkillProfile config) {
-        SkillProfile tmp = skillProfile;
+        SkillProfile tmp = currentProfile;
 
-        skillProfile = config;
+        currentProfile = config;
         NBTTagCompound tag = SkillNBT.getTag(SkillNBT.TAG_DYNAMIC);
         tag.setString(CONFIG_PROFILE_CURRENT, config.name);
         try {
@@ -99,20 +107,20 @@ public final class Skills {
             SkillNBT.save();
         } catch (JsonProcessingException e) {
             // recover
-            skillProfile = tmp;
+            currentProfile = tmp;
             SkillLog.error(e, "Failed to save dynamic skill data.");
         }
     }
 
     public static SkillProfile getConfigCopy() {
-        return skillProfile.copy();
+        return currentProfile.copy();
     }
 
     public static AbstractSkill get(String unlocalizedName) {
         if (unlocalizedName.startsWith(PREFIX_STATIC)) {
             return SKILL_MAP.get(unlocalizedName);
         } else if (unlocalizedName.startsWith(PREFIX_DYNAMIC)) {
-            return skillProfile.dynamicSkills.get(unlocalizedName);
+            return currentProfile.dynamicSkills.get(unlocalizedName);
         }
         return null;
     }
@@ -124,11 +132,11 @@ public final class Skills {
     public static List<AbstractSkill> getAll(boolean sort) {
         List<AbstractSkill> skills = new ArrayList<>(SKILL_MAP.values());
         if (sort) {
-            List<DynamicSkill> dynamicSkills = new ArrayList<>(skillProfile.dynamicSkills.values());
+            List<DynamicSkill> dynamicSkills = new ArrayList<>(currentProfile.dynamicSkills.values());
             dynamicSkills.sort(Comparator.comparingInt(DynamicSkill::getUniqueId));
             skills.addAll(dynamicSkills);
         } else {
-            skills.addAll(skillProfile.dynamicSkills.values());
+            skills.addAll(currentProfile.dynamicSkills.values());
         }
 
         return Collections.unmodifiableList(skills);
@@ -145,7 +153,7 @@ public final class Skills {
     @SideOnly(Side.CLIENT)
     public static String getI18nName(SkillEffect skill) {
         if (skill instanceof DynamicSkill) {
-            return skillProfile.getLocalizedName((DynamicSkill) skill);
+            return currentProfile.getLocalizedName((DynamicSkill) skill);
         }
         return I18n.format(skill.getUnlocalizedName());
     }
@@ -153,13 +161,13 @@ public final class Skills {
 
     public static String getLocalizedName(AbstractSkill skill) {
         if (skill instanceof DynamicSkill) {
-            return skillProfile.getLocalizedName((DynamicSkill) skill);
+            return currentProfile.getLocalizedName((DynamicSkill) skill);
         }
         return StatCollector.translateToLocal(skill.getUnlocalizedName());
     }
 
     public static String getSkillDescription(DynamicSkill skill) {
-        return skillProfile.getDescription(skill);
+        return currentProfile.getDescription(skill);
     }
 
     public static void putModId(Class<? extends SkillEffect> clz, String modId) {
@@ -175,6 +183,6 @@ public final class Skills {
         PlayerSkills properties = PlayerSkills.get(player);
         NBTTagCompound tag = new NBTTagCompound();
         properties.saveNBTData(tag);
-        return new ClientSkillInitPacket(skillProfile, tag);
+        return new ClientSkillInitPacket(currentProfile, tag);
     }
 }
