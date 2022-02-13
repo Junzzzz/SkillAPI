@@ -11,6 +11,7 @@ import skillapi.common.SkillLog;
 import skillapi.common.SkillNBT;
 import skillapi.common.SkillRuntimeException;
 import skillapi.packet.ClientSkillInitPacket;
+import skillapi.skill.SkillProfile.SkillProfileInfo;
 
 import java.io.IOException;
 import java.util.*;
@@ -48,9 +49,6 @@ public final class Skills {
         } else {
             NBTTagCompound profilesTag = tag.getCompoundTag(TAG_DYNAMIC_PROFILES);
 
-            // Init Manager
-            profileManager.init(profilesTag);
-
             // Load current profile
             byte[] profile = profilesTag.getByteArray(current);
 
@@ -66,12 +64,18 @@ public final class Skills {
                 SkillLog.warn("Failed to load dynamic skill config. Loading default config.");
                 initDefault();
             }
+
+            // Init Manager
+            profileManager.init(profilesTag);
         }
     }
 
     private static void initDefault() {
-        currentProfile = new SkillProfile();
-        currentProfile.setName(CONFIG_NAME_DEFAULT);
+        SkillProfile defaultProfile = new SkillProfile();
+        defaultProfile.name = CONFIG_NAME_DEFAULT;
+        defaultProfile.lastUpdater = "SkillApi";
+        defaultProfile.lastUpdateTime = System.currentTimeMillis();
+        serverSwitchConfig(defaultProfile);
     }
 
     public static synchronized void register(AbstractSkill skill) {
@@ -184,5 +188,9 @@ public final class Skills {
         NBTTagCompound tag = new NBTTagCompound();
         properties.saveNBTData(tag);
         return new ClientSkillInitPacket(currentProfile, tag);
+    }
+
+    public static List<SkillProfileInfo> getProfileInfos() {
+        return profileManager.getInfos();
     }
 }

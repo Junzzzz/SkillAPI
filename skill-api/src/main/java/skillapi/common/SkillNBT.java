@@ -36,7 +36,7 @@ public class SkillNBT {
     public static synchronized NBTTagCompound getTag(String... name) {
         NBTTagCompound tag = nbt;
         for (String str : name) {
-            tag = getTag(nbt, str);
+            tag = getTag(tag, str);
         }
         return tag;
     }

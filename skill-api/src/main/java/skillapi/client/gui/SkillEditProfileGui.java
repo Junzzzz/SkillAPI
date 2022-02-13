@@ -5,8 +5,6 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.gui.GuiYesNo;
 import net.minecraft.client.gui.GuiYesNoCallback;
 import net.minecraft.client.resources.I18n;
-import org.lwjgl.opengl.GL11;
-import skillapi.api.gui.base.BaseGui;
 import skillapi.api.gui.base.ListenerRegistry;
 import skillapi.api.gui.base.RenderUtils;
 import skillapi.api.gui.base.listener.MousePressedListener;
@@ -19,13 +17,11 @@ import skillapi.skill.Skills;
 import java.awt.*;
 import java.util.List;
 
-import static skillapi.client.gui.SkillProfilesGui.*;
-
 /**
  * @author Jun
  */
 @SideOnly(Side.CLIENT)
-public final class SkillEditProfileGui extends BaseGui implements GuiYesNoCallback {
+public final class SkillEditProfileGui extends ItemListGui implements GuiYesNoCallback {
     private int guiPositionX;
     private int guiPositionY;
 
@@ -48,16 +44,12 @@ public final class SkillEditProfileGui extends BaseGui implements GuiYesNoCallba
 
     public SkillEditProfileGui() {
         this.editingProfile = Skills.getConfigCopy();
-        this.page = new PageHelper<>(this.editingProfile.getDynamicSkillBuilders(), 7);
+        this.page = new PageHelper<>(this.editingProfile.getDynamicSkillBuilders(), SKILL_LIST_SIZE);
     }
 
     @Override
     protected void init() {
-        this.guiPositionX = (this.width - SKILL_LIST_WIDTH) / 2;
-        this.guiPositionY = (this.height - SKILL_LIST_HEIGHT - 25) / 2;
-
-        this.skillListPositionX = this.guiPositionX + SKILL_LIST_ITEM_X;
-        this.skillListPositionY = this.guiPositionY + SKILL_LIST_ITEM_Y;
+        super.init();
 
         // Prev page button
         prevPageButton = addButton(this.guiPositionX, this.guiPositionY + SKILL_LIST_HEIGHT, 20, 20, "<",
@@ -73,7 +65,7 @@ public final class SkillEditProfileGui extends BaseGui implements GuiYesNoCallba
                     checkPageStatus();
                 });
         // Add skill button
-        addSkillButton = addButton(this.guiPositionX + 5, this.guiPositionY + 145, 18, 20, "+",
+        addSkillButton = addButton(this.guiPositionX + 5, this.guiPositionY + 153, 18, 20, "+",
                 () -> {
                     DynamicSkillBuilder skillBuilder = new DynamicSkillBuilder();
                     skillBuilder.setName("Unnamed skill #" + skillBuilder.getUniqueId());
@@ -81,7 +73,7 @@ public final class SkillEditProfileGui extends BaseGui implements GuiYesNoCallba
                 }
         );
         // Delete skill button
-        deleteSkillButton = addButton(this.guiPositionX + 26, this.guiPositionY + 145, 18, 20, "-",
+        deleteSkillButton = addButton(this.guiPositionX + 26, this.guiPositionY + 153, 18, 20, "-",
                 () -> getMinecraft().displayGuiScreen(new GuiYesNo(
                         this,
                         I18n.format("skill.gui.config.delete.title", getSelectedSkill().getName()),
@@ -90,11 +82,11 @@ public final class SkillEditProfileGui extends BaseGui implements GuiYesNoCallba
                 ))
         );
         // Edit skill button
-        editSkillButton = addButton(this.guiPositionX + 85, this.guiPositionY + 145, 30, 20, "Edit",
+        editSkillButton = addButton(this.guiPositionX + 85, this.guiPositionY + 153, 30, 20, "$skill.constant.edit",
                 () -> displayGui(new SkillEditGui(this, getSelectedSkill()))
         );
 
-        applySkillButton = addButton(this.guiPositionX + 52, this.guiPositionY + 145, 30, 20, "Apply",
+        applySkillButton = addButton(this.guiPositionX + 52, this.guiPositionY + 153, 30, 20, "Apply",
                 () -> {
                     // TODO 应用方案
                     Skills.serverSwitchConfig(this.editingProfile);
@@ -107,27 +99,15 @@ public final class SkillEditProfileGui extends BaseGui implements GuiYesNoCallba
     }
 
     @Override
-    public void render(int mouseX, int mouseY, float partialTicks) {
-        GL11.glEnable(GL11.GL_BLEND);
-        super.drawDefaultBackground();
-
-        drawBackground();
-        drawSkill(mouseX, mouseY);
-
-        GL11.glDisable(GL11.GL_BLEND);
+    protected boolean keepFocus(int x, int y) {
+        return deleteSkillButton.getLayout().isIn(x, y) || editSkillButton.getLayout().isIn(x, y);
     }
 
     @Override
     protected void listener(ListenerRegistry listener) {
-        MousePressedListener press = (x, y) -> {
-            // Do not lose focus when deleting and editing
-            if (!deleteSkillButton.getLayout().isIn(x, y) && !editSkillButton.getLayout().isIn(x, y)) {
-                this.selectedLine = getMouseOver(x, y);
-                if (this.selectedLine >= this.page.getCurrentPage().size()) {
-                    this.selectedLine = -1;
-                }
-            }
+        super.listener(listener);
 
+        MousePressedListener press = (x, y) -> {
             checkPageStatus();
         };
 
@@ -140,29 +120,9 @@ public final class SkillEditProfileGui extends BaseGui implements GuiYesNoCallba
         RenderUtils.drawTexturedModalRect(guiPositionX, guiPositionY, 0, 0, SKILL_LIST_WIDTH, SKILL_LIST_HEIGHT);
     }
 
-    private void drawSkill(int mouseX, int mouseY) {
+    @Override
+    protected void drawItem(int mouseX, int mouseY) {
         List<DynamicSkillBuilder> skills = this.page.getCurrentPage();
-
-        // Draw background
-        for (int i = 0; i < skills.size(); i++) {
-            RenderUtils.drawTexturedModalRect(this.skillListPositionX,
-                    this.skillListPositionY + i * SKILL_LIST_ITEM_HEIGHT, 0, 169, SKILL_LIST_ITEM_WIDTH,
-                    SKILL_LIST_ITEM_HEIGHT);
-        }
-
-        final int mouseOver = getMouseOver(mouseX, mouseY);
-        if (mouseOver != -1 && mouseOver < skills.size()) {
-            RenderUtils.drawTexturedModalRect(this.skillListPositionX,
-                    this.skillListPositionY + mouseOver * SKILL_LIST_ITEM_HEIGHT, 0, 207, SKILL_LIST_ITEM_WIDTH,
-                    SKILL_LIST_ITEM_HEIGHT);
-        }
-
-        if (selectedLine != -1) {
-            RenderUtils.drawTexturedModalRect(this.skillListPositionX,
-                    this.skillListPositionY + selectedLine * SKILL_LIST_ITEM_HEIGHT, 108, 169, SKILL_LIST_ITEM_WIDTH,
-                    SKILL_LIST_ITEM_HEIGHT);
-        }
-
         // Draw text
         for (int i = 0; i < skills.size(); i++) {
             getFontRenderer().drawString(skills.get(i).getName(), this.skillListPositionX + 2,
@@ -189,22 +149,6 @@ public final class SkillEditProfileGui extends BaseGui implements GuiYesNoCallba
         this.editSkillButton.setEnable(this.selectedLine != -1);
         this.deleteSkillButton.setEnable(this.editSkillButton.isEnable());
         this.applySkillButton.setEnable(enableApply);
-    }
-
-    /**
-     * Get the line where the mouse is hovering
-     *
-     * @param mouseX Mouse x axis
-     * @param mouseY Mouse y axis
-     * @return Selected row. If not selected, return {@code -1}
-     */
-    private int getMouseOver(int mouseX, int mouseY) {
-        final int x = mouseX - this.skillListPositionX;
-        final int y = mouseY - this.skillListPositionY;
-        if (x > 0 && y > 0 && x < SKILL_LIST_ITEM_WIDTH && y < SKILL_LIST_ITEM_HEIGHT_ALL) {
-            return y / SKILL_LIST_ITEM_HEIGHT;
-        }
-        return -1;
     }
 
     private DynamicSkillBuilder getSelectedSkill() {

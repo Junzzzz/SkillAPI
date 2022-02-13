@@ -41,4 +41,12 @@ public class SkillProfileManager {
         }
         return null;
     }
+
+    public List<SkillProfileInfo> getInfos() {
+        List<SkillProfileInfo> result = new ArrayList<>(profileNames.size());
+        for (String profileName : profileNames) {
+            result.add(getProfileInfo(profileName));
+        }
+        return result;
+    }
 }

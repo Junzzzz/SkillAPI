@@ -23,6 +23,7 @@ skill.gui.config.delete.tip=The skills will not be restored!
 
 skill.constant.error.sync=Data is out of sync
 skill.constant.invalidLeanBook=Invalid Book
+skill.constant.edit=Edit
 skill.constant.skillBook=Skill Book:
 skill.constant.learnSkill=Successful Learning Skills [%1$s]
 skill.constant.knownSkill=The skill has already been learned

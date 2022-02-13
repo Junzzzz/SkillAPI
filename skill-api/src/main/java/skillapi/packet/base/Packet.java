@@ -19,9 +19,7 @@ import skillapi.common.SkillLog;
 import skillapi.packet.serializer.PacketSerializer;
 import skillapi.utils.ClassUtils;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
@@ -46,6 +44,8 @@ public final class Packet {
 
     public static void init() {
         packets = PACKET_MAP.values().toArray(new IPacket[0]);
+        // TODO Multi-mod sync
+        Arrays.sort(packets, Comparator.comparing(packet -> packet.clz.getName()));
         for (int i = 0; i < packets.length; i++) {
             packets[i].index = i;
         }

@@ -69,10 +69,6 @@ public class SkillProfile {
         return this.constant.get(skill.getUniqueId() + ".description");
     }
 
-    public synchronized void setName(String name) {
-        this.name = name;
-    }
-
     public List<DynamicSkillBuilder> getDynamicSkillBuilders() {
         return Collections.unmodifiableList(
                 this.dynamicSkills.values().stream()
@@ -91,7 +87,7 @@ public class SkillProfile {
     }
 
     public SkillProfileInfo getInfo() {
-        return new SkillProfileInfo(this.lastUpdater, this.lastUpdateTime);
+        return new SkillProfileInfo(this.name, this.lastUpdater, this.lastUpdateTime);
     }
 
     public static SkillProfileInfo getInfo(byte[] jsonBytes) {
@@ -101,12 +97,13 @@ public class SkillProfile {
     public static SkillProfileInfo getInfo(String json) {
         try {
             JsonNode node = JsonUtils.getMapper().readTree(json);
+            String name = node.get("name").asText("error");
             String lastUpdater = node.get("lastUpdater").asText("");
             long lastUpdateTime = node.get("lastUpdateTime").asLong(System.currentTimeMillis());
-            return new SkillProfileInfo(lastUpdater, lastUpdateTime);
+            return new SkillProfileInfo(name, lastUpdater, lastUpdateTime);
         } catch (IOException e) {
             SkillLog.warn("Getting profile information failed. Json: %s", json);
-            return new SkillProfileInfo("", System.currentTimeMillis());
+            return new SkillProfileInfo("error", "", System.currentTimeMillis());
         }
     }
 
@@ -121,7 +118,8 @@ public class SkillProfile {
     @Getter
     @Setter
     @AllArgsConstructor
-    static class SkillProfileInfo {
+    public static class SkillProfileInfo {
+        private String name;
         private String lastUpdater;
         private long lastUpdateTime;
     }
