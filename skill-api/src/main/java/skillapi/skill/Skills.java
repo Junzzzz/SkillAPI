@@ -43,9 +43,11 @@ public final class Skills {
         NBTTagCompound tag = SkillNBT.getTag(SkillNBT.TAG_DYNAMIC);
         String current = tag.getString(CONFIG_PROFILE_CURRENT);
         if (current.isEmpty()) {
-            initDefault();
             tag.setString(CONFIG_PROFILE_CURRENT, CONFIG_NAME_DEFAULT);
-            SkillNBT.save();
+            initDefault();
+
+            // Init Manager
+            profileManager.init(tag.getCompoundTag(TAG_DYNAMIC_PROFILES));
         } else {
             NBTTagCompound profilesTag = tag.getCompoundTag(TAG_DYNAMIC_PROFILES);
 
@@ -114,10 +116,6 @@ public final class Skills {
             currentProfile = tmp;
             SkillLog.error(e, "Failed to save dynamic skill data.");
         }
-    }
-
-    public static SkillProfile getConfigCopy() {
-        return currentProfile.copy();
     }
 
     public static AbstractSkill get(String unlocalizedName) {
@@ -192,5 +190,13 @@ public final class Skills {
 
     public static List<SkillProfileInfo> getProfileInfos() {
         return profileManager.getInfos();
+    }
+
+    public static SkillProfile getCurrentProfile() {
+        return currentProfile.copy();
+    }
+
+    public static SkillProfile getProfile(String name) {
+        return profileManager.get(name);
     }
 }

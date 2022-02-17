@@ -162,11 +162,11 @@ public final class ListenerRegistry {
         }
     }
 
-    protected interface ComponentCaller<T> {
+    public interface ComponentCaller<T> {
         void call(BaseComponent genericGui, T listener);
     }
 
-    protected interface Caller<T> {
+    public interface Caller<T> {
         void call(T listener);
     }
 }

@@ -6,10 +6,10 @@ import net.minecraft.client.gui.GuiYesNo;
 import net.minecraft.client.gui.GuiYesNoCallback;
 import net.minecraft.client.resources.I18n;
 import skillapi.api.gui.base.ListenerRegistry;
-import skillapi.api.gui.base.RenderUtils;
 import skillapi.api.gui.base.listener.MousePressedListener;
 import skillapi.api.gui.component.ButtonComponent;
 import skillapi.common.PageHelper;
+import skillapi.common.Translation;
 import skillapi.skill.DynamicSkillBuilder;
 import skillapi.skill.SkillProfile;
 import skillapi.skill.Skills;
@@ -21,13 +21,7 @@ import java.util.List;
  * @author Jun
  */
 @SideOnly(Side.CLIENT)
-public final class SkillEditProfileGui extends ItemListGui implements GuiYesNoCallback {
-    private int guiPositionX;
-    private int guiPositionY;
-
-    private int skillListPositionX;
-    private int skillListPositionY;
-
+public final class SkillEditProfileGui extends ItemListGui<DynamicSkillBuilder> implements GuiYesNoCallback {
     private ButtonComponent nextPageButton;
     private ButtonComponent prevPageButton;
 
@@ -37,37 +31,22 @@ public final class SkillEditProfileGui extends ItemListGui implements GuiYesNoCa
     private ButtonComponent applySkillButton;
     private boolean enableApply = false;
 
-    private final PageHelper<DynamicSkillBuilder> page;
     private final SkillProfile editingProfile;
 
-    private int selectedLine = -1;
-
-    public SkillEditProfileGui() {
-        this.editingProfile = Skills.getConfigCopy();
-        this.page = new PageHelper<>(this.editingProfile.getDynamicSkillBuilders(), SKILL_LIST_SIZE);
+    public SkillEditProfileGui(SkillProfile profile) {
+        super(new PageHelper<>(profile.getDynamicSkillBuilders(), SKILL_LIST_SIZE));
+        setTitle(Translation.format("skill.gui.editProfile.title", profile.getName()));
+        this.editingProfile = profile;
     }
 
     @Override
     protected void init() {
         super.init();
 
-        // Prev page button
-        prevPageButton = addButton(this.guiPositionX, this.guiPositionY + SKILL_LIST_HEIGHT, 20, 20, "<",
-                () -> {
-                    this.page.prevPage();
-                    checkPageStatus();
-                }
-        );
-        // Next page button
-        nextPageButton = addButton(this.guiPositionX + SKILL_LIST_WIDTH - 20, this.guiPositionY + SKILL_LIST_HEIGHT, 20, 20, ">",
-                () -> {
-                    this.page.nextPage();
-                    checkPageStatus();
-                });
         // Add skill button
         addSkillButton = addButton(this.guiPositionX + 5, this.guiPositionY + 153, 18, 20, "+",
                 () -> {
-                    DynamicSkillBuilder skillBuilder = new DynamicSkillBuilder();
+                    DynamicSkillBuilder skillBuilder = new DynamicSkillBuilder(editingProfile);
                     skillBuilder.setName("Unnamed skill #" + skillBuilder.getUniqueId());
                     this.page.addAndToLastPage(skillBuilder);
                 }
@@ -99,11 +78,6 @@ public final class SkillEditProfileGui extends ItemListGui implements GuiYesNoCa
     }
 
     @Override
-    protected boolean keepFocus(int x, int y) {
-        return deleteSkillButton.getLayout().isIn(x, y) || editSkillButton.getLayout().isIn(x, y);
-    }
-
-    @Override
     protected void listener(ListenerRegistry listener) {
         super.listener(listener);
 
@@ -114,10 +88,10 @@ public final class SkillEditProfileGui extends ItemListGui implements GuiYesNoCa
         listener.on(press);
     }
 
+
     @Override
-    protected void drawBackground() {
-        getTextureManager().bindTexture(SkillProfilesGui.SKILL_LIST_TEXTURES);
-        RenderUtils.drawTexturedModalRect(guiPositionX, guiPositionY, 0, 0, SKILL_LIST_WIDTH, SKILL_LIST_HEIGHT);
+    protected boolean keepFocus(int x, int y) {
+        return deleteSkillButton.getLayout().isIn(x, y) || editSkillButton.getLayout().isIn(x, y);
     }
 
     @Override
@@ -141,9 +115,9 @@ public final class SkillEditProfileGui extends ItemListGui implements GuiYesNoCa
         displayGui(this);
     }
 
-    private void checkPageStatus() {
-        this.nextPageButton.setEnable(this.page.hasNextPage());
-        this.prevPageButton.setEnable(this.page.hasPrevPage());
+    @Override
+    protected void checkPageStatus() {
+        super.checkPageStatus();
 
         // Check if selected
         this.editSkillButton.setEnable(this.selectedLine != -1);

@@ -34,7 +34,12 @@ public abstract class BaseGui extends GenericGui {
         this.listener(listenerRegistry);
     }
 
+    private void initRenderer() {
+        GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+    }
+
     public final void drawScreen(int mouseX, int mouseY, float partialTicks) {
+        initRenderer();
         render(mouseX, mouseY, partialTicks);
 
         renderComponent(mouseX, mouseY, partialTicks);
@@ -69,6 +74,7 @@ public abstract class BaseGui extends GenericGui {
 
     private void renderComponent(int mouseX, int mouseY, float partialTicks) {
         for (BaseComponent component : components) {
+            initRenderer();
             component.render(mouseX, mouseY, partialTicks);
         }
     }

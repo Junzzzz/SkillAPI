@@ -21,6 +21,9 @@ skill.gui.title=已学技能
 skill.gui.config.delete.title=是否删除技能[%1$s]？
 skill.gui.config.delete.tip=技能将无法被恢复！
 
+skill.gui.profile.title=技能方案
+skill.gui.editProfile.title=编辑方案 - %1$s
+
 skill.constant.error.sync=数据不同步
 skill.constant.invalidLeanBook=无效技能书
 skill.constant.edit=编辑

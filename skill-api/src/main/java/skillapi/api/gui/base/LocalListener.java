@@ -1,8 +1,9 @@
 package skillapi.api.gui.base;
 
 /**
+ * Events will be passed to child components
+ *
  * @author Jun
- * @date 2021/3/21.
  */
 public interface LocalListener extends GenericListener {
 }

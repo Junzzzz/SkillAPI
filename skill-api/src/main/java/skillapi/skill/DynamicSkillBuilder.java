@@ -3,10 +3,8 @@ package skillapi.skill;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.val;
-import net.minecraft.nbt.NBTTagCompound;
 import skillapi.api.annotation.SkillParam;
 import skillapi.api.util.Pair;
-import skillapi.common.SkillNBT;
 import skillapi.common.SkillRuntimeException;
 import skillapi.utils.ClassUtils;
 
@@ -43,8 +41,8 @@ public class DynamicSkillBuilder {
 
     private final List<Map.Entry<SkillEffect, Map<String, String>>> effects = new ArrayList<>();
 
-    public DynamicSkillBuilder() {
-        this.uniqueId = getId();
+    public DynamicSkillBuilder(SkillProfile profile) {
+        this.uniqueId = profile.getSkillUniqueId();
     }
 
     public DynamicSkillBuilder(SkillProfile config, DynamicSkill skill) {
@@ -55,14 +53,6 @@ public class DynamicSkillBuilder {
 
     protected DynamicSkillBuilder(int uniqueId) {
         this.uniqueId = uniqueId;
-    }
-
-    private static synchronized int getId() {
-        NBTTagCompound dynamic = SkillNBT.getTag(SkillNBT.TAG_DYNAMIC);
-        int result = dynamic.getInteger("num") + 1;
-        dynamic.setInteger("num", result);
-        SkillNBT.save();
-        return result;
     }
 
     public void addEffect(Class<? extends SkillEffect> clz) {

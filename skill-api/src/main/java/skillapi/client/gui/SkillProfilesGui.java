@@ -1,10 +1,15 @@
 package skillapi.client.gui;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.gui.FontRenderer;
+import skillapi.api.gui.base.GuiApi;
 import skillapi.api.gui.component.ButtonComponent;
 import skillapi.common.PageHelper;
+import skillapi.common.Translation;
+import skillapi.packet.OpenEditProfileGuiPacket;
+import skillapi.packet.base.Packet;
 import skillapi.skill.SkillProfile.SkillProfileInfo;
-import skillapi.skill.Skills;
 
 import java.awt.*;
 import java.time.Instant;
@@ -16,34 +21,60 @@ import java.util.List;
 /**
  * @author Jun
  */
-public class SkillProfilesGui extends ItemListGui {
+@SideOnly(Side.CLIENT)
+public class SkillProfilesGui extends ItemListGui<SkillProfileInfo> {
     private ButtonComponent addSkillButton;
     private ButtonComponent deleteSkillButton;
     private ButtonComponent editSkillButton;
 
-    private final PageHelper<SkillProfileInfo> page;
-
     private static final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-    public SkillProfilesGui() {
-        this.page = new PageHelper<>(Skills.getProfileInfos(), SKILL_LIST_SIZE);
+    public SkillProfilesGui(List<SkillProfileInfo> profiles) {
+        super(new PageHelper<>(profiles, SKILL_LIST_SIZE));
+        setTitle(Translation.format("skill.gui.profile.title"));
     }
 
     @Override
     protected void init() {
         super.init();
+
         // Add skill button
         addSkillButton = addButton(this.guiPositionX + 5, this.guiPositionY + 153, 18, 20, "+",
-                () -> {}
+                () -> {
+                }
         );
         // Delete skill button
         deleteSkillButton = addButton(this.guiPositionX + 26, this.guiPositionY + 153, 18, 20, "-",
-                () -> {}
+                () -> {
+                }
         );
         // Edit skill button
         editSkillButton = addButton(this.guiPositionX + 85, this.guiPositionY + 153, 30, 20, "$skill.constant.edit",
-                () -> {}
+                () -> {
+                    SkillProfileInfo info = getSelectedItem();
+                    if (info != null) {
+                        Packet.callback(new OpenEditProfileGuiPacket(info.getName()), profile -> {
+                            // TODO LOCK
+                            GuiApi.displayGui(new SkillEditProfileGui(profile));
+                        });
+                    }
+                }
         );
+    }
+
+    @Override
+    protected boolean keepFocus(int x, int y) {
+        return deleteSkillButton.getLayout().isIn(x, y) || editSkillButton.getLayout().isIn(x, y);
+    }
+
+    private SkillProfileInfo getSelectedItem() {
+        List<SkillProfileInfo> currentPage = page.getCurrentPage();
+
+        if (0 <= this.selectedLine && this.selectedLine < currentPage.size()) {
+            return currentPage.get(this.selectedLine);
+        }
+
+        return null;
     }
 
     @Override

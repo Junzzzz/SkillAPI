@@ -34,6 +34,12 @@ public class SkillProfile {
     protected String name;
     protected String lastUpdater;
     protected long lastUpdateTime;
+
+    /**
+     * Number of auto-increment skills
+     */
+    protected int num;
+
     protected final Map<String, String> constant;
     protected final Map<String, DynamicSkill> dynamicSkills;
 
@@ -83,7 +89,16 @@ public class SkillProfile {
         c.name = this.name;
         c.lastUpdater = this.lastUpdater;
         c.lastUpdateTime = this.lastUpdateTime;
+        c.num = this.num;
         return c;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public synchronized int getSkillUniqueId() {
+        return ++this.num;
     }
 
     public SkillProfileInfo getInfo() {
@@ -133,7 +148,8 @@ public class SkillProfile {
             jsonGenerator.writeStringField("name", skillProfile.name);
             jsonGenerator.writeStringField("lastUpdater", skillProfile.lastUpdater);
             jsonGenerator.writeNumberField("lastUpdateTime", skillProfile.lastUpdateTime);
-            jsonGenerator.writeStringField("name", skillProfile.name);
+            jsonGenerator.writeNumberField("num", skillProfile.num);
+
             jsonGenerator.writeObjectField("constant", skillProfile.constant);
 
             jsonGenerator.writeArrayFieldStart("skills");
@@ -183,6 +199,7 @@ public class SkillProfile {
             config.name = node.get("name").textValue();
             config.lastUpdater = node.get("lastUpdater").textValue();
             config.lastUpdateTime = node.get("lastUpdateTime").longValue();
+            config.num = node.get("num").intValue();
 
             TreeNode constantNode = node.get("constant");
             Map<String, String> constant = new HashMap<>(32);

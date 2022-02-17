@@ -50,7 +50,7 @@ public class SkillNBT {
             return tag.getCompoundTag(name);
         } else {
             NBTTagCompound result = new NBTTagCompound();
-            result.setTag(name, result);
+            tag.setTag(name, result);
             return result;
         }
     }

@@ -1,9 +1,11 @@
 package skillapi.skill;
 
 import net.minecraft.nbt.NBTTagCompound;
+import skillapi.common.SkillLog;
 import skillapi.common.SkillNBT;
 import skillapi.skill.SkillProfile.SkillProfileInfo;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,10 +27,32 @@ public class SkillProfileManager {
         }
     }
 
-    public SkillProfileInfo getProfileInfo(String name) {
+    private byte[] getProfileBytes(String name) {
         NBTTagCompound profile = SkillNBT.getTag(SkillNBT.TAG_DYNAMIC, Skills.TAG_DYNAMIC_PROFILES);
         byte[] bytes = profile.getByteArray(name);
         if (bytes.length == 0) {
+            return null;
+        }
+        return bytes;
+    }
+
+    public SkillProfile get(String name) {
+        byte[] bytes = getProfileBytes(name);
+        if (bytes == null) {
+            SkillLog.warn("Can't find skill profile named %s", name);
+            return null;
+        }
+        try {
+            return SkillProfile.valueOf(bytes);
+        } catch (IOException e) {
+            SkillLog.error(e, "Skill profile %s deserialization failed", name);
+            return null;
+        }
+    }
+
+    public SkillProfileInfo getProfileInfo(String name) {
+        byte[] bytes = getProfileBytes(name);
+        if (bytes == null) {
             return null;
         }
         return SkillProfile.getInfo(bytes);
