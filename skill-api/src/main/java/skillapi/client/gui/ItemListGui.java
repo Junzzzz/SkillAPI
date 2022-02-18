@@ -84,6 +84,7 @@ public abstract class ItemListGui<T> extends BaseGui {
                 int mouseOver = getMouseOver(x, y);
                 if (mouseOver < SKILL_LIST_SIZE && this.selectedLine != mouseOver) {
                     selectedLineChanged(mouseOver);
+                    checkPageStatus();
                 }
             }
         };
@@ -133,7 +134,7 @@ public abstract class ItemListGui<T> extends BaseGui {
 
         // Title
         if (title != null) {
-            getFontRenderer().drawString(title, guiPositionX + 6, guiPositionY + 6, Color.YELLOW.getRGB(), true);
+            drawString(title, guiPositionX + 6, guiPositionY + 6, Color.YELLOW.getRGB(), true);
         }
     }
 

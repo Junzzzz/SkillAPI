@@ -7,17 +7,19 @@ import skillapi.skill.SkillProfile.SkillProfileInfo;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Jun
  */
 public class SkillProfileManager {
-    private final List<String> profileNames;
+    private final Set<String> profileNames;
 
     public SkillProfileManager() {
         // Default
-        profileNames = new ArrayList<>(4);
+        profileNames = new LinkedHashSet<>(4);
     }
 
     void init(NBTTagCompound profilesTag) {
@@ -50,6 +52,20 @@ public class SkillProfileManager {
         }
     }
 
+    public boolean contains(String name) {
+        return this.profileNames.contains(name);
+    }
+
+    public boolean remove(String name) {
+        boolean success = this.profileNames.remove(name);
+        if (success) {
+            NBTTagCompound tag = SkillNBT.getTag(SkillNBT.TAG_DYNAMIC, Skills.TAG_DYNAMIC_PROFILES);
+            tag.removeTag(name);
+            SkillNBT.save();
+        }
+        return success;
+    }
+
     public SkillProfileInfo getProfileInfo(String name) {
         byte[] bytes = getProfileBytes(name);
         if (bytes == null) {
@@ -58,19 +74,22 @@ public class SkillProfileManager {
         return SkillProfile.getInfo(bytes);
     }
 
-    public SkillProfileInfo getProfileInfo(int index) {
-        final int size = profileNames.size();
-        if (0 <= index && index < size) {
-            return getProfileInfo(this.profileNames.get(index));
-        }
-        return null;
-    }
-
     public List<SkillProfileInfo> getInfos() {
         List<SkillProfileInfo> result = new ArrayList<>(profileNames.size());
         for (String profileName : profileNames) {
             result.add(getProfileInfo(profileName));
         }
         return result;
+    }
+
+    public void saveProfile(SkillProfile profile) {
+        NBTTagCompound tag = SkillNBT.getTag(SkillNBT.TAG_DYNAMIC, Skills.TAG_DYNAMIC_PROFILES);
+        try {
+            tag.setByteArray(profile.name, profile.getBytes());
+            SkillNBT.save();
+            profileNames.add(profile.name);
+        } catch (Exception e) {
+            SkillLog.error(e, "Saving profile [%s] failed.", profile.name);
+        }
     }
 }

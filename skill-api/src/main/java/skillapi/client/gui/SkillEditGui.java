@@ -108,13 +108,13 @@ public final class SkillEditGui extends BaseGui {
         drawCenteredString("基本信息", this.formLayout.getCenterX(), 10, 0xEBEBEB);
         drawCenteredString("技能参数", this.formLayout.getCenterX(), 90, 0xEBEBEB);
 
-        drawTextfieldLabel(this.name, "技能名");
-        drawTextfieldLabel(this.mana, "所需魔力");
-        drawTextfieldLabel(this.cooldown, "冷却时间");
-        drawTextfieldLabel(this.charge, "释放等待");
+        drawTextFieldLabel(this.name, "技能名");
+        drawTextFieldLabel(this.mana, "所需魔力");
+        drawTextFieldLabel(this.cooldown, "冷却时间");
+        drawTextFieldLabel(this.charge, "释放等待");
     }
 
-    private void drawTextfieldLabel(TextFieldComponent component, String label) {
+    private void drawTextFieldLabel(TextFieldComponent component, String label) {
         drawString(label, component.getLayout().getX() - labelWidth - 5, component.getLayout().getY() + 5, 0xFFFFFF);
     }
 

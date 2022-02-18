@@ -126,4 +126,9 @@ public final class PageHelper<T> {
     public int dataSize() {
         return this.data.size();
     }
+
+    public void setData(Collection<T> newData) {
+        this.data.clear();
+        this.data.addAll(newData);
+    }
 }

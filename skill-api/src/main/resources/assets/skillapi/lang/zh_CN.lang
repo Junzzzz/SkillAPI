@@ -17,11 +17,14 @@ commands.teach.skill.known=%1$s 已学会 %2$s
 commands.teach.skill.invalidPlayer=%1$s 无法学习 %2$s
 commands.teach.skill.notFound=找不到技能"%1$s"
 
+skill.gui.inputDialog.label=输入文本
+
 skill.gui.title=已学技能
 skill.gui.config.delete.title=是否删除技能[%1$s]？
 skill.gui.config.delete.tip=技能将无法被恢复！
-
 skill.gui.profile.title=技能方案
+skill.gui.profile.dialog.title=添加动态技能方案
+skill.gui.profile.dialog.label=输入方案名
 skill.gui.editProfile.title=编辑方案 - %1$s
 
 skill.constant.error.sync=数据不同步

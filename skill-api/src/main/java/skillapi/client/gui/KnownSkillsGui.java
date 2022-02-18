@@ -11,7 +11,7 @@ import skillapi.api.gui.base.listener.MouseReleasedListener;
 import skillapi.client.GuiKnownSkills;
 import skillapi.client.SkillClient;
 import skillapi.client.gui.component.KnownSkillListComponent;
-import skillapi.packet.OpenSkillProfilesGuiPacket;
+import skillapi.packet.GetProfileInfosPacket;
 import skillapi.packet.SkillBarSyncPacket;
 import skillapi.packet.base.Packet;
 import skillapi.skill.AbstractSkill;
@@ -48,7 +48,7 @@ public class KnownSkillsGui extends BaseGui {
         addComponent(skillListComponent);
 
         addButton((width - 206) / 2 - 20, (height - 134) / 2, 20, 20, "</>",
-                () -> Packet.callback(new OpenSkillProfilesGuiPacket(), profiles -> {
+                () -> Packet.callback(new GetProfileInfosPacket(), profiles -> {
                     GuiApi.displayGui(new SkillProfilesGui(profiles));
                 }));
     }

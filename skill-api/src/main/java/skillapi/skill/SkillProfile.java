@@ -53,6 +53,13 @@ public class SkillProfile {
         this.dynamicSkills = dynamicSkills;
     }
 
+    public SkillProfile(String name, String lastUpdater, long lastUpdateTime) {
+        this();
+        this.name = name;
+        this.lastUpdater = lastUpdater;
+        this.lastUpdateTime = lastUpdateTime;
+    }
+
     public synchronized DynamicSkill put(DynamicSkillBuilder builder) {
         DynamicSkill skill = builder.build();
         this.dynamicSkills.put(skill.getUnlocalizedName(), skill);

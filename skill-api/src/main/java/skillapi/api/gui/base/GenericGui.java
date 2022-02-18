@@ -109,13 +109,34 @@ public abstract class GenericGui {
     }
 
     protected final void drawCenteredString(String text, int centerX, int y, int color) {
+        drawCenteredString(text, centerX, y, color, false, true);
+    }
+
+    protected final void drawCenteredString(String text, int centerX, int y, int color, boolean dropShadow) {
+        drawCenteredString(text, centerX, y, color, dropShadow, true);
+    }
+
+    protected final void drawCenteredString(String text, int centerX, int y, int color, boolean dropShadow, boolean translate) {
         final FontRenderer fontRenderer = getFontRenderer();
-        text = translate(text);
-        fontRenderer.drawString(text, centerX - fontRenderer.getStringWidth(text) / 2, y, color);
+        if (translate) {
+            text = translate(text);
+        }
+        fontRenderer.drawString(text, centerX - fontRenderer.getStringWidth(text) / 2, y, color, dropShadow);
     }
 
     protected final void drawString(String text, int x, int y, int color) {
-        getFontRenderer().drawString(translate(text), x, y, color);
+        drawString(text, x, y, color, false, true);
+    }
+
+    protected final void drawString(String text, int x, int y, int color, boolean dropShadow) {
+        drawString(text, x, y, color, dropShadow, true);
+    }
+
+    protected final void drawString(String text, int x, int y, int color, boolean dropShadow, boolean translate) {
+        if (translate) {
+            text = translate(text);
+        }
+        getFontRenderer().drawString(text, x, y, color, dropShadow);
     }
 
     protected String translate(String text) {

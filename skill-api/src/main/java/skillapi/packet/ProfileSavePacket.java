@@ -2,31 +2,27 @@ package skillapi.packet;
 
 import cpw.mods.fml.relauncher.Side;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
 import net.minecraft.entity.player.EntityPlayer;
-import skillapi.packet.base.CallbackPacket;
+import skillapi.api.annotation.SkillPacket;
+import skillapi.packet.base.AbstractPacket;
 import skillapi.server.SkillServer;
 import skillapi.skill.SkillProfile;
 import skillapi.skill.Skills;
 
-
 /**
  * @author Jun
  */
-@Getter
-@Setter
 @AllArgsConstructor
-public class OpenEditProfileGuiPacket extends CallbackPacket<SkillProfile> {
-    private String profileName;
+@SkillPacket
+public class ProfileSavePacket extends AbstractPacket {
+    private SkillProfile profile;
 
     @Override
-    protected SkillProfile returns(EntityPlayer player, Side from) {
+    protected void run(EntityPlayer player, Side from) {
         if (from.isClient()) {
             if (SkillServer.hasHighestAuthority(player)) {
-                return Skills.getProfile(profileName);
+                Skills.getProfileManager().saveProfile(profile);
             }
         }
-        return null;
     }
 }

@@ -22,7 +22,7 @@ public abstract class CallbackPacket<T> extends AbstractPacket {
     }
 
     @Override
-    protected void run(EntityPlayer player, Side from) {
+    protected final void run(EntityPlayer player, Side from) {
         T result = returns(player, from);
         if (result == null) {
             return;

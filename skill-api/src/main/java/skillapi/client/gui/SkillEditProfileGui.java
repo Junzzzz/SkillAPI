@@ -10,9 +10,10 @@ import skillapi.api.gui.base.listener.MousePressedListener;
 import skillapi.api.gui.component.ButtonComponent;
 import skillapi.common.PageHelper;
 import skillapi.common.Translation;
+import skillapi.packet.ProfileSavePacket;
+import skillapi.packet.base.Packet;
 import skillapi.skill.DynamicSkillBuilder;
 import skillapi.skill.SkillProfile;
-import skillapi.skill.Skills;
 
 import java.awt.*;
 import java.util.List;
@@ -28,8 +29,6 @@ public final class SkillEditProfileGui extends ItemListGui<DynamicSkillBuilder> 
     private ButtonComponent addSkillButton;
     private ButtonComponent deleteSkillButton;
     private ButtonComponent editSkillButton;
-    private ButtonComponent applySkillButton;
-    private boolean enableApply = false;
 
     private final SkillProfile editingProfile;
 
@@ -63,15 +62,6 @@ public final class SkillEditProfileGui extends ItemListGui<DynamicSkillBuilder> 
         // Edit skill button
         editSkillButton = addButton(this.guiPositionX + 85, this.guiPositionY + 153, 30, 20, "$skill.constant.edit",
                 () -> displayGui(new SkillEditGui(this, getSelectedSkill()))
-        );
-
-        applySkillButton = addButton(this.guiPositionX + 52, this.guiPositionY + 153, 30, 20, "Apply",
-                () -> {
-                    // TODO 应用方案
-                    Skills.serverSwitchConfig(this.editingProfile);
-                    this.enableApply = false;
-                    checkPageStatus();
-                }
         );
 
         checkPageStatus();
@@ -110,7 +100,7 @@ public final class SkillEditProfileGui extends ItemListGui<DynamicSkillBuilder> 
             this.selectedLine = -1;
             DynamicSkillBuilder removed = this.page.removeInCurrentPage(select);
             this.editingProfile.remove(removed);
-            this.enableApply = true;
+            saveAll();
         }
         displayGui(this);
     }
@@ -122,7 +112,6 @@ public final class SkillEditProfileGui extends ItemListGui<DynamicSkillBuilder> 
         // Check if selected
         this.editSkillButton.setEnable(this.selectedLine != -1);
         this.deleteSkillButton.setEnable(this.editSkillButton.isEnable());
-        this.applySkillButton.setEnable(enableApply);
     }
 
     private DynamicSkillBuilder getSelectedSkill() {
@@ -131,7 +120,12 @@ public final class SkillEditProfileGui extends ItemListGui<DynamicSkillBuilder> 
 
     public void saveSkill(DynamicSkillBuilder builder) {
         this.editingProfile.put(builder);
-        this.enableApply = true;
-        // TODO 保存到临时文件
+
+        saveAll();
+    }
+
+    private void saveAll() {
+        // Save on server
+        Packet.send(new ProfileSavePacket(this.editingProfile));
     }
 }

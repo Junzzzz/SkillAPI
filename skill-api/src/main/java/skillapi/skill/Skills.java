@@ -11,7 +11,6 @@ import skillapi.common.SkillLog;
 import skillapi.common.SkillNBT;
 import skillapi.common.SkillRuntimeException;
 import skillapi.packet.ClientSkillInitPacket;
-import skillapi.skill.SkillProfile.SkillProfileInfo;
 
 import java.io.IOException;
 import java.util.*;
@@ -96,20 +95,20 @@ public final class Skills {
     }
 
     @SideOnly(Side.CLIENT)
-    public static synchronized void clientSwitchConfig(SkillProfile config) {
-        currentProfile = config;
+    public static synchronized void clientSwitchConfig(SkillProfile profile) {
+        currentProfile = profile;
     }
 
-    public static synchronized void serverSwitchConfig(SkillProfile config) {
+    public static synchronized void serverSwitchConfig(SkillProfile profile) {
         SkillProfile tmp = currentProfile;
 
-        currentProfile = config;
+        currentProfile = profile;
         NBTTagCompound tag = SkillNBT.getTag(SkillNBT.TAG_DYNAMIC);
-        tag.setString(CONFIG_PROFILE_CURRENT, config.name);
+        tag.setString(CONFIG_PROFILE_CURRENT, profile.name);
         try {
-            NBTTagCompound profile = tag.getCompoundTag(TAG_DYNAMIC_PROFILES);
-            tag.setTag(TAG_DYNAMIC_PROFILES, profile);
-            profile.setByteArray(config.name, config.getBytes());
+            NBTTagCompound profileTag = tag.getCompoundTag(TAG_DYNAMIC_PROFILES);
+            tag.setTag(TAG_DYNAMIC_PROFILES, profileTag);
+            profileTag.setByteArray(profile.name, profile.getBytes());
             SkillNBT.save();
         } catch (JsonProcessingException e) {
             // recover
@@ -188,8 +187,8 @@ public final class Skills {
         return new ClientSkillInitPacket(currentProfile, tag);
     }
 
-    public static List<SkillProfileInfo> getProfileInfos() {
-        return profileManager.getInfos();
+    public static SkillProfileManager getProfileManager() {
+        return profileManager;
     }
 
     public static SkillProfile getCurrentProfile() {

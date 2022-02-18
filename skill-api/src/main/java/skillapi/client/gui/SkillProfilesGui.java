@@ -5,9 +5,12 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.gui.FontRenderer;
 import skillapi.api.gui.base.GuiApi;
 import skillapi.api.gui.component.ButtonComponent;
+import skillapi.api.gui.component.InputDialogGui;
 import skillapi.common.PageHelper;
 import skillapi.common.Translation;
-import skillapi.packet.OpenEditProfileGuiPacket;
+import skillapi.packet.AddNewProfilePacket;
+import skillapi.packet.GetProfilePacket;
+import skillapi.packet.RemoveProfilePacket;
 import skillapi.packet.base.Packet;
 import skillapi.skill.SkillProfile.SkillProfileInfo;
 
@@ -41,11 +44,21 @@ public class SkillProfilesGui extends ItemListGui<SkillProfileInfo> {
         // Add skill button
         addSkillButton = addButton(this.guiPositionX + 5, this.guiPositionY + 153, 18, 20, "+",
                 () -> {
+                    String title = Translation.format("skill.gui.profile.dialog.title");
+                    String label = Translation.format("skill.gui.profile.dialog.label");
+                    InputDialogGui dialog = new InputDialogGui(this, title, label, name -> {
+                        Packet.callback(new AddNewProfilePacket(name), this::loadNewData);
+                    });
+                    GuiApi.displayGui(dialog);
                 }
         );
         // Delete skill button
         deleteSkillButton = addButton(this.guiPositionX + 26, this.guiPositionY + 153, 18, 20, "-",
                 () -> {
+                    SkillProfileInfo selectedItem = getSelectedItem();
+                    if (selectedItem != null) {
+                        Packet.callback(new RemoveProfilePacket(selectedItem.getName()), this::loadNewData);
+                    }
                 }
         );
         // Edit skill button
@@ -53,18 +66,29 @@ public class SkillProfilesGui extends ItemListGui<SkillProfileInfo> {
                 () -> {
                     SkillProfileInfo info = getSelectedItem();
                     if (info != null) {
-                        Packet.callback(new OpenEditProfileGuiPacket(info.getName()), profile -> {
+                        Packet.callback(new GetProfilePacket(info.getName()), profile -> {
                             // TODO LOCK
                             GuiApi.displayGui(new SkillEditProfileGui(profile));
                         });
                     }
                 }
         );
+
+        checkPageStatus();
     }
 
     @Override
     protected boolean keepFocus(int x, int y) {
         return deleteSkillButton.getLayout().isIn(x, y) || editSkillButton.getLayout().isIn(x, y);
+    }
+
+    @Override
+    protected void checkPageStatus() {
+        super.checkPageStatus();
+
+        // Check if selected
+        this.editSkillButton.setEnable(this.selectedLine != -1);
+        this.deleteSkillButton.setEnable(this.editSkillButton.isEnable());
     }
 
     private SkillProfileInfo getSelectedItem() {
@@ -97,5 +121,14 @@ public class SkillProfilesGui extends ItemListGui<SkillProfileInfo> {
                     Color.LIGHT_GRAY.getRGB()
             );
         }
+    }
+
+    private void loadNewData(List<SkillProfileInfo> newData) {
+        this.page.setData(newData);
+        this.page.toLastPage();
+        if (getSelectedItem() == null) {
+            this.selectedLine = -1;
+        }
+        checkPageStatus();
     }
 }
