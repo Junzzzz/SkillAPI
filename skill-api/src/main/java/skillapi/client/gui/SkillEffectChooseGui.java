@@ -9,11 +9,12 @@ import skillapi.client.gui.component.SkillEffectListComponent;
 import skillapi.skill.SkillEffect;
 import skillapi.skill.Skills;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
  * @author Jun
- * @date 2020/11/13.
  */
 public class SkillEffectChooseGui extends BaseGui {
     private final SkillEditGui parent;
@@ -41,9 +42,11 @@ public class SkillEffectChooseGui extends BaseGui {
         });
 
         finishButton = addButton(width / 2 - 40, height - 30, 80, 20, "$gui.done", () -> {
+            List<Class<? extends SkillEffect>> effectClasses = new ArrayList<>();
             for (String s : this.rightSelectList.getList()) {
-                parent.skillBuilder.addEffect(Skills.getSkillEffect(s));
+                effectClasses.add(Skills.getSkillEffect(s));
             }
+            parent.skillBuilder.setEffects(effectClasses);
             displayGui(parent);
         });
 

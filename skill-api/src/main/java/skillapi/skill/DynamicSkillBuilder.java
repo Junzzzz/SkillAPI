@@ -40,6 +40,7 @@ public class DynamicSkillBuilder {
     private int charge;
 
     private final List<Map.Entry<SkillEffect, Map<String, String>>> effects = new ArrayList<>();
+    private final Set<Class<? extends SkillEffect>> effectSet = new HashSet<>(4);
 
     public DynamicSkillBuilder(SkillProfile profile) {
         this.uniqueId = profile.getSkillUniqueId();
@@ -60,6 +61,9 @@ public class DynamicSkillBuilder {
         if (annotation == null) {
             throw new SkillRuntimeException("Unknown Error");
         }
+        if (!effectSet.add(clz)) {
+            return;
+        }
         Map<String, String> paramMap = new LinkedHashMap<>(clz.getDeclaredFields().length);
         SkillEffect skillEffect = ClassUtils.newEmptyInstance(clz, "A fatal error occurred and the skill " +
                 "effect could not be created.");
@@ -67,6 +71,27 @@ public class DynamicSkillBuilder {
             paramMap.put(field.getName(), null);
         }
         effects.add(new Pair<>(skillEffect, paramMap));
+    }
+
+    public void setEffects(List<Class<? extends SkillEffect>> classes) {
+        List<Map.Entry<SkillEffect, Map<String, String>>> newList = new ArrayList<>(classes.size());
+        Set<Class<? extends SkillEffect>> newSet = new HashSet<>(classes);
+
+        // Retain the desired effect
+        this.effectSet.clear();
+        for (Map.Entry<SkillEffect, Map<String, String>> effect : this.effects) {
+            if (newSet.remove(effect.getKey().getClass())) {
+                newList.add(effect);
+                this.effectSet.add(effect.getKey().getClass());
+            }
+        }
+        this.effects.clear();
+        this.effects.addAll(newList);
+
+        // Add new effect
+        for (Class<? extends SkillEffect> clz : newSet) {
+            addEffect(clz);
+        }
     }
 
     public boolean isEmpty() {
@@ -78,6 +103,9 @@ public class DynamicSkillBuilder {
     }
 
     public List<Map.Entry<String, String>> getParams(int index) {
+        if (index < 0 || index >= effects.size()) {
+            return new ArrayList<>();
+        }
         return effects.get(index).getValue().entrySet().stream()
                 .map(e -> new Pair<>(e.getKey(), e.getValue() != null ? e.getValue() : ""))
                 .collect(Collectors.toList());

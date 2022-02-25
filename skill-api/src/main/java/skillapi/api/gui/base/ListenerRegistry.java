@@ -2,23 +2,24 @@ package skillapi.api.gui.base;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import lombok.AllArgsConstructor;
 import lombok.var;
 import skillapi.common.SkillRuntimeException;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * @author Jun
- * @date 2021/3/20.
  */
 @SideOnly(Side.CLIENT)
 public final class ListenerRegistry {
-    private static Map<Class<? extends GenericListener>, Map<BaseComponent, List<GenericListener>>> GLOBAL;
+    private static final Comparator<PriorityListener> PRIORITY_COMPARATOR = Comparator.comparingInt(o -> o.priority);
+
+    private static Map<Class<? extends GenericListener>, Map<BaseComponent, List<PriorityListener>>> GLOBAL;
 
     private final GenericGui base;
-    private final Map<Class<? extends GenericListener>, Map<BaseComponent, List<GenericListener>>> local =
-            new LinkedHashMap<>(8);
+    private final Map<Class<? extends GenericListener>, Map<BaseComponent, List<PriorityListener>>> local =
+            new HashMap<>(8);
 
     private BaseComponent mappingComponent;
 
@@ -26,15 +27,15 @@ public final class ListenerRegistry {
         this.base = ui;
     }
 
-    protected void onComponent(BaseComponent mappingComponent) {
+    void onComponent(BaseComponent mappingComponent) {
         this.mappingComponent = mappingComponent;
     }
 
-    protected static void init() {
-        GLOBAL = new LinkedHashMap<>(8);
+    static void init() {
+        GLOBAL = new HashMap<>(8);
     }
 
-    protected static void clean() {
+    static void clean() {
         GLOBAL.clear();
         GLOBAL = null;
     }
@@ -42,7 +43,7 @@ public final class ListenerRegistry {
     /**
      * Can only be executed in BaseGui
      */
-    protected void clear() {
+    void clear() {
         GLOBAL.clear();
         this.local.clear();
     }
@@ -69,22 +70,26 @@ public final class ListenerRegistry {
         }
     }
 
+    public void on(GenericListener listener) {
+        on(listener, 0);
+    }
 
     @SuppressWarnings("unchecked")
-    public void on(GenericListener listener) {
+    public void on(GenericListener listener, int priority) {
         final Class<?>[] interfaces = listener.getClass().getInterfaces();
         if (interfaces.length != 1) {
             throw new SkillRuntimeException("Unknown error");
         }
         final Class<? extends GenericListener> listenerClass = (Class<? extends GenericListener>) interfaces[0];
         if (listener instanceof LocalListener) {
-            local.computeIfAbsent(listenerClass, k -> new HashMap<>(4))
-                    .computeIfAbsent(mappingComponent, k -> new LinkedList<>())
-                    .add(listener);
+            local.computeIfAbsent(listenerClass, k -> new LinkedHashMap<>(4))
+                    .computeIfAbsent(mappingComponent, k -> new ArrayList<>())
+                    .add(new PriorityListener(mappingComponent, listener, priority));
+
         } else {
-            GLOBAL.computeIfAbsent(listenerClass, k -> new HashMap<>(4))
-                    .computeIfAbsent(mappingComponent, k -> new LinkedList<>())
-                    .add(listener);
+            GLOBAL.computeIfAbsent(listenerClass, k -> new LinkedHashMap<>(4))
+                    .computeIfAbsent(mappingComponent, k -> new ArrayList<>())
+                    .add(new PriorityListener(mappingComponent, listener, priority));
         }
     }
 
@@ -107,15 +112,12 @@ public final class ListenerRegistry {
         if (map == null) {
             return;
         }
-        final Map<BaseComponent, List<GenericListener>> m = map.get(clz);
+        final Map<BaseComponent, List<PriorityListener>> m = map.get(clz);
         if (m == null) {
             return;
         }
-        for (Map.Entry<BaseComponent, List<GenericListener>> e : m.entrySet()) {
-            for (GenericListener l : e.getValue()) {
-                caller.call(e.getKey(), (T) l);
-            }
-        }
+        m.entrySet().stream().flatMap(e -> e.getValue().stream()).sorted(PRIORITY_COMPARATOR)
+                .forEach(l -> caller.call(l.component, (T) l.listener));
     }
 
     @SuppressWarnings("unchecked")
@@ -130,14 +132,13 @@ public final class ListenerRegistry {
         if (map == null) {
             return;
         }
-        Map<BaseComponent, List<GenericListener>> m = map.get(clz);
+        Map<BaseComponent, List<PriorityListener>> m = map.get(clz);
         if (m == null) {
             return;
         }
-        List<T> listeners = (List<T>) m.values().stream().flatMap(Collection::stream).collect(Collectors.toList());
-        for (T listener : listeners) {
-            caller.call(listener);
-        }
+        m.values().stream().flatMap(Collection::stream)
+                .sorted(PRIORITY_COMPARATOR)
+                .forEach(p -> caller.call((T) p.listener));
     }
 
     @SuppressWarnings("unchecked")
@@ -149,16 +150,17 @@ public final class ListenerRegistry {
             return;
         }
         // Global only
-        final Map<BaseComponent, List<GenericListener>> m = GLOBAL.get(clz);
+        final Map<BaseComponent, List<PriorityListener>> m = GLOBAL.get(clz);
         if (m == null) {
             return;
         }
-        final List<T> listeners = (List<T>) m.get(component);
+        final List<PriorityListener> listeners = m.get(component);
         if (listeners == null) {
             return;
         }
-        for (T listener : listeners) {
-            caller.call(listener);
+        listeners.sort(PRIORITY_COMPARATOR);
+        for (PriorityListener pl : listeners) {
+            caller.call((T) pl.listener);
         }
     }
 
@@ -168,5 +170,12 @@ public final class ListenerRegistry {
 
     public interface Caller<T> {
         void call(T listener);
+    }
+
+    @AllArgsConstructor
+    static class PriorityListener {
+        BaseComponent component;
+        GenericListener listener;
+        int priority;
     }
 }

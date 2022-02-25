@@ -15,7 +15,6 @@ import java.util.stream.Collectors;
  * TODO SLIDER
  *
  * @author Jun
- * @date 2021/3/20.
  */
 public class FormComponent extends BaseComponent {
     protected final int labelWidth;
@@ -83,7 +82,7 @@ public class FormComponent extends BaseComponent {
     }
 
     @AllArgsConstructor
-    protected class ParamTextField {
+    protected static class ParamTextField {
         public String param;
         public TextFieldComponent textField;
     }

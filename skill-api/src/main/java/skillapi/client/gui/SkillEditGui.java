@@ -11,15 +11,17 @@ import skillapi.api.gui.base.Layout;
 import skillapi.api.gui.base.ListenerRegistry;
 import skillapi.api.gui.base.listener.KeyTypedListener;
 import skillapi.api.gui.component.ButtonComponent;
+import skillapi.api.gui.component.RecordTextFieldComponent;
 import skillapi.api.gui.component.TextFieldComponent;
 import skillapi.api.gui.component.impl.ScrollingListComponent;
 import skillapi.client.gui.component.SkillEditFormComponent;
 import skillapi.skill.DynamicSkillBuilder;
 import skillapi.skill.SkillEffect;
 
+import static skillapi.api.gui.component.TextFieldComponent.TextFieldType.POSITIVE_INTEGER;
+
 /**
  * @author Jun
- * @date 2020/10/24.
  */
 @SideOnly(Side.CLIENT)
 public final class SkillEditGui extends BaseGui {
@@ -27,17 +29,15 @@ public final class SkillEditGui extends BaseGui {
     private final int labelWidth = 40;
     private Layout formLayout;
 
-    protected ScrollingListComponent<SkillEffect> effectList;
+    ScrollingListComponent<SkillEffect> effectList;
     private SkillEditFormComponent form;
     private ButtonComponent saveButton;
-    private TextFieldComponent name;
-    private TextFieldComponent mana;
-    private TextFieldComponent cooldown;
-    private TextFieldComponent charge;
+    private RecordTextFieldComponent name;
+    private RecordTextFieldComponent mana;
+    private RecordTextFieldComponent cooldown;
+    private RecordTextFieldComponent charge;
 
-    private int effectIndex;
-
-    protected final DynamicSkillBuilder skillBuilder;
+    final DynamicSkillBuilder skillBuilder;
 
     public SkillEditGui(SkillEditProfileGui parent, DynamicSkillBuilder builder) {
         this.parent = parent;
@@ -56,10 +56,9 @@ public final class SkillEditGui extends BaseGui {
         this.effectList = new ScrollingListComponent<>(listLayout, 25, skillBuilder.getEffects(), renderer);
         this.effectList.setClickEvent((item, index) -> {
             this.form.clear();
-            this.effectIndex = index;
             this.form.setSkillEffect(item);
             this.form.addParams(skillBuilder.getParams(index));
-            this.saveButton.setEnable(false);
+            this.saveButton.setEnable(RecordTextFieldComponent.isChanged(this.name, this.mana, this.cooldown, this.charge));
         });
 
         final Layout nameLayout = Layout.builder()
@@ -71,10 +70,12 @@ public final class SkillEditGui extends BaseGui {
         final Layout cooldownLayout = new Layout(nameLayout.getLeft(), 55, nameLayout.getWidth(), 20);
         final Layout chargeLayout = new Layout(manaLayout.getLeft(), 55, nameLayout.getWidth(), 20);
 
-        this.name = new TextFieldComponent(nameLayout);
-        this.mana = new TextFieldComponent(manaLayout);
-        this.cooldown = new TextFieldComponent(cooldownLayout);
-        this.charge = new TextFieldComponent(chargeLayout);
+        this.name = new RecordTextFieldComponent(nameLayout);
+        this.mana = new RecordTextFieldComponent(manaLayout);
+        this.cooldown = new RecordTextFieldComponent(cooldownLayout);
+        this.charge = new RecordTextFieldComponent(chargeLayout);
+
+        TextFieldComponent.setType(POSITIVE_INTEGER, this.mana, this.cooldown, this.charge);
 
         this.name.setText(skillBuilder.getName());
         this.mana.setText(String.valueOf(skillBuilder.getMana()));
@@ -85,7 +86,7 @@ public final class SkillEditGui extends BaseGui {
 
         addComponent(effectList, this.name, this.mana, this.cooldown, this.charge, form);
         // Button
-        addButton(10, this.height - 5 - 20, 100, 20, "Edit", () -> displayGui(new SkillEffectChooseGui(this)));
+        addButton(10, this.height - 5 - 20, 100, 20, "$skill.constant.edit", () -> displayGui(new SkillEffectChooseGui(this)));
 
         final int btnPadding = (this.form.getLayout().getWidth() - 200) / 3;
         this.saveButton = addButton(this.form.getLayout().getLeft() + btnPadding, this.height - 5 - 20, 100, 20,
@@ -122,22 +123,12 @@ public final class SkillEditGui extends BaseGui {
     protected void listener(ListenerRegistry listener) {
         KeyTypedListener ktl = (c, key) -> {
             if (key == Keyboard.KEY_BACK || checkNumber(c)) {
-                // TODO Integer.parseInt(this.cooldown.getText()) 空文本有BUG
                 // TODO 校验不完善
                 val map = this.form.getFormMap();
 
-                val originList = this.skillBuilder.getParams(this.effectIndex);
+                val originList = this.skillBuilder.getParams(getIndex());
 
-                boolean flag = !this.name.getText().equals(this.skillBuilder.getName());
-                if (!flag && this.skillBuilder.getMana() != Integer.parseInt(this.mana.getText())) {
-                    flag = true;
-                }
-                if (!flag && this.skillBuilder.getCooldown() != (long) (Double.parseDouble(this.cooldown.getText()) * 1000)) {
-                    flag = true;
-                }
-                if (!flag && this.skillBuilder.getCharge() != Integer.parseInt(this.charge.getText())) {
-                    flag = true;
-                }
+                boolean flag = RecordTextFieldComponent.isChanged(this.name, this.mana, this.cooldown, this.charge);
 
                 if (!flag) {
                     for (var e : originList) {
@@ -156,13 +147,17 @@ public final class SkillEditGui extends BaseGui {
         listener.on(ktl);
     }
 
+    public int getIndex() {
+        return this.effectList.getSelectedIndex();
+    }
+
     private boolean checkNumber(char c) {
         return c >= '0' && c <= '9';
     }
 
     private void clickSave() {
         this.form.getForm()
-                .forEach(param -> this.skillBuilder.setParam(this.effectIndex, param.getKey(), param.getValue()));
+                .forEach(param -> this.skillBuilder.setParam(getIndex(), param.getKey(), param.getValue()));
         this.skillBuilder.setName(this.name.getText());
         this.skillBuilder.setMana(Integer.parseInt(this.mana.getText()));
         this.skillBuilder.setCooldown((long) (Double.parseDouble(this.cooldown.getText()) * 1000));
