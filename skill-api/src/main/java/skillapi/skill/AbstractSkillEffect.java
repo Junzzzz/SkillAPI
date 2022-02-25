@@ -6,15 +6,13 @@ import java.util.Objects;
  * @author Jun
  */
 public abstract class AbstractSkillEffect implements SkillEffect {
-    private final String name = "skill.effect." + Skills.getModId(getClass()) + "." + getClass().getSimpleName();
-
     @Override
     public String getUnlocalizedName() {
-        return name;
+        return "skill.effect." + Skills.getModId(getClass()) + "." + getClass().getSimpleName();
     }
 
     public String getParamName(String param) {
-        return name + "." + param;
+        return getUnlocalizedName() + "." + param;
     }
 
     @Override
@@ -28,7 +26,7 @@ public abstract class AbstractSkillEffect implements SkillEffect {
 
         AbstractSkillEffect that = (AbstractSkillEffect) o;
 
-        return Objects.equals(name, that.name);
+        return Objects.equals(getUnlocalizedName(), that.getUnlocalizedName());
     }
 
     @Override

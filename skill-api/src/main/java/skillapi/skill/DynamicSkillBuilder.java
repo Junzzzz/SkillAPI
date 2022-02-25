@@ -50,10 +50,32 @@ public class DynamicSkillBuilder {
         this.uniqueId = skill.getUniqueId();
         this.name = config.getLocalizedName(skill);
         this.description = config.getDescription(skill);
+        this.mana = skill.getMana();
+        this.cooldown = skill.getCooldown();
+        this.charge = skill.getCharge();
+        for (SkillEffect effect : skill.effects) {
+            addEffect(effect);
+        }
     }
 
     protected DynamicSkillBuilder(int uniqueId) {
         this.uniqueId = uniqueId;
+    }
+
+    public void addEffect(SkillEffect effect) {
+        Class<? extends SkillEffect> clz = effect.getClass();
+        Map<String, String> paramMap = new LinkedHashMap<>(clz.getDeclaredFields().length);
+        try {
+            for (Field field : clz.getDeclaredFields()) {
+                if (field.isAnnotationPresent(SkillParam.class)) {
+                    field.setAccessible(true);
+                    paramMap.put(field.getName(), field.get(effect).toString());
+                }
+            }
+        } catch (IllegalAccessException e) {
+            throw new SkillRuntimeException("Unknown Error");
+        }
+        effects.add(new Pair<>(effect, paramMap));
     }
 
     public void addEffect(Class<? extends SkillEffect> clz) {
@@ -68,7 +90,9 @@ public class DynamicSkillBuilder {
         SkillEffect skillEffect = ClassUtils.newEmptyInstance(clz, "A fatal error occurred and the skill " +
                 "effect could not be created.");
         for (Field field : clz.getDeclaredFields()) {
-            paramMap.put(field.getName(), null);
+            if (field.isAnnotationPresent(SkillParam.class)) {
+                paramMap.put(field.getName(), null);
+            }
         }
         effects.add(new Pair<>(skillEffect, paramMap));
     }

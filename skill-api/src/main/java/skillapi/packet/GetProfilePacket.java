@@ -3,6 +3,7 @@ package skillapi.packet;
 import cpw.mods.fml.relauncher.Side;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import net.minecraft.entity.player.EntityPlayer;
 import skillapi.api.annotation.SkillPacket;
@@ -17,6 +18,7 @@ import skillapi.skill.Skills;
  */
 @Getter
 @Setter
+@NoArgsConstructor
 @AllArgsConstructor
 @SkillPacket
 public class GetProfilePacket extends CallbackPacket<SkillProfile> {

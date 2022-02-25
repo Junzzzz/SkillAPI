@@ -11,6 +11,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.NetHandlerPlayServer;
@@ -138,6 +139,15 @@ public final class Packet {
     }
 
     public static void sendToServer(AbstractPacket packet) {
+        if (Minecraft.getMinecraft().isIntegratedServerRunning()) {
+            EntityClientPlayerMP clientPlayer = FMLClientHandler.instance().getClientPlayerEntity();
+            if (clientPlayer != null) {
+                String name = clientPlayer.getCommandSenderName();
+                EntityPlayer player = Minecraft.getMinecraft().getIntegratedServer().getEntityWorld().getPlayerEntityByName(name);
+                packet.run(player, Side.CLIENT);
+                return;
+            }
+        }
         FMLProxyPacket proxy = proxy(packet, Side.SERVER);
         if (proxy != null) {
             CHANNEL.sendToServer(proxy);

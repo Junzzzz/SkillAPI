@@ -19,6 +19,7 @@ import skillapi.skill.DynamicSkillBuilder;
 import skillapi.skill.SkillEffect;
 
 import static skillapi.api.gui.component.TextFieldComponent.TextFieldType.POSITIVE_INTEGER;
+import static skillapi.api.gui.component.TextFieldComponent.TextFieldType.POSITIVE_NUMBER;
 
 /**
  * @author Jun
@@ -75,11 +76,12 @@ public final class SkillEditGui extends BaseGui {
         this.cooldown = new RecordTextFieldComponent(cooldownLayout);
         this.charge = new RecordTextFieldComponent(chargeLayout);
 
-        TextFieldComponent.setType(POSITIVE_INTEGER, this.mana, this.cooldown, this.charge);
+        this.cooldown.setType(POSITIVE_NUMBER);
+        TextFieldComponent.setType(POSITIVE_INTEGER, this.mana, this.charge);
 
         this.name.setText(skillBuilder.getName());
         this.mana.setText(String.valueOf(skillBuilder.getMana()));
-        this.cooldown.setText(String.valueOf(skillBuilder.getCooldown()));
+        this.cooldown.setText(String.format("%.3f", skillBuilder.getCooldown() / 1000D));
         this.charge.setText(String.valueOf(skillBuilder.getCharge()));
 
         this.form = new SkillEditFormComponent(formLayout, labelWidth);
@@ -163,7 +165,12 @@ public final class SkillEditGui extends BaseGui {
         this.skillBuilder.setCooldown((long) (Double.parseDouble(this.cooldown.getText()) * 1000));
         this.skillBuilder.setCharge(Integer.parseInt(this.charge.getText()));
         this.saveButton.setEnable(false);
-        parent.saveSkill(this.skillBuilder);
+        try {
+            parent.saveSkill(this.skillBuilder);
+        } catch (Exception e) {
+            this.saveButton.setEnable(true);
+            // TODO fail tip
+        }
     }
 
     private boolean checkEmpty(TextFieldComponent component) {

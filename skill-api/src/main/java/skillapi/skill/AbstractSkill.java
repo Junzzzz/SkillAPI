@@ -2,8 +2,6 @@ package skillapi.skill;
 
 import skillapi.common.Translation;
 
-import java.util.Objects;
-
 /**
  * @author Jun
  */
@@ -37,20 +35,6 @@ public abstract class AbstractSkill extends AbstractSkillEffect {
 
     public String getDescription() {
         return Translation.format(this.name + ".description");
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        AbstractSkill that = (AbstractSkill) o;
-
-        return Objects.equals(getUnlocalizedName(), that.getUnlocalizedName());
     }
 
     @Override
