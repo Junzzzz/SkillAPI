@@ -17,13 +17,24 @@ public final class SkillExecutor {
     private static Deque<TriggerUnit> triggerQueue = new ArrayDeque<>(64);
     private static Deque<TriggerUnit> reuseQueue = new ArrayDeque<>(64);
 
+    private static boolean STOP_RECEIVE = false;
+
     public static void init() {
         triggerQueue = new ArrayDeque<>(64);
         reuseQueue = new ArrayDeque<>(64);
     }
 
+    public static synchronized void resume() {
+        STOP_RECEIVE = false;
+    }
+
+    public static synchronized void stop() {
+        STOP_RECEIVE = true;
+        triggerQueue.clear();
+    }
+
     public static void execute(AbstractSkill skill, EntityPlayer player, EntityLivingBase target) {
-        if (skill == null || player == null) {
+        if (skill == null || player == null || STOP_RECEIVE) {
             return;
         }
         TriggerUnit unit;

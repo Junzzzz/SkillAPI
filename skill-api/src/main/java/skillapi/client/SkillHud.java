@@ -13,7 +13,7 @@ import static skillapi.client.SkillClient.SKILL;
  */
 public class SkillHud {
     public static void drawHud(int width, int height) {
-        if (SKILL == null) {
+        if (SKILL == null || !SkillClient.drawHud) {
             // After initialization
             return;
         }

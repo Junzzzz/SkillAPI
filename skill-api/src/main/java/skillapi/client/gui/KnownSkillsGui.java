@@ -47,10 +47,12 @@ public class KnownSkillsGui extends BaseGui {
         skillListComponent = new KnownSkillListComponent(listLayout, sliderLayout, new ArrayList<>(properties.getKnownSkills()));
         addComponent(skillListComponent);
 
-        addButton((width - 206) / 2 - 20, (height - 134) / 2, 20, 20, "</>",
-                () -> Packet.callback(new GetProfileInfosPacket(), profiles -> {
-                    GuiApi.displayGui(new SkillProfilesGui(profiles));
-                }));
+        if (properties.getPlayer().capabilities.isCreativeMode) {
+            addButton((width - 206) / 2 - 20, (height - 134) / 2, 20, 20, "</>",
+                    () -> Packet.callback(new GetProfileInfosPacket(), profiles -> {
+                        GuiApi.displayGui(new SkillProfilesGui(profiles));
+                    }));
+        }
     }
 
     @Override

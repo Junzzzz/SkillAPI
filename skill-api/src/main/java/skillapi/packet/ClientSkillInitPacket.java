@@ -30,10 +30,12 @@ public class ClientSkillInitPacket extends AbstractPacket {
     @Override
     protected void run(EntityPlayer player, Side from) {
         if (from.isServer()) {
+            SkillClient.drawHud = false;
             Skills.clientSwitchConfig(config);
             PlayerSkills skill = PlayerSkills.get(player);
             skill.loadNBTData(playerSkillProperties);
             SkillClient.initPlayerSkill(skill);
+            SkillClient.drawHud = true;
         }
     }
 }

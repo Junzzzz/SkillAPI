@@ -139,7 +139,7 @@ public class DynamicSkillBuilder {
         effects.get(index).getValue().put(paramName, value);
     }
 
-    public DynamicSkill build() {
+    public DynamicSkill build(SkillProfile profile) {
         List<SkillEffect> result = new ArrayList<>();
 
         for (Map.Entry<SkillEffect, Map<String, String>> entry : effects) {
@@ -170,7 +170,7 @@ public class DynamicSkillBuilder {
             result.add(skillEffect);
         }
 
-        DynamicSkill dynamicSkill = new DynamicSkill(uniqueId, result.toArray(new SkillEffect[0]));
+        DynamicSkill dynamicSkill = new DynamicSkill(profile, uniqueId, result.toArray(new SkillEffect[0]));
         dynamicSkill.mana = mana;
         dynamicSkill.cooldown = cooldown;
         dynamicSkill.charge = charge;

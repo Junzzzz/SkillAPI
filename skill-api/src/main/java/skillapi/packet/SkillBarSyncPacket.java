@@ -35,6 +35,9 @@ public class SkillBarSyncPacket extends AbstractPacket {
 
     @Override
     protected void run(EntityPlayer player, Side from) {
+        if (from.isServer()) {
+            return;
+        }
         PlayerSkills properties = PlayerSkills.get(player);
         Set<AbstractSkill> knownSkills = properties.getKnownSkills();
         for (int i = 0; i < this.skillNames.length; i++) {

@@ -8,17 +8,17 @@ import skillapi.api.gui.component.ButtonComponent;
 import skillapi.api.gui.component.InputDialogGui;
 import skillapi.common.PageHelper;
 import skillapi.common.Translation;
-import skillapi.packet.AddNewProfilePacket;
-import skillapi.packet.GetProfilePacket;
-import skillapi.packet.RemoveProfilePacket;
+import skillapi.packet.*;
 import skillapi.packet.base.Packet;
 import skillapi.skill.SkillProfile.SkillProfileInfo;
+import skillapi.skill.Skills;
 
 import java.awt.*;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -26,23 +26,36 @@ import java.util.List;
  */
 @SideOnly(Side.CLIENT)
 public class SkillProfilesGui extends ItemListGui<SkillProfileInfo> {
-    private ButtonComponent addSkillButton;
-    private ButtonComponent deleteSkillButton;
-    private ButtonComponent editSkillButton;
+    private ButtonComponent addProfileButton;
+    private ButtonComponent deleteProfileButton;
+    private ButtonComponent editProfileButton;
+    private ButtonComponent switchProfileButton;
 
     private static final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public SkillProfilesGui(List<SkillProfileInfo> profiles) {
-        super(new PageHelper<>(profiles, SKILL_LIST_SIZE));
+        super(new PageHelper<>(pinCurrentProfile(profiles), SKILL_LIST_SIZE));
         setTitle(Translation.format("skill.gui.profile.title"));
+    }
+
+    private static List<SkillProfileInfo> pinCurrentProfile(List<SkillProfileInfo> profiles) {
+        SkillProfileInfo info = Skills.getCurrentProfileInfo();
+        List<SkillProfileInfo> result = new ArrayList<>();
+        result.add(info);
+        for (SkillProfileInfo profile : profiles) {
+            if (!profile.getName().equals(info.getName())) {
+                result.add(profile);
+            }
+        }
+        return result;
     }
 
     @Override
     protected void init() {
         super.init();
 
-        // Add skill button
-        addSkillButton = addButton(this.guiPositionX + 5, this.guiPositionY + 153, 18, 20, "+",
+        // Add profile button
+        addProfileButton = addButton(this.guiPositionX + 5, this.guiPositionY + 153, 18, 20, "+",
                 () -> {
                     String title = Translation.format("skill.gui.profile.dialog.title");
                     String label = Translation.format("skill.gui.profile.dialog.label");
@@ -52,8 +65,8 @@ public class SkillProfilesGui extends ItemListGui<SkillProfileInfo> {
                     GuiApi.displayGui(dialog);
                 }
         );
-        // Delete skill button
-        deleteSkillButton = addButton(this.guiPositionX + 26, this.guiPositionY + 153, 18, 20, "-",
+        // Delete profile button
+        deleteProfileButton = addButton(this.guiPositionX + 26, this.guiPositionY + 153, 18, 20, "-",
                 () -> {
                     SkillProfileInfo selectedItem = getSelectedItem();
                     if (selectedItem != null) {
@@ -61,8 +74,20 @@ public class SkillProfilesGui extends ItemListGui<SkillProfileInfo> {
                     }
                 }
         );
-        // Edit skill button
-        editSkillButton = addButton(this.guiPositionX + 85, this.guiPositionY + 153, 30, 20, "$skill.constant.edit",
+        // Switch profile
+        switchProfileButton = addButton(this.guiPositionX + 52, this.guiPositionY + 153, 30, 20, "$skill.constant.switch",
+                () -> {
+                    SkillProfileInfo selectedItem = getSelectedItem();
+                    if (selectedItem != null) {
+                        Packet.send(new SwitchProfilePacket(selectedItem.getName()));
+                    }
+                    Packet.callback(new GetProfileInfosPacket(), profiles -> {
+                        GuiApi.displayGui(new SkillProfilesGui(profiles));
+                    });
+                }
+        );
+        // Edit profile button
+        editProfileButton = addButton(this.guiPositionX + 85, this.guiPositionY + 153, 30, 20, "$skill.constant.edit",
                 () -> {
                     SkillProfileInfo info = getSelectedItem();
                     if (info != null) {
@@ -73,13 +98,18 @@ public class SkillProfilesGui extends ItemListGui<SkillProfileInfo> {
                     }
                 }
         );
-
         checkPageStatus();
     }
 
     @Override
     protected boolean keepFocus(int x, int y) {
-        return deleteSkillButton.getLayout().isIn(x, y) || editSkillButton.getLayout().isIn(x, y);
+        ButtonComponent[] buttons = {this.deleteProfileButton, this.editProfileButton, this.switchProfileButton};
+        for (ButtonComponent button : buttons) {
+            if (button.getLayout().isIn(x, y)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
@@ -87,8 +117,15 @@ public class SkillProfilesGui extends ItemListGui<SkillProfileInfo> {
         super.checkPageStatus();
 
         // Check if selected
-        this.editSkillButton.setEnable(this.selectedLine != -1);
-        this.deleteSkillButton.setEnable(this.editSkillButton.isEnable());
+        if (this.selectedLine == 0 && !this.page.hasPrevPage()) {
+            this.editProfileButton.setEnable(false);
+            this.deleteProfileButton.setEnable(false);
+            this.switchProfileButton.setEnable(false);
+        } else {
+            this.editProfileButton.setEnable(this.selectedLine != -1);
+            this.deleteProfileButton.setEnable(this.editProfileButton.isEnable());
+            this.switchProfileButton.setEnable(this.selectedLine != -1);
+        }
     }
 
     private SkillProfileInfo getSelectedItem() {

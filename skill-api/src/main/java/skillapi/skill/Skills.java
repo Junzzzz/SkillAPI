@@ -11,6 +11,7 @@ import skillapi.common.SkillLog;
 import skillapi.common.SkillNBT;
 import skillapi.common.SkillRuntimeException;
 import skillapi.packet.ClientSkillInitPacket;
+import skillapi.skill.SkillProfile.SkillProfileInfo;
 
 import java.io.IOException;
 import java.util.*;
@@ -191,8 +192,8 @@ public final class Skills {
         return profileManager;
     }
 
-    public static SkillProfile getCurrentProfile() {
-        return currentProfile.copy();
+    public static SkillProfileInfo getCurrentProfileInfo() {
+        return currentProfile.getInfo();
     }
 
     public static SkillProfile getProfile(String name) {

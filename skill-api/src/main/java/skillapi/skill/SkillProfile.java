@@ -61,7 +61,7 @@ public class SkillProfile {
     }
 
     public synchronized DynamicSkill put(DynamicSkillBuilder builder) {
-        DynamicSkill skill = builder.build();
+        DynamicSkill skill = builder.build(this);
         this.dynamicSkills.put(skill.getUnlocalizedName(), skill);
         this.constant.put(skill.getUniqueId() + ".name", builder.getName());
         this.constant.put(skill.getUniqueId() + ".description", builder.getDescription());

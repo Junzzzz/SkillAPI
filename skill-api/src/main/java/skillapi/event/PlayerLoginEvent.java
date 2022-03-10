@@ -5,8 +5,6 @@ import cpw.mods.fml.relauncher.Side;
 import net.minecraft.entity.player.EntityPlayerMP;
 import skillapi.api.annotation.SkillEvent;
 import skillapi.event.base.BaseSkillEvent;
-import skillapi.packet.TestPacket;
-import skillapi.packet.base.Packet;
 
 /**
  * @author Jun
@@ -16,7 +14,7 @@ public class PlayerLoginEvent extends BaseSkillEvent<PlayerLoggedInEvent> {
     @Override
     public void onServer(PlayerLoggedInEvent event) {
         if (event.player instanceof EntityPlayerMP) {
-            Packet.sendToClient(new TestPacket("你登录了！"), (EntityPlayerMP) event.player);
+//            Packet.sendToClient(new TestPacket("你登录了！"), (EntityPlayerMP) event.player);
         }
 
     }

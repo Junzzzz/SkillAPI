@@ -25,6 +25,7 @@ import skillapi.utils.ClientUtils;
 @SkillEvent(Side.CLIENT)
 public class SkillClient {
     public static PlayerSkills SKILL;
+    public static boolean drawHud = false;
 
     public static KeyBinding showSkillGuiKey;
     public static KeyBinding[] unleashSkillKey = new KeyBinding[5];

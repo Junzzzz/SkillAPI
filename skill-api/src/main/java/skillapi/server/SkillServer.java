@@ -3,12 +3,14 @@ package skillapi.server;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.management.ServerConfigurationManager;
 import net.minecraft.world.storage.SaveFormatOld;
 import skillapi.common.SkillNBT;
 import skillapi.skill.SkillExecutor;
 import skillapi.skill.Skills;
 
 import java.io.File;
+import java.util.List;
 
 /**
  * @author Jun
@@ -29,6 +31,15 @@ public final class SkillServer {
 
     public static long getTotalTime() {
         return server.getEntityWorld().getTotalWorldTime();
+    }
+
+    public static ServerConfigurationManager getManager() {
+        return server.getConfigurationManager();
+    }
+
+    @SuppressWarnings("unchecked")
+    public static List<EntityPlayerMP> getPlayerList() {
+        return (List<EntityPlayerMP>) getManager().playerEntityList;
     }
 
     public static void kick(EntityPlayer player, String message) {

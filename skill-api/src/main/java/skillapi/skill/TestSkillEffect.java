@@ -5,6 +5,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ChatComponentText;
 import skillapi.api.annotation.SkillEffect;
 import skillapi.api.annotation.SkillParam;
+import skillapi.common.Message;
 
 /**
  * @author Jun
@@ -16,6 +17,10 @@ public class TestSkillEffect extends AbstractSkillEffect {
 
     @Override
     public void unleash(EntityPlayer player, EntityLivingBase entity) {
-        player.addChatComponentMessage(new ChatComponentText("param: " + testParam));
+        if (entity != null) {
+            Message.send(player,"Face to: " + entity.getCommandSenderName());
+        } else {
+            player.addChatComponentMessage(new ChatComponentText("param: " + testParam));
+        }
     }
 }

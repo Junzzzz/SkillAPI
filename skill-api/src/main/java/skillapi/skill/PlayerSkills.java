@@ -122,9 +122,12 @@ public class PlayerSkills implements IExtendedEntityProperties {
             for (int i = 0; i < list.tagCount(); i++) {
                 AbstractSkill skill = Skills.get(list.getStringTagAt(i));
                 if (skill != null) {
+                    skillBar[i] = skill;
                     cooldowns[i] = Cooldown.get(player, skill.getCooldown());
                     cooldowns[i].setCooling();
-                    skillBar[i] = skill;
+                } else {
+                    skillBar[i] = null;
+                    cooldowns[i] = null;
                 }
             }
         }
