@@ -18,7 +18,13 @@ public class TestStaticSkill extends AbstractStaticSkill {
     }
 
     @Override
-    public void unleash(EntityPlayer player, EntityLivingBase entity) {
+    public boolean unleash(EntityPlayer player, EntityLivingBase entity) {
         player.addChatComponentMessage(new ChatComponentText("Static Skill!"));
+        return true;
+    }
+
+    @Override
+    public boolean canUnleash(EntityPlayer player, EntityLivingBase entity) {
+        return true;
     }
 }

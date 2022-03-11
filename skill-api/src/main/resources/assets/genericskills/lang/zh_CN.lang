@@ -21,3 +21,6 @@ skill.name.unrelentingforce=不懈的力量
 skill.name.barrage=箭雨
 
 skill.type.name.genericsskill=通用技能
+
+skill.effect.genericskills.WeaponBleedingEffect=武器流血效果
+skill.effect.genericskills.TestSkillEffect.damagePercentage=武器伤害百分比

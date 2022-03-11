@@ -23,3 +23,5 @@ skill.name.barrage=Barrage
 
 skill.type.name.genericsskill=Generics Skill
 
+skill.effect.genericskills.WeaponBleedingEffect=Weapon Bleed
+skill.effect.genericskills.TestSkillEffect.damagePercentage=Damage Percentage

@@ -6,7 +6,7 @@ import lombok.val;
 import skillapi.api.annotation.SkillParam;
 import skillapi.api.util.Pair;
 import skillapi.common.SkillRuntimeException;
-import skillapi.utils.ClassUtils;
+import skillapi.utils.ReflectionUtils;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -62,11 +62,21 @@ public class DynamicSkillBuilder {
         this.uniqueId = uniqueId;
     }
 
+    public static List<Field> getFields(Class<? extends SkillEffect> clz) {
+        val annotation = clz.getDeclaredAnnotation(skillapi.api.annotation.SkillEffect.class);
+        if (annotation == null) {
+            throw new SkillRuntimeException("Unknown Error");
+        }
+        return annotation.callSuper() ? ReflectionUtils.getAllFields(clz) : Arrays.asList(clz.getDeclaredFields());
+    }
+
     public void addEffect(SkillEffect effect) {
         Class<? extends SkillEffect> clz = effect.getClass();
-        Map<String, String> paramMap = new LinkedHashMap<>(clz.getDeclaredFields().length);
+        List<Field> fields = getFields(clz);
+
+        Map<String, String> paramMap = new LinkedHashMap<>(fields.size());
         try {
-            for (Field field : clz.getDeclaredFields()) {
+            for (Field field : fields) {
                 if (field.isAnnotationPresent(SkillParam.class)) {
                     field.setAccessible(true);
                     paramMap.put(field.getName(), field.get(effect).toString());
@@ -79,19 +89,18 @@ public class DynamicSkillBuilder {
     }
 
     public void addEffect(Class<? extends SkillEffect> clz) {
-        val annotation = clz.getDeclaredAnnotation(skillapi.api.annotation.SkillEffect.class);
-        if (annotation == null) {
-            throw new SkillRuntimeException("Unknown Error");
-        }
         if (!effectSet.add(clz)) {
             return;
         }
-        Map<String, String> paramMap = new LinkedHashMap<>(clz.getDeclaredFields().length);
-        SkillEffect skillEffect = ClassUtils.newEmptyInstance(clz, "A fatal error occurred and the skill " +
+        List<Field> fields = getFields(clz);
+        Map<String, String> paramMap = new LinkedHashMap<>(fields.size());
+        SkillEffect skillEffect = ReflectionUtils.newEmptyInstance(clz, "A fatal error occurred and the skill " +
                 "effect could not be created.");
-        for (Field field : clz.getDeclaredFields()) {
+
+        for (Field field : fields) {
             if (field.isAnnotationPresent(SkillParam.class)) {
-                paramMap.put(field.getName(), null);
+                // Remove parent class duplicated field name
+                paramMap.putIfAbsent(field.getName(), null);
             }
         }
         effects.add(new Pair<>(skillEffect, paramMap));
@@ -152,7 +161,7 @@ public class DynamicSkillBuilder {
             }
 
             Map<String, String> map = entry.getValue();
-            for (Field field : clz.getDeclaredFields()) {
+            for (Field field : getFields(clz)) {
                 if (field.getAnnotation(SkillParam.class) == null) {
                     continue;
                 }

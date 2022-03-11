@@ -14,5 +14,11 @@ import java.lang.annotation.Target;
 public @interface SkillEffect {
     String value() default "";
 
+    /**
+     * Weather to search for parameters from parent class
+     */
+    boolean callSuper() default false;
+
+    // TODO repeatable
     boolean repeatable() default false;
 }

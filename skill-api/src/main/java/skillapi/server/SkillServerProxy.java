@@ -3,6 +3,7 @@ package skillapi.server;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import skillapi.Application;
 import skillapi.api.SkillApi;
 import skillapi.common.SkillProxy;
 
@@ -12,7 +13,8 @@ import skillapi.common.SkillProxy;
 public class SkillServerProxy implements SkillProxy {
     @Override
     public void preInit(FMLPreInitializationEvent event) {
-        SkillApi.preInit(event);
+        // TODO replace package
+        SkillApi.preInit(event, Application.MOD_ID);
     }
 
     @Override

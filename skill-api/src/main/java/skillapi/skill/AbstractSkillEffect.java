@@ -1,5 +1,8 @@
 package skillapi.skill;
 
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
+
 import java.util.Objects;
 
 /**
@@ -13,6 +16,11 @@ public abstract class AbstractSkillEffect implements SkillEffect {
 
     public String getParamName(String param) {
         return getUnlocalizedName() + "." + param;
+    }
+
+    @Override
+    public void afterUnleash(EntityPlayer player, EntityLivingBase entity) {
+        // Default: none
     }
 
     @Override

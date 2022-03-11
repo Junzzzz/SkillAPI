@@ -2,7 +2,6 @@ package genericskill.skill;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ChunkCoordinates;
-import skillapi.item.SkillItemLoader;
 
 public class SkillBindingSignet extends SkillGeneric {
     @Override
@@ -22,7 +21,7 @@ public class SkillBindingSignet extends SkillGeneric {
 
     @Override
     public boolean canPlayerUseSkill(EntityPlayer player) {
-        return player.inventory.hasItem(SkillItemLoader.heritageAmulet);
+        return false;
     }
 
     @Override
@@ -41,7 +40,7 @@ public class SkillBindingSignet extends SkillGeneric {
                 }
                 player.setPositionAndUpdate(posX + 0.5F, posY + 0.1F, posZ + 0.5F);
             }
-            player.inventory.consumeInventoryItem(SkillItemLoader.heritageAmulet);
+//            player.inventory.consumeInventoryItem(SkillItemLoader.heritageAmulet);
             player.worldObj.playSoundAtEntity(player, "mob.ghast.fireball", 1.0F, 1.0F);
             return true;
         } else {

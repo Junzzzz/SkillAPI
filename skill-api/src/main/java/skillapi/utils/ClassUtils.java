@@ -15,7 +15,6 @@ import skillapi.common.SkillLog;
 import skillapi.common.SkillRuntimeException;
 
 import java.io.*;
-import java.lang.reflect.Constructor;
 import java.net.JarURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -303,17 +302,6 @@ public class ClassUtils {
 
     public static String getClassPackage(String className) {
         return className.substring(0, className.lastIndexOf("."));
-    }
-
-    public static <T> T newEmptyInstance(Class<T> target, String msgFormat, Object... msgArgs) {
-        try {
-            Class<?>[] empty = {};
-            Constructor<T> constructor = target.getDeclaredConstructor(empty);
-            constructor.setAccessible(true);
-            return constructor.newInstance((Object[]) null);
-        } catch (Throwable e) {
-            throw new SkillRuntimeException(e, msgFormat, msgArgs);
-        }
     }
 
     public static Class<?> getCallerClass() {

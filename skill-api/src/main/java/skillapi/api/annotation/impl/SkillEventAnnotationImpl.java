@@ -13,6 +13,7 @@ import skillapi.common.SkillLog;
 import skillapi.common.SkillRuntimeException;
 import skillapi.event.base.BaseSkillEvent;
 import skillapi.utils.ClassUtils;
+import skillapi.utils.ReflectionUtils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -88,7 +89,7 @@ public final class SkillEventAnnotationImpl implements SkillAnnotationRegister<S
                 return;
             }
 
-            final Object instance = ClassUtils.newEmptyInstance(target, "Minecraft event registration failed From: %s", target.getName());
+            final Object instance = ReflectionUtils.newEmptyInstance(target, "Minecraft event registration failed From: %s", target.getName());
 
             injection(instance, annotation);
 
@@ -99,7 +100,7 @@ public final class SkillEventAnnotationImpl implements SkillAnnotationRegister<S
     }
 
     private void registerMethod(Class<?> target) {
-        final Object instance = ClassUtils.newEmptyInstance(target, "Minecraft event registration failed From: %s", target.getName());
+        final Object instance = ReflectionUtils.newEmptyInstance(target, "Minecraft event registration failed From: %s", target.getName());
 
         for (Method method : target.getMethods()) {
             if (!method.isAnnotationPresent(SubscribeEvent.class)) {

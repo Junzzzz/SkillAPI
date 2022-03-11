@@ -18,7 +18,7 @@ import net.minecraft.network.NetHandlerPlayServer;
 import skillapi.api.annotation.SkillPacket;
 import skillapi.common.SkillLog;
 import skillapi.packet.serializer.PacketSerializer;
-import skillapi.utils.ClassUtils;
+import skillapi.utils.ReflectionUtils;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -56,7 +56,7 @@ public final class Packet {
         Class<? extends PacketSerializer<? extends AbstractPacket>> serializerClass = annotation.serializer();
         PacketSerializer<? extends AbstractPacket> packetSerializer = SERIALIZER_MAP.get(serializerClass);
         if (packetSerializer == null) {
-            packetSerializer = ClassUtils.newEmptyInstance(serializerClass, "Failed to create serializer: %s",
+            packetSerializer = ReflectionUtils.newEmptyInstance(serializerClass, "Failed to create serializer: %s",
                     serializerClass.getName());
             SERIALIZER_MAP.put(serializerClass, packetSerializer);
         }
@@ -67,7 +67,7 @@ public final class Packet {
     public static <T extends PacketSerializer<? extends AbstractPacket>> T getSerializer(Class<T> clz) {
         PacketSerializer<? extends AbstractPacket> packetSerializer = SERIALIZER_MAP.get(clz);
         if (packetSerializer == null) {
-            packetSerializer = ClassUtils.newEmptyInstance(clz, "Failed to create serializer: %s", clz.getName());
+            packetSerializer = ReflectionUtils.newEmptyInstance(clz, "Failed to create serializer: %s", clz.getName());
             SERIALIZER_MAP.put(clz, packetSerializer);
         }
         return (T) packetSerializer;

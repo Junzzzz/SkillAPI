@@ -173,7 +173,7 @@ public class SkillProfile {
                     jsonGenerator.writeStringField("name", effect.getUnlocalizedName());
                     jsonGenerator.writeObjectFieldStart("fields");
                     Class<? extends SkillEffect> clz = effect.getClass();
-                    for (Field field : clz.getDeclaredFields()) {
+                    for (Field field : DynamicSkillBuilder.getFields(clz)) {
                         if (field.getAnnotation(SkillParam.class) == null) {
                             continue;
                         }

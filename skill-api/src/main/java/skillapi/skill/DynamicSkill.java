@@ -31,10 +31,28 @@ public class DynamicSkill extends AbstractSkill {
     }
 
     @Override
-    public void unleash(EntityPlayer player, EntityLivingBase entity) {
+    public boolean canUnleash(EntityPlayer player, EntityLivingBase entity) {
         for (SkillEffect effect : effects) {
-            effect.unleash(player, entity);
+            if (!effect.canUnleash(player,entity)) {
+                return false;
+            }
         }
+        return true;
+    }
+
+    @Override
+    public boolean unleash(EntityPlayer player, EntityLivingBase entity) {
+        boolean flag = true;
+
+        // Execute by order
+        for (SkillEffect effect : effects) {
+            if (flag) {
+                // Will be interrupted by the execution result of the skill effect
+                flag = effect.unleash(player, entity);
+            }
+        }
+
+        return flag;
     }
 
     @Override

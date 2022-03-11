@@ -16,11 +16,18 @@ public class TestSkillEffect extends AbstractSkillEffect {
     private int testParam;
 
     @Override
-    public void unleash(EntityPlayer player, EntityLivingBase entity) {
+    public boolean unleash(EntityPlayer player, EntityLivingBase entity) {
         if (entity != null) {
             Message.send(player,"Face to: " + entity.getCommandSenderName());
         } else {
             player.addChatComponentMessage(new ChatComponentText("param: " + testParam));
         }
+
+        return true;
+    }
+
+    @Override
+    public boolean canUnleash(EntityPlayer player, EntityLivingBase entity) {
+        return true;
     }
 }

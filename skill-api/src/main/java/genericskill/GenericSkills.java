@@ -12,12 +12,7 @@ import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.common.registry.GameRegistry;
 import genericskill.entity.EntityShockWave;
-import genericskill.skill.*;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
-import skillapi.SkillRegistry;
-
-import static skillapi.item.SkillItemLoader.*;
+import skillapi.api.SkillApi;
 
 @Mod(modid = "genericskills", name = "Generic Skills Pack", useMetadata = true, dependencies = "required-after:skillapi")
 public final class GenericSkills {
@@ -25,22 +20,24 @@ public final class GenericSkills {
 
     @EventHandler
     public void init(FMLInitializationEvent event) {
-        SkillRegistry.registerSkill(new SkillCreeperBlast().setName(skills[0]).setTexture("creeperblast"));
-        SkillRegistry.registerSkill(new SkillLevitate().setName(skills[1]).setTexture("levitate"));
-        SkillRegistry.registerSkill(new SkillSummonWolf().setName(skills[2]).setTexture("summonwolf"));
-        SkillRegistry.registerSkill(new SkillSuperJump().setName(skills[3]).setTexture("superjump"));
-        SkillRegistry.registerSkill(new SkillHealingBreeze().setName(skills[4]).setTexture("healingbreeze"));
-        SkillRegistry.registerSkill(new SkillBindingSignet().setName(skills[5]).setTexture("bindingsignet"));
-        SkillRegistry.registerSkill(new SkillUnrelentingForce().setName(skills[6]).setTexture("unrelentingforce"));
-        SkillRegistry.registerSkill(new SkillBarrage().setName(skills[7]).setTexture("barrage"));
+        SkillApi.init(event);
+//        SkillRegistry.registerSkill(new SkillCreeperBlast().setName(skills[0]).setTexture("creeperblast"));
+//        SkillRegistry.registerSkill(new SkillLevitate().setName(skills[1]).setTexture("levitate"));
+//        SkillRegistry.registerSkill(new SkillSummonWolf().setName(skills[2]).setTexture("summonwolf"));
+//        SkillRegistry.registerSkill(new SkillSuperJump().setName(skills[3]).setTexture("superjump"));
+//        SkillRegistry.registerSkill(new SkillHealingBreeze().setName(skills[4]).setTexture("healingbreeze"));
+//        SkillRegistry.registerSkill(new SkillBindingSignet().setName(skills[5]).setTexture("bindingsignet"));
+//        SkillRegistry.registerSkill(new SkillUnrelentingForce().setName(skills[6]).setTexture("unrelentingforce"));
+//        SkillRegistry.registerSkill(new SkillBarrage().setName(skills[7]).setTexture("barrage"));
         EntityRegistry.registerModEntity(EntityShockWave.class, "FusRoDah", 0, this, 20, 4, true);
-        GameRegistry.addShapelessRecipe(new ItemStack(genSkillBook), Items.gold_ingot, Items.book);
-        GameRegistry.addRecipe(new ItemStack(heritageAmulet), " S ", "S S", "GDG", 'S', Items.string, 'G', Items.gold_ingot, 'D', Items.diamond);
-        GameRegistry.addShapelessRecipe(new ItemStack(manaPotion), Items.glass_bottle, new ItemStack(Items.dye, 1, 4));
+//        GameRegistry.addShapelessRecipe(new ItemStack(genSkillBook), Items.gold_ingot, Items.book);
+//        GameRegistry.addRecipe(new ItemStack(heritageAmulet), " S ", "S S", "GDG", 'S', Items.string, 'G', Items.gold_ingot, 'D', Items.diamond);
+//        GameRegistry.addShapelessRecipe(new ItemStack(manaPotion), Items.glass_bottle, new ItemStack(Items.dye, 1, 4));
     }
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
+        SkillApi.preInit(event);
         // Update
         if (event.getSourceFile().getName().endsWith(".jar") && event.getSide().isClient()) {
             try {

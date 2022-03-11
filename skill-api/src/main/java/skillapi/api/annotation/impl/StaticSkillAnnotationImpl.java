@@ -7,7 +7,7 @@ import skillapi.api.annotation.StaticSkill;
 import skillapi.common.SkillRuntimeException;
 import skillapi.skill.AbstractStaticSkill;
 import skillapi.skill.Skills;
-import skillapi.utils.ClassUtils;
+import skillapi.utils.ReflectionUtils;
 
 /**
  * @author Jun
@@ -23,7 +23,7 @@ public class StaticSkillAnnotationImpl implements SkillAnnotationRegister<Static
                     "base class AbstractStaticSkill. Class: %s", target.getName());
         }
         Skills.putModId((Class<? extends AbstractStaticSkill>) target, mod.modId);
-        AbstractStaticSkill staticSkill = (AbstractStaticSkill) ClassUtils.newEmptyInstance(target, "Static skill " +
+        AbstractStaticSkill staticSkill = (AbstractStaticSkill) ReflectionUtils.newEmptyInstance(target, "Static skill " +
                 "initialize failed. Class: %s", target.getName());
 
         Skills.register(staticSkill);
