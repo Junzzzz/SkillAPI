@@ -68,7 +68,11 @@ public final class SkillExecutor {
         AbstractSkill skill;
 
         public void unleash() {
-            skill.unleash(player, target);
+            if (player != null && player.isEntityAlive()
+                    && skill.canUnleash(player, target)
+                    && skill.unleash(player, target)) {
+                skill.afterUnleash(player, target);
+            }
         }
     }
 }

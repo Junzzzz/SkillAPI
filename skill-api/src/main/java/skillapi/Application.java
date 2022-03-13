@@ -6,6 +6,8 @@ import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.*;
 import cpw.mods.fml.common.network.FMLEventChannel;
 import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.common.registry.GameData;
+import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.FMLLaunchHandler;
 import net.minecraft.server.management.ServerConfigurationManager;
 import net.sf.cglib.proxy.Enhancer;
@@ -73,5 +75,14 @@ public final class Application {
                 new Class[]{parameterType}, new Object[]{event.getServer()}
         );
         event.getServer().func_152361_a(proxy);
+    }
+
+    @EventHandler
+    public void remap(FMLMissingMappingsEvent event) {
+        for (FMLMissingMappingsEvent.MissingMapping missingMapping : event.get()) {
+            if (missingMapping.type == GameRegistry.Type.ITEM) {
+                missingMapping.remap(GameData.getItemRegistry().getObject(missingMapping.name.replace(" ", "")));
+            }
+        }
     }
 }

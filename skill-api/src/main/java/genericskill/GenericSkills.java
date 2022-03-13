@@ -1,22 +1,16 @@
 package genericskill;
 
-import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
-import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLMissingMappingsEvent;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.registry.EntityRegistry;
-import cpw.mods.fml.common.registry.GameData;
-import cpw.mods.fml.common.registry.GameRegistry;
 import genericskill.entity.EntityShockWave;
 import skillapi.api.SkillApi;
 
 @Mod(modid = "genericskills", name = "Generic Skills Pack", useMetadata = true, dependencies = "required-after:skillapi")
 public final class GenericSkills {
-    public static final String[] skills = {"Creeper Blast", "Levitate", "Summon Wolf", "Super Jump", "Healing Breeze", "Binding Signet", "Unrelenting Force", "Barrage"};
+//    public static final String[] skills = {"Creeper Blast", "Levitate", "Summon Wolf", "Super Jump", "Healing Breeze", "Binding Signet", "Unrelenting Force", "Barrage"};
 
     @EventHandler
     public void init(FMLInitializationEvent event) {
@@ -37,31 +31,6 @@ public final class GenericSkills {
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
-        SkillApi.preInit(event);
-        // Update
-        if (event.getSourceFile().getName().endsWith(".jar") && event.getSide().isClient()) {
-            try {
-                Class.forName("mods.mud.ModUpdateDetector").getDeclaredMethod("registerMod", ModContainer.class, String.class, String.class).invoke(null,
-                        FMLCommonHandler.instance().findContainerFor(this),
-                        "https://raw.github.com/GotoLink/SkillAPI/master/Pack_update.xml",
-                        "https://raw.github.com/GotoLink/SkillAPI/master/Pack_changelog.md"
-                );
-            } catch (Throwable ignored) {
-            }
-        }
-    }
-
-    @EventHandler
-    public void postInit(FMLPostInitializationEvent event) {
-
-    }
-
-    @EventHandler
-    public void remap(FMLMissingMappingsEvent event) {
-        for (FMLMissingMappingsEvent.MissingMapping missingMapping : event.get()) {
-            if (missingMapping.type == GameRegistry.Type.ITEM) {
-                missingMapping.remap(GameData.getItemRegistry().getObject(missingMapping.name.replace(" ", "")));
-            }
-        }
+        SkillApi.preInit(event,"genericskil");
     }
 }
