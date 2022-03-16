@@ -5,9 +5,12 @@ import cpw.mods.fml.relauncher.Side;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import skillapi.common.SkillRuntimeException;
 import skillapi.packet.serializer.JsonPacketSerializer;
 import skillapi.packet.serializer.PacketSerializer;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.UUID;
 
 /**
@@ -27,7 +30,7 @@ public abstract class CallbackPacket<T> extends AbstractPacket {
         if (result == null) {
             return;
         }
-        CallbackResultPacket<T> packet = new CallbackResultPacket<>(uuid, result);
+        CallbackResultPacket<T> packet = new CallbackResultPacket<>(uuid, result, getDataType(this));
 
         if (from.isClient()) {
             Packet.sendToClient(packet, (EntityPlayerMP) player);
@@ -37,6 +40,15 @@ public abstract class CallbackPacket<T> extends AbstractPacket {
     }
 
     protected abstract T returns(EntityPlayer player, Side from);
+
+    private static CallbackPacketDataType getDataType(CallbackPacket<?> packet) {
+        ParameterizedType superclass = (ParameterizedType) packet.getClass().getGenericSuperclass();
+        Type[] actualTypeArguments = superclass.getActualTypeArguments();
+        if (actualTypeArguments.length != 1) {
+            throw new SkillRuntimeException("Unknown Error");
+        }
+        return CallbackPacketDataType.get(actualTypeArguments[0]);
+    }
 
     public static class Serializer implements PacketSerializer<CallbackPacket<?>> {
         private final JsonPacketSerializer json = Packet.getSerializer(JsonPacketSerializer.class);

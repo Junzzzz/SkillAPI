@@ -6,6 +6,7 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import skillapi.Application;
 import skillapi.api.SkillApi;
 import skillapi.common.SkillProxy;
+import skillapi.skill.Cooldown;
 
 /**
  * @author Jun
@@ -25,5 +26,10 @@ public class SkillServerProxy implements SkillProxy {
     @Override
     public void postInit(FMLPostInitializationEvent event) {
 
+    }
+
+    @Override
+    public Cooldown getCooldown(long cooldownMills) {
+        return new ServerCooldown(cooldownMills);
     }
 }

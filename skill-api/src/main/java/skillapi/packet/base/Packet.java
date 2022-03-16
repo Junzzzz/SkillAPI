@@ -241,7 +241,7 @@ public final class Packet {
                 calledPacket = packet.serializer.deserialize(packet.clz, buffer);
                 calledPacket.run(player, from);
             } catch (Exception e) {
-                SkillLog.error(e, "Failed to deserialize packet data. Packet class: %s", packet.getClass());
+                SkillLog.error(e, "Failed to deserialize packet data. Packet class: %s", packet.clz);
             }
         }
     }

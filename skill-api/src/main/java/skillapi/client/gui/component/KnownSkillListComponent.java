@@ -1,11 +1,11 @@
 package skillapi.client.gui.component;
 
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.resources.I18n;
 import org.lwjgl.opengl.GL11;
 import skillapi.api.gui.base.*;
 import skillapi.api.gui.component.SliderComponent;
 import skillapi.client.GuiKnownSkills;
+import skillapi.common.Translation;
 import skillapi.skill.AbstractSkill;
 import skillapi.skill.Skills;
 
@@ -82,6 +82,10 @@ public class KnownSkillListComponent extends BaseComponent {
             width = Math.max(fontRenderer.getStringWidth(s) + 10, width);
         }
 
+        if (emptyDesc) {
+            width = Math.max(fontRenderer.getStringWidth(Translation.format("skill.constant.noDescription")), width);
+        }
+
         RenderUtils.drawRect(GL11.GL_POLYGON, x - 1, y - 1, x + 1 + width, y + 1 + height, 0xCC000000);
         RenderUtils.drawRect(GL11.GL_QUADS, x, y, x + width, y + height, 0xCC001F5F);
         GL11.glEnable(GL11.GL_BLEND);
@@ -95,7 +99,7 @@ public class KnownSkillListComponent extends BaseComponent {
                 fontRenderer.drawString(desc[i], x + 5, y + 15 + (9 * i), 0x8FA8FF);
             }
         } else {
-            fontRenderer.drawString(I18n.format("skill.constant.noDescription"), x + 5, y + 15, 0x8FA8FF);
+            fontRenderer.drawString(Translation.format("skill.constant.noDescription"), x + 5, y + 15, 0x8FA8FF);
         }
         GL11.glDisable(GL11.GL_BLEND);
     }

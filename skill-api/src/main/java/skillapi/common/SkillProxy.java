@@ -3,6 +3,7 @@ package skillapi.common;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import skillapi.skill.Cooldown;
 
 /**
  * @author Jun
@@ -28,4 +29,6 @@ public interface SkillProxy {
      * @param event 事件
      */
     void postInit(FMLPostInitializationEvent event);
+
+    Cooldown getCooldown(long cooldownMills);
 }

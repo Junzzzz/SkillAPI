@@ -1,9 +1,6 @@
 package skillapi.skill;
 
-import net.minecraft.client.entity.AbstractClientPlayer;
-import net.minecraft.entity.player.EntityPlayer;
-import skillapi.client.ClientCooldown;
-import skillapi.server.ServerCooldown;
+import skillapi.Application;
 
 /**
  * @author Jun
@@ -15,11 +12,7 @@ public interface Cooldown {
 
     void setCooling();
 
-    static Cooldown get(EntityPlayer player, long cooldownMills) {
-        if (player instanceof AbstractClientPlayer) {
-            return new ClientCooldown(cooldownMills);
-        } else {
-            return new ServerCooldown(cooldownMills);
-        }
+    static Cooldown get(long cooldownMills) {
+        return Application.proxy.getCooldown(cooldownMills);
     }
 }

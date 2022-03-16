@@ -1,5 +1,6 @@
 package skillapi.packet.base;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import cpw.mods.fml.relauncher.Side;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,6 +23,9 @@ import java.util.UUID;
 public class CallbackResultPacket<T> extends AbstractPacket {
     private UUID uuid;
     private T data;
+
+    @JsonIgnore
+    private CallbackPacketDataType dataType;
 
     @Override
     protected void run(EntityPlayer player, Side from) {
