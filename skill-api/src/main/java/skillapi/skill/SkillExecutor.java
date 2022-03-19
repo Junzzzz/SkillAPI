@@ -2,9 +2,11 @@ package skillapi.skill;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import skillapi.api.annotation.SkillEvent;
+import skillapi.common.SkillLog;
+import skillapi.packet.ClientSkillUnleashPacket;
+import skillapi.packet.base.Packet;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -33,7 +35,7 @@ public final class SkillExecutor {
         triggerQueue.clear();
     }
 
-    public static void execute(AbstractSkill skill, EntityPlayer player, EntityLivingBase target) {
+    public static void execute(AbstractSkill skill, EntityPlayer player, SkillExtraInfo extraInfo) {
         if (skill == null || player == null || STOP_RECEIVE) {
             return;
         }
@@ -45,7 +47,7 @@ public final class SkillExecutor {
         }
         unit.skill = skill;
         unit.player = player;
-        unit.target = target;
+        unit.extraInfo = extraInfo;
         triggerQueue.offer(unit);
     }
 
@@ -64,14 +66,23 @@ public final class SkillExecutor {
 
     private static class TriggerUnit {
         EntityPlayer player;
-        EntityLivingBase target;
         AbstractSkill skill;
+        SkillExtraInfo extraInfo;
 
         public void unleash() {
-            if (player != null && player.isEntityAlive()
-                    && skill.canUnleash(player, target)
-                    && skill.unleash(player, target)) {
-                skill.afterUnleash(player, target);
+            if (player != null && player.isEntityAlive() && skill.canUnleash(player, extraInfo)) {
+                try {
+                    if (skill.unleash(player, extraInfo)) {
+                        skill.afterUnleash(player, extraInfo);
+
+                        // Client
+                        Packet.send(new ClientSkillUnleashPacket(skill), player);
+                    }
+                } catch (Exception e) {
+                    String profileName = Skills.getCurrentProfileInfo().getName();
+                    SkillLog.error(e, "Unleash skill failed! Player: %s, Profile: %s, Skill: %s",
+                            player.getCommandSenderName(), profileName, skill.getLocalizedName());
+                }
             }
         }
     }

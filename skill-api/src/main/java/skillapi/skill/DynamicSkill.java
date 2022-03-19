@@ -1,6 +1,7 @@
 package skillapi.skill;
 
-import net.minecraft.entity.EntityLivingBase;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.player.EntityPlayer;
 
 /**
@@ -30,10 +31,11 @@ public class DynamicSkill extends AbstractSkill {
         return Skills.getSkillDescription(this);
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
-    public boolean canUnleash(EntityPlayer player, EntityLivingBase entity) {
+    public boolean clientBeforeUnleash(EntityPlayer player, SkillExtraInfo extraInfo) {
         for (SkillEffect effect : effects) {
-            if (!effect.canUnleash(player,entity)) {
+            if (!effect.clientBeforeUnleash(player, extraInfo)) {
                 return false;
             }
         }
@@ -41,18 +43,43 @@ public class DynamicSkill extends AbstractSkill {
     }
 
     @Override
-    public boolean unleash(EntityPlayer player, EntityLivingBase entity) {
+    public boolean canUnleash(EntityPlayer player, SkillExtraInfo info) {
+        for (SkillEffect effect : effects) {
+            if (!effect.canUnleash(player, info)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public boolean unleash(EntityPlayer player, SkillExtraInfo extraInfo) {
         boolean flag = true;
 
         // Execute by order
         for (SkillEffect effect : effects) {
             if (flag) {
                 // Will be interrupted by the execution result of the skill effect
-                flag = effect.unleash(player, entity);
+                flag = effect.unleash(player, extraInfo);
             }
         }
 
         return flag;
+    }
+
+    @Override
+    public void afterUnleash(EntityPlayer player, SkillExtraInfo extraInfo) {
+        for (SkillEffect effect : effects) {
+            effect.afterUnleash(player, extraInfo);
+        }
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public void clientUnleash(EntityPlayer player) {
+        for (SkillEffect effect : effects) {
+            effect.clientUnleash(player);
+        }
     }
 
     @Override

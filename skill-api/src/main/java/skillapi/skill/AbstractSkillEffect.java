@@ -1,6 +1,7 @@
 package skillapi.skill;
 
-import net.minecraft.entity.EntityLivingBase;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.player.EntityPlayer;
 
 import java.util.Objects;
@@ -18,8 +19,25 @@ public abstract class AbstractSkillEffect implements SkillEffect {
         return getUnlocalizedName() + "." + param;
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
-    public void afterUnleash(EntityPlayer player, EntityLivingBase entity) {
+    public boolean clientBeforeUnleash(EntityPlayer player, SkillExtraInfo extraInfo) {
+        return true;
+    }
+
+    @Override
+    public boolean canUnleash(EntityPlayer player, SkillExtraInfo extraInfo) {
+        return player != null;
+    }
+
+    @Override
+    public void afterUnleash(EntityPlayer player, SkillExtraInfo extraInfo) {
+        // Default: none
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public void clientUnleash(EntityPlayer player) {
         // Default: none
     }
 

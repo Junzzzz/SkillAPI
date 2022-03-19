@@ -1,6 +1,7 @@
 package skillapi.api.annotation;
 
 import cpw.mods.fml.relauncher.Side;
+import skillapi.event.base.AbstractSkillEvent;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -9,13 +10,12 @@ import java.lang.annotation.Target;
 
 /**
  * @author Jun
- * @date 2020/8/20.
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface SkillEvent {
     /**
-     * Only effective when inheriting {@link skillapi.event.base.BaseSkillEvent}
+     * Only effective when inheriting {@link AbstractSkillEvent}
      *
      * @return Effective range
      */

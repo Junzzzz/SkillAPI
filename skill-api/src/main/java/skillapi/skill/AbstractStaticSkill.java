@@ -1,5 +1,6 @@
 package skillapi.skill;
 
+import net.minecraft.entity.player.EntityPlayer;
 import skillapi.common.SkillRuntimeException;
 
 /**
@@ -14,6 +15,14 @@ public abstract class AbstractStaticSkill extends AbstractSkill {
     }
 
     protected abstract void init(StaticSkillBuilder builder);
+
+    protected abstract void effect(EntityPlayer player, SkillExtraInfo info);
+
+    @Override
+    public final boolean unleash(EntityPlayer player, SkillExtraInfo info) {
+        this.effect(player, info);
+        return true;
+    }
 
     final class StaticSkillBuilder {
         StaticSkillBuilder mana(int mana) {

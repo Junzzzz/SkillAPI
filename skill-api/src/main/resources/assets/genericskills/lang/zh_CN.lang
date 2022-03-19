@@ -22,5 +22,20 @@ skill.name.barrage=箭雨
 
 skill.type.name.genericsskill=通用技能
 
-skill.effect.genericskills.WeaponBleedingEffect=武器流血效果
-skill.effect.genericskills.TestSkillEffect.damagePercentage=武器伤害百分比
+skill.effect.genericskills.BlindnessEffect=失明
+skill.effect.genericskills.BodyFixedEffect=定身
+skill.effect.genericskills.ConfusionEffect=反胃
+skill.effect.genericskills.NightVisionEffect=夜视
+skill.effect.genericskills.PoisonEffect=中毒
+skill.effect.genericskills.SlowdownEffect=迟缓
+skill.effect.genericskills.WitherEffect=凋零
+skill.effect.genericskills.BurningEffect=燃烧
+skill.effect.genericskills.ContinuousHealingEffect=持续生命恢复
+skill.effect.genericskills.DashEffect=冲刺
+skill.effect.genericskills.InstantHealingEffect=瞬间治疗
+skill.effect.genericskills.LifeStealingEffect=生命偷取
+skill.effect.genericskills.RepelEffect=击退
+skill.effect.genericskills.WeaponDamageEffect=武器造成伤害
+skill.effect.genericskills.DestroyWeaponDamageEffect=销毁手上武器造成伤害
+skill.effect.genericskills.WeaponBleedingEffect=武器流血
+skill.effect.genericskills.WeaponBleedingEffect.damagePercentage=武器伤害百分比

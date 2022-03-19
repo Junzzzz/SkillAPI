@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.node.TextNode;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import skillapi.api.annotation.SkillParam;
 import skillapi.common.SkillLog;
@@ -139,6 +140,7 @@ public class SkillProfile {
 
     @Getter
     @Setter
+    @NoArgsConstructor
     @AllArgsConstructor
     public static class SkillProfileInfo {
         private String name;

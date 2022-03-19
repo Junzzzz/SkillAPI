@@ -1,5 +1,6 @@
 package genericskill.effects;
 
+import genericskill.utils.SkillUtils;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.player.EntityPlayer;
@@ -8,18 +9,23 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
 import skillapi.api.annotation.SkillEffect;
 import skillapi.api.annotation.SkillParam;
-import skillapi.skill.AbstractSkillEffect;
+import skillapi.skill.AbstractTargetSkillEffect;
+import skillapi.skill.SkillExtraInfo;
 
 /**
  * @author Jun
  */
-@SkillEffect
-public class WeaponDamageEffect extends AbstractSkillEffect {
+@SkillEffect(callSuper = true)
+public class WeaponDamageEffect extends AbstractTargetSkillEffect {
     @SkillParam
     protected double damagePercentage;
 
     @Override
-    public boolean canUnleash(EntityPlayer player, EntityLivingBase entity) {
+    public boolean canUnleash(EntityPlayer player, EntityLivingBase target, SkillExtraInfo extraInfo) {
+        if (target == null) {
+            return false;
+        }
+
         InventoryPlayer inv = player.inventory;
         ItemStack heldItem = inv.getCurrentItem();
 
@@ -27,11 +33,11 @@ public class WeaponDamageEffect extends AbstractSkillEffect {
         if (heldItem == null || !heldItem.isItemStackDamageable() || heldItem.isStackable()) {
             return false;
         }
-        return entity.canAttackWithItem() && !entity.hitByEntity(player);
+        return target.canAttackWithItem() && !target.hitByEntity(player);
     }
 
     @Override
-    public boolean unleash(EntityPlayer player, EntityLivingBase entity) {
+    public boolean unleash(EntityPlayer player, EntityLivingBase target, SkillExtraInfo extraInfo) {
         double damage = player.getEntityAttribute(SharedMonsterAttributes.attackDamage).getAttributeValue();
 
 //        float enchantmentAddition = EnchantmentHelper.getEnchantmentModifierLiving(player, entity);
@@ -43,12 +49,10 @@ public class WeaponDamageEffect extends AbstractSkillEffect {
         damage *= this.damagePercentage;
 
         if (damage > 0) {
-
-
-            boolean createDamage = entity.attackEntityFrom(DamageSource.causePlayerDamage(player), getDamage(damage));
+            boolean createDamage = target.attackEntityFrom(DamageSource.causePlayerDamage(player), SkillUtils.getDamage(damage));
 
             if (createDamage) {
-                afterCreateDamage(player, entity);
+                afterCreateDamage(player, target);
                 return true;
             }
         }
@@ -58,14 +62,5 @@ public class WeaponDamageEffect extends AbstractSkillEffect {
 
     public void afterCreateDamage(EntityPlayer player, EntityLivingBase entity) {
         player.setLastAttacker(entity);
-    }
-
-    public float getDamage(double damage) {
-        damage = Math.round(damage);
-
-        if (damage < 1.0D) {
-            damage = 1.0D;
-        }
-        return (float) damage;
     }
 }

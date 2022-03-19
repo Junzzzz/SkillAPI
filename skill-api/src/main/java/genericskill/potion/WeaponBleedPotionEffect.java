@@ -33,6 +33,8 @@ public class WeaponBleedPotionEffect extends PotionEffect {
 
     @Override
     public void performEffect(EntityLivingBase entity) {
-        entity.attackEntityFrom(DamageSource.causePlayerDamage(fromPlayer), damage);
+        if (this.getDuration() > 0) {
+            entity.attackEntityFrom(DamageSource.causePlayerDamage(fromPlayer), damage);
+        }
     }
 }

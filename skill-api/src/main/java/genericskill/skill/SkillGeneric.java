@@ -2,7 +2,6 @@ package genericskill.skill;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import genericskill.utils.SkillUtils;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
@@ -33,13 +32,13 @@ public abstract class SkillGeneric extends Skill {
     @SideOnly(Side.CLIENT)
     @Override
     public String getLocalizedName() {
-        return SkillUtils.getSkillI18nName(trimName);
+        return "";
     }
 
     @SideOnly(Side.CLIENT)
     @Override
     public String getDescription() {
-        return SkillUtils.getSkillDescription(trimName);
+        return "";
     }
 
     @Override

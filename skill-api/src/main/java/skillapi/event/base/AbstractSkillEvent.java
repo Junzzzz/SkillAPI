@@ -18,7 +18,7 @@ import skillapi.common.SkillLog;
  * @author Jun
  * @date 2020/8/20.
  */
-public abstract class BaseSkillEvent<T extends Event> {
+public abstract class AbstractSkillEvent<T extends Event> {
     private boolean onServer;
     private boolean onClient;
 

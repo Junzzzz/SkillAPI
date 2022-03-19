@@ -31,6 +31,6 @@ public final class GenericSkills {
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
-        SkillApi.preInit(event,"genericskil");
+        SkillApi.preInit(event,"genericskill");
     }
 }

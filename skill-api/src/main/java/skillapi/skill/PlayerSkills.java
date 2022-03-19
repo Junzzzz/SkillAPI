@@ -71,7 +71,7 @@ public class PlayerSkills implements IExtendedEntityProperties {
 
             // Reset cooldown
             if (this.cooldowns[index] == null) {
-                this.cooldowns[index] = Cooldown.get(player, skill.getCooldown());
+                this.cooldowns[index] = Cooldown.get(skill.getCooldown());
             } else {
                 this.cooldowns[index].setCooldown(skill.cooldown);
             }
@@ -123,7 +123,7 @@ public class PlayerSkills implements IExtendedEntityProperties {
                 AbstractSkill skill = Skills.get(list.getStringTagAt(i));
                 if (skill != null) {
                     skillBar[i] = skill;
-                    cooldowns[i] = Cooldown.get(player, skill.getCooldown());
+                    cooldowns[i] = Cooldown.get(skill.getCooldown());
                     cooldowns[i].setCooling();
                 } else {
                     skillBar[i] = null;

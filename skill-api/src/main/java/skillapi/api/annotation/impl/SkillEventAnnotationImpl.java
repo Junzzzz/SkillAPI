@@ -11,7 +11,7 @@ import skillapi.api.annotation.SkillEvent;
 import skillapi.common.EventBusHandler;
 import skillapi.common.SkillLog;
 import skillapi.common.SkillRuntimeException;
-import skillapi.event.base.BaseSkillEvent;
+import skillapi.event.base.AbstractSkillEvent;
 import skillapi.utils.ClassUtils;
 import skillapi.utils.ReflectionUtils;
 
@@ -31,10 +31,10 @@ public final class SkillEventAnnotationImpl implements SkillAnnotationRegister<S
 
     static {
         try {
-            FIELD_SEVER = BaseSkillEvent.class.getDeclaredField("onServer");
+            FIELD_SEVER = AbstractSkillEvent.class.getDeclaredField("onServer");
             FIELD_SEVER.setAccessible(true);
 
-            FIELD_CLIENT = BaseSkillEvent.class.getDeclaredField("onClient");
+            FIELD_CLIENT = AbstractSkillEvent.class.getDeclaredField("onClient");
             FIELD_CLIENT.setAccessible(true);
         } catch (NoSuchFieldException e) {
             throw new SkillRuntimeException("Impossible error", e);
@@ -56,7 +56,7 @@ public final class SkillEventAnnotationImpl implements SkillAnnotationRegister<S
                 return;
             }
         }
-        if (BaseSkillEvent.class.isAssignableFrom(target)) {
+        if (AbstractSkillEvent.class.isAssignableFrom(target)) {
             registerClass(target, annotation);
         } else {
             registerMethod(target);

@@ -4,13 +4,13 @@ import cpw.mods.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import cpw.mods.fml.relauncher.Side;
 import net.minecraft.entity.player.EntityPlayerMP;
 import skillapi.api.annotation.SkillEvent;
-import skillapi.event.base.BaseSkillEvent;
+import skillapi.event.base.AbstractSkillEvent;
 
 /**
  * @author Jun
  */
 @SkillEvent(Side.SERVER)
-public class PlayerLoginEvent extends BaseSkillEvent<PlayerLoggedInEvent> {
+public class PlayerLoginEvent extends AbstractSkillEvent<PlayerLoggedInEvent> {
     @Override
     public void onServer(PlayerLoggedInEvent event) {
         if (event.player instanceof EntityPlayerMP) {

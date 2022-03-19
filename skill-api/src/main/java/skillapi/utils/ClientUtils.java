@@ -40,15 +40,15 @@ public class ClientUtils {
     }
 
     public static EntityLivingBase getPointedLivingEntity(double distance, float renderTickTime) {
-        Vec3 vec3 = MC.renderViewEntity.getPosition(renderTickTime);
-        Vec3 vec31 = MC.renderViewEntity.getLook(renderTickTime);
-        Vec3 vec32 = vec3.addVector(vec31.xCoord * distance, vec31.yCoord * distance, vec31.zCoord * distance);
+        Vec3 pos = MC.renderViewEntity.getPosition(renderTickTime);
+        Vec3 look = MC.renderViewEntity.getLook(renderTickTime);
+        Vec3 lookPos = pos.addVector(look.xCoord * distance, look.yCoord * distance, look.zCoord * distance);
         Entity pointedEntity = null;
         double f1 = 1.0D;
         @SuppressWarnings("rawtypes")
         List list = MC.theWorld.getEntitiesWithinAABBExcludingEntity(MC.renderViewEntity,
-                MC.renderViewEntity.boundingBox.addCoord(vec31.xCoord * distance, vec31.yCoord * distance,
-                        vec31.zCoord * distance).expand(f1, f1, f1));
+                MC.renderViewEntity.boundingBox.addCoord(look.xCoord * distance, look.yCoord * distance,
+                        look.zCoord * distance).expand(f1, f1, f1));
         double minDistance = distance;
 
         for (Object o : list) {
@@ -57,15 +57,15 @@ public class ClientUtils {
             if (entity.canBeCollidedWith()) {
                 float f2 = entity.getCollisionBorderSize();
                 AxisAlignedBB axisalignedbb = entity.boundingBox.expand(f2, f2, f2);
-                MovingObjectPosition movingobjectposition = axisalignedbb.calculateIntercept(vec3, vec32);
+                MovingObjectPosition mop = axisalignedbb.calculateIntercept(pos, lookPos);
 
-                if (axisalignedbb.isVecInside(vec3)) {
+                if (axisalignedbb.isVecInside(pos)) {
                     if (0.0D < minDistance || minDistance == 0.0D) {
                         pointedEntity = entity;
                         minDistance = 0.0D;
                     }
-                } else if (movingobjectposition != null) {
-                    double d3 = vec3.distanceTo(movingobjectposition.hitVec);
+                } else if (mop != null) {
+                    double d3 = pos.distanceTo(mop.hitVec);
 
                     if (d3 < minDistance || minDistance == 0.0D) {
                         if (entity == MC.renderViewEntity.ridingEntity && !entity.canRiderInteract()) {

@@ -6,17 +6,12 @@ import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.settings.KeyBinding;
-import net.minecraft.entity.EntityLivingBase;
 import org.lwjgl.input.Keyboard;
 import skillapi.api.annotation.SkillEvent;
 import skillapi.api.gui.base.GuiApi;
 import skillapi.client.gui.KnownSkillsGui;
-import skillapi.packet.PlayerUnleashSkillPacket;
 import skillapi.packet.base.Packet;
-import skillapi.skill.AbstractSkill;
-import skillapi.skill.Cooldown;
-import skillapi.skill.PlayerSkills;
-import skillapi.utils.ClientUtils;
+import skillapi.skill.*;
 
 /**
  * @author Jun
@@ -35,6 +30,8 @@ public class SkillClient {
 
     public static final String GROUP_GUI = "key.categories.gui";
     public static final String GROUP_GAMEPLAY = "key.categories.gameplay";
+
+    private static final SkillExtraInfo SKILL_EXTRA_INFO = new SkillExtraInfo();
 
     public static void init() {
         showSkillGuiKey = new KeyBinding("key.skillGui", Keyboard.getKeyIndex(KEY_GUI), GROUP_GUI);
@@ -80,11 +77,13 @@ public class SkillClient {
             return;
         }
         if (SKILL.getMana() >= skill.getMana() && cooldown.isCooledDown()) {
-//            PacketHandler.sendToServer(new WorldTimePacket());
-            // TODO distance
-            EntityLivingBase target = ClientUtils.getPointedLivingEntity(10.0D);
-            Packet.sendToServer(new PlayerUnleashSkillPacket(index, target));
-            SKILL.consumeMana(skill.getMana());
+            // Reuse
+            SKILL_EXTRA_INFO.reset();
+
+            if (skill.clientBeforeUnleash(SKILL.getPlayer(), SKILL_EXTRA_INFO)) {
+                Packet.sendToServer(new PlayerUnleashSkillPacket(index, SKILL_EXTRA_INFO));
+                SKILL.consumeMana(skill.getMana());
+            }
         }
     }
 }
