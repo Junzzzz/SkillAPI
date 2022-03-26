@@ -23,6 +23,7 @@ import java.util.List;
  */
 @SideOnly(Side.CLIENT)
 public final class SkillEditProfileGui extends ItemListGui<DynamicSkillBuilder> implements GuiYesNoCallback {
+    private ButtonComponent backSkillButton;
     private ButtonComponent nextPageButton;
     private ButtonComponent prevPageButton;
 
@@ -41,6 +42,8 @@ public final class SkillEditProfileGui extends ItemListGui<DynamicSkillBuilder> 
     @Override
     protected void init() {
         super.init();
+
+        backSkillButton = addButton(this.guiPositionX - 23, this.guiPositionY, 20, 20, "<<", SkillProfilesGui::open);
 
         // Add skill button
         addSkillButton = addButton(this.guiPositionX + 5, this.guiPositionY + 153, 18, 20, "+",

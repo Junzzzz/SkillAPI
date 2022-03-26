@@ -13,7 +13,7 @@ import skillapi.skill.SkillExtraInfo;
 @SkillEffect(callSuper = true)
 public class LifeStealingEffect extends AbstractTargetSkillEffect {
     @SkillParam
-    private float damagePercent;
+    private float damagePercentage;
 
     @Override
     public boolean unleash(EntityPlayer player, EntityLivingBase target, SkillExtraInfo extraInfo) {
@@ -23,6 +23,6 @@ public class LifeStealingEffect extends AbstractTargetSkillEffect {
     @Override
     public void afterUnleash(EntityPlayer player, EntityLivingBase target, SkillExtraInfo extraInfo) {
         float damage = target.prevHealth - target.getHealth();
-        player.heal(damage * damagePercent);
+        player.heal(damage * damagePercentage);
     }
 }

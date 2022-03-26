@@ -4,14 +4,16 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.resources.I18n;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
-import skillapi.api.gui.base.*;
+import skillapi.api.gui.base.BaseGui;
+import skillapi.api.gui.base.Layout;
+import skillapi.api.gui.base.ListenerRegistry;
+import skillapi.api.gui.base.RenderUtils;
 import skillapi.api.gui.base.listener.FocusChangedListener;
 import skillapi.api.gui.base.listener.MousePressedListener;
 import skillapi.api.gui.base.listener.MouseReleasedListener;
 import skillapi.client.GuiKnownSkills;
 import skillapi.client.SkillClient;
 import skillapi.client.gui.component.KnownSkillListComponent;
-import skillapi.packet.GetProfileInfosPacket;
 import skillapi.packet.SkillBarSyncPacket;
 import skillapi.packet.base.Packet;
 import skillapi.skill.AbstractSkill;
@@ -48,10 +50,7 @@ public class KnownSkillsGui extends BaseGui {
         addComponent(skillListComponent);
 
         if (properties.getPlayer().capabilities.isCreativeMode) {
-            addButton((width - 206) / 2 - 20, (height - 134) / 2, 20, 20, "</>",
-                    () -> Packet.callback(new GetProfileInfosPacket(), profiles -> {
-                        GuiApi.displayGui(new SkillProfilesGui(profiles));
-                    }));
+            addButton((width - 206) / 2 - 20, (height - 134) / 2, 20, 20, "</>", SkillProfilesGui::open);
         }
     }
 

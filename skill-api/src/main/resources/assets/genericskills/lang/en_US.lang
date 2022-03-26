@@ -1,26 +1,4 @@
 ﻿
-item.genSkillBook.name=Generic Skill Book
-item.heritageAmulet.name=Heritage Amulet
-item.manaPotion.name=Mana Potion
-
-skill.description.creeperblast=Channels your inner creeper\noutwards into an explosive\nforce.
-skill.description.levitate=Projects your mana downward\ncausing you to levitate.
-skill.description.summonwolf=Injects your life force\ninto a bone thereby summoning\na trusty canine companion.\n(requires a bone)
-skill.description.superjump=Gives you the ability to jump\ntwice as high. No exhaustion;\naffected by potions and\nsprinting.
-skill.description.healingbreeze=If your health is less than 2\nhearts, you're instantly healed 2\nhearts. Then for 10 seconds,\nyou're randomly healed half a\nheart at a time.
-skill.description.bindingsignet=Teleports you back to your\nroots.\n(requires a Heritage Amulet)
-skill.description.unrelentingforce=Blows anything in front of you\nclear away (including walls).
-skill.description.barrage=Fires a shower of up to 5\narrows all at once. Its strength\nand spread is affected by your\nlevel.\n(requires a bow and at least 2\narrows)
-
-skill.name.creeperblast=Creeper Blast
-skill.name.levitate=Levitate
-skill.name.summonwolf=Summon Wolf
-skill.name.superjump=Super Jump
-skill.name.healingbreeze=Healing Breeze
-skill.name.bindingsignet=Binding Signet
-skill.name.unrelentingforce=Unrelenting Force
-skill.name.barrage=Barrage
-
 skill.type.name.genericsskill=Generics Skill
 
 skill.effect.genericskills.WeaponBleedingEffect=Weapon Bleed

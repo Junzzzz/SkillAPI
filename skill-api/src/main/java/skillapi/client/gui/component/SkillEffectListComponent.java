@@ -1,9 +1,9 @@
 package skillapi.client.gui.component;
 
-import net.minecraft.client.resources.I18n;
 import skillapi.api.gui.base.Layout;
 import skillapi.api.gui.component.AbstractScrollingListComponent;
 import skillapi.api.gui.component.ButtonComponent;
+import skillapi.common.Translation;
 
 import java.util.List;
 
@@ -20,7 +20,7 @@ public final class SkillEffectListComponent extends AbstractScrollingListCompone
 
     @Override
     protected void renderSlot(String data, int x, int y) {
-        this.getFontRenderer().drawString(I18n.format(data), x, y, 0xFFFFFF);
+        this.getFontRenderer().drawString(Translation.format(data), x + 2, y + 2, 0xFFFFFF);
     }
 
     @Override

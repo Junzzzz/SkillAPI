@@ -92,11 +92,11 @@ public final class SkillEditGui extends BaseGui {
 
         final int btnPadding = (this.form.getLayout().getWidth() - 200) / 3;
         this.saveButton = addButton(this.form.getLayout().getLeft() + btnPadding, this.height - 5 - 20, 100, 20,
-                "Save", this::clickSave);
+                "$skill.constant.save", this::clickSave);
         this.saveButton.setEnable(false);
 
         addButton(this.saveButton.getLayout().getRight() + btnPadding, this.saveButton.getLayout().getY(), 100, 20,
-                "Finish", this::clickFinish);
+                "$skill.constant.finish", this::clickFinish);
 
         if (skillBuilder.isEmpty()) {
             // Need to be placed at the end
@@ -108,13 +108,14 @@ public final class SkillEditGui extends BaseGui {
     public void render(int mouseX, int mouseY, float partialTicks) {
         super.drawBackground();
 
-        drawCenteredString("基本信息", this.formLayout.getCenterX(), 10, 0xEBEBEB);
-        drawCenteredString("技能参数", this.formLayout.getCenterX(), 90, 0xEBEBEB);
+        // TODO Cache
+        drawCenteredString("$skill.gui.editSkill.base.title.info", this.formLayout.getCenterX(), 10, 0xEBEBEB);
+        drawCenteredString("$skill.gui.editSkill.base.title.param", this.formLayout.getCenterX(), 90, 0xEBEBEB);
 
-        drawTextFieldLabel(this.name, "技能名");
-        drawTextFieldLabel(this.mana, "所需魔力");
-        drawTextFieldLabel(this.cooldown, "冷却时间");
-        drawTextFieldLabel(this.charge, "释放等待");
+        drawTextFieldLabel(this.name, "$skill.gui.editSkill.base.name");
+        drawTextFieldLabel(this.mana, "$skill.gui.editSkill.base.mana");
+        drawTextFieldLabel(this.cooldown, "$skill.gui.editSkill.base.cooldown");
+        drawTextFieldLabel(this.charge, "$skill.gui.editSkill.base.charge");
     }
 
     private void drawTextFieldLabel(TextFieldComponent component, String label) {

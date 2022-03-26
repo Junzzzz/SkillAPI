@@ -28,4 +28,9 @@ public class ServerCooldown implements Cooldown {
     public void setCooling() {
         this.lastTime = System.currentTimeMillis();
     }
+
+    @Override
+    public String toString() {
+        return System.nanoTime() - this.lastTime + "ms";
+    }
 }

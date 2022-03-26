@@ -38,6 +38,10 @@ public class SkillProfilesGui extends ItemListGui<SkillProfileInfo> {
         setTitle(Translation.format("skill.gui.profile.title"));
     }
 
+    public static void open() {
+        Packet.callback(new GetProfileInfosPacket(), profiles -> GuiApi.displayGui(new SkillProfilesGui(profiles)));
+    }
+
     private static List<SkillProfileInfo> pinCurrentProfile(List<SkillProfileInfo> profiles) {
         SkillProfileInfo info = Skills.getCurrentProfileInfo();
         List<SkillProfileInfo> result = new ArrayList<>();
@@ -81,9 +85,7 @@ public class SkillProfilesGui extends ItemListGui<SkillProfileInfo> {
                     if (selectedItem != null) {
                         Packet.send(new SwitchProfilePacket(selectedItem.getName()));
                     }
-                    Packet.callback(new GetProfileInfosPacket(), profiles -> {
-                        GuiApi.displayGui(new SkillProfilesGui(profiles));
-                    });
+                    SkillProfilesGui.open();
                 }
         );
         // Edit profile button

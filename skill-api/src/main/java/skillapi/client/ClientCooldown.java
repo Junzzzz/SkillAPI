@@ -33,4 +33,9 @@ public class ClientCooldown implements Cooldown {
         this.initTime = true;
         this.lastTime = System.nanoTime();
     }
+
+    @Override
+    public String toString() {
+        return (System.nanoTime() - this.lastTime) / 1000000 + "ms";
+    }
 }

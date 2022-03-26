@@ -37,7 +37,7 @@ public final class SkillApi {
 
         // Load annotation
         List<Class<?>> classes = ClassUtils.scanLocalClasses(event.getSourceFile(), packageName, true);
-        final List<Class<?>> remainClass = new LinkedList<>();
+        List<Class<?>> remainClass = new LinkedList<>();
         classes = ListUtils.filter(classes, clz -> clz.isAnnotationPresent(SkillAnnotation.class), remainClass);
         registerAnnotation(classes);
         registerAll(remainClass, event.getModMetadata());
@@ -54,7 +54,7 @@ public final class SkillApi {
     private static void registerAll(List<Class<?>> classes, ModMetadata modMetadata) {
         for (Class<?> clz : classes) {
             for (Annotation annotation : clz.getAnnotations()) {
-                final SkillAnnotationRegister<Annotation> function = ANNOTATION_MAP.get(annotation.annotationType());
+                SkillAnnotationRegister<Annotation> function = ANNOTATION_MAP.get(annotation.annotationType());
                 if (function != null) {
                     function.register(clz, annotation, modMetadata);
                 }

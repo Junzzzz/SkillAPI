@@ -4,6 +4,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
+import skillapi.api.annotation.SkillEffect;
 import skillapi.api.annotation.SkillParam;
 import skillapi.skill.AbstractTargetSkillEffect;
 import skillapi.skill.SkillExtraInfo;
@@ -11,6 +12,7 @@ import skillapi.skill.SkillExtraInfo;
 /**
  * @author Jun
  */
+@SkillEffect
 public abstract class AbstractPotionSkillEffect extends AbstractTargetSkillEffect {
     @SkillParam
     protected int duration;

@@ -21,6 +21,20 @@ public class WeaponDamageEffect extends AbstractTargetSkillEffect {
     protected double damagePercentage;
 
     @Override
+    public boolean clientBeforeUnleash(EntityPlayer player, SkillExtraInfo extraInfo) {
+        InventoryPlayer inv = player.inventory;
+        ItemStack heldItem = inv.getCurrentItem();
+
+        // Item can attack
+        if (heldItem == null || !heldItem.isItemStackDamageable() || heldItem.isStackable()) {
+            return false;
+        }
+
+        return super.clientBeforeUnleash(player, extraInfo);
+    }
+
+
+    @Override
     public boolean canUnleash(EntityPlayer player, EntityLivingBase target, SkillExtraInfo extraInfo) {
         if (target == null) {
             return false;

@@ -1,9 +1,9 @@
 package skillapi.client.gui.component;
 
-import net.minecraft.client.resources.I18n;
 import skillapi.api.gui.base.Layout;
 import skillapi.api.gui.component.FormComponent;
 import skillapi.api.gui.component.TextFieldComponent;
+import skillapi.common.Translation;
 import skillapi.skill.AbstractSkillEffect;
 import skillapi.skill.SkillEffect;
 
@@ -27,7 +27,7 @@ public final class SkillEditFormComponent extends FormComponent {
         final int x = this.layout.getLeft() + 5;
         int i = this.layout.getTop() + 5;
         for (ParamTextField unit : params) {
-            drawString(((I18nParamTextField) unit).translate, x, i, 0xFFFFFF);
+            drawString(((CacheParamTextField) unit).translation, x, i, 0xFFFFFF);
             unit.textField.render(mouseX, mouseY, partialTicks);
             i += 25;
         }
@@ -35,27 +35,29 @@ public final class SkillEditFormComponent extends FormComponent {
 
     @Override
     public void addParam(String param, String initialValue) {
-        final Layout textfield = Layout.builder()
-                .x(this.layout.getLeft() + 10 + labelWidth)
+        String translation = effect instanceof AbstractSkillEffect ?
+                Translation.format(((AbstractSkillEffect) effect).getParamName(param)) : param;
+        int width = Math.min((int) (this.layout.getWidth() / 2.5), getFontRenderer().getStringWidth(translation));
+
+        Layout layout = Layout.builder()
+                .x(this.layout.getLeft() + 10 + width)
                 .y(this.layout.getTop() + this.params.size() * 25)
                 .height(20)
-                .width(this.layout.getWidth() - 10 - labelWidth)
+                .width(this.layout.getWidth() - 10 - width)
                 .build();
-        final TextFieldComponent component = new TextFieldComponent(textfield);
+        final TextFieldComponent component = new TextFieldComponent(layout);
         component.setText(initialValue);
-        this.params.add(new I18nParamTextField(param, addComponent(component)));
+
+
+        this.params.add(new CacheParamTextField(param, translation, addComponent(component)));
     }
 
-    private final class I18nParamTextField extends ParamTextField {
-        String translate;
+    private static final class CacheParamTextField extends ParamTextField {
+        final String translation;
 
-        public I18nParamTextField(String param, TextFieldComponent textField) {
+        public CacheParamTextField(String param, String translation, TextFieldComponent textField) {
             super(param, textField);
-            if (effect instanceof AbstractSkillEffect) {
-                this.translate = I18n.format(((AbstractSkillEffect) effect).getParamName(param));
-            } else {
-                this.translate = param;
-            }
+            this.translation = translation;
         }
     }
 }

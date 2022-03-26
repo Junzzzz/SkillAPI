@@ -26,11 +26,19 @@ skill.gui.profile.title=技能方案
 skill.gui.profile.dialog.title=添加动态技能方案
 skill.gui.profile.dialog.label=输入方案名
 skill.gui.editProfile.title=编辑方案 - %1$s
+skill.gui.editSkill.base.title.info=基本信息
+skill.gui.editSkill.base.title.param=技能参数
+skill.gui.editSkill.base.name=技能名
+skill.gui.editSkill.base.mana=所需魔力
+skill.gui.editSkill.base.cooldown=冷却时间(秒)
+skill.gui.editSkill.base.charge=释放等待(未完成)
 
 skill.constant.error.sync=数据不同步
 skill.constant.invalidLeanBook=无效技能书
 skill.constant.edit=编辑
 skill.constant.switch=切换
+skill.constant.save=保存
+skill.constant.finish=完成
 skill.constant.skillBook=技能书:
 skill.constant.learnSkill=学习技能[%1$s]成功
 skill.constant.knownSkill=已学过该技能
@@ -38,5 +46,7 @@ skill.constant.noDescription=无描述
 
 skill.static.skillapi.TestStaticSkill=测试静态技能
 skill.static.skillapi.TestStaticSkill.description=测试技能描述\nAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\nBBBBBBBBBBB
+
+skill.effect.skillapi.AbstractTargetSkillEffect.distance=指向目标生效距离(格)
 skill.effect.skillapi.TestSkillEffect=测试技能效果
 skill.effect.skillapi.TestSkillEffect.testParam=测试参数

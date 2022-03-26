@@ -7,6 +7,8 @@ import skillapi.api.annotation.SkillEffect;
 import skillapi.common.SkillRuntimeException;
 import skillapi.skill.Skills;
 
+import java.lang.reflect.Modifier;
+
 /**
  * @author Jun
  * @date 2020/9/4.
@@ -23,6 +25,9 @@ public final class SkillEffectAnnotationImpl implements SkillAnnotationRegister<
 
         Class<? extends skillapi.skill.SkillEffect> effect = (Class<? extends skillapi.skill.SkillEffect>) target;
         Skills.putModId(effect, mod.modId);
-        Skills.register(Skills.PREFIX_EFFECT + mod.modId + "." + effect.getSimpleName(), effect);
+
+        if (!target.isInterface() && !Modifier.isAbstract(target.getModifiers())) {
+            Skills.register(Skills.PREFIX_EFFECT + mod.modId + "." + effect.getSimpleName(), effect);
+        }
     }
 }
