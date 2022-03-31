@@ -12,4 +12,9 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface SkillParam {
+    /**
+     * Is it a universal parameter
+     * @return If {@code true}, the parameter will be set only once
+     */
+    boolean universal() default false;
 }

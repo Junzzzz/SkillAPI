@@ -50,4 +50,21 @@ public class ReflectionUtils {
         }
         return result;
     }
+
+    /**
+     * Find which class the field is in, including super classes
+     */
+    public static <T> Class<? super T> findClassByFieldName(Class<T> fromClass, String name) {
+        Class<? super T> result = fromClass;
+        while (result != null) {
+            Field[] declaredFields = getDeclaredFields(result);
+            for (Field field : declaredFields) {
+                if (field.getName().equals(name)) {
+                    return result;
+                }
+            }
+            result = result.getSuperclass();
+        }
+        return null;
+    }
 }

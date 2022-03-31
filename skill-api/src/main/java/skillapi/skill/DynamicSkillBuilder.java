@@ -44,6 +44,7 @@ public class DynamicSkillBuilder {
 
     public DynamicSkillBuilder(SkillProfile profile) {
         this.uniqueId = profile.getSkillUniqueId();
+        initUniversal();
     }
 
     public DynamicSkillBuilder(SkillProfile config, DynamicSkill skill) {
@@ -53,9 +54,25 @@ public class DynamicSkillBuilder {
         this.mana = skill.getMana();
         this.cooldown = skill.getCooldown();
         this.charge = skill.getCharge();
+
+        // Add effect
+        initUniversal();
         for (SkillEffect effect : skill.effects) {
             addEffect(effect);
         }
+    }
+
+    private void initUniversal() {
+        Map<String, String> map = new HashMap<>(8);
+        Map.Entry<SkillEffect, Map<String, String>> universal = new Pair<>(UniversalParam.INSTANCE, map);
+        map.put("name", this.name);
+        map.put("mana", String.valueOf(this.mana));
+        map.put("cooldown", String.format("%.3f", this.cooldown / 1000D));
+        this.effects.add(universal);
+    }
+
+    private Map<String, String> getUniversalMap() {
+        return this.effects.get(0).getValue();
     }
 
     protected DynamicSkillBuilder(int uniqueId) {
@@ -70,6 +87,17 @@ public class DynamicSkillBuilder {
         return annotation.callSuper() ? ReflectionUtils.getAllFields(clz) : Arrays.asList(clz.getDeclaredFields());
     }
 
+    private void addUniversalParam(SkillEffect effect, Field field) {
+        String name = effect instanceof AbstractSkillEffect ? ((AbstractSkillEffect) effect).getParamName(field.getName()) : field.getName();
+        Map<String, String> universalMap = getUniversalMap();
+        field.setAccessible(true);
+        try {
+            universalMap.put(name, field.get(effect).toString());
+        } catch (IllegalAccessException e) {
+            throw new SkillRuntimeException("Unknown Error");
+        }
+    }
+
     public void addEffect(SkillEffect effect) {
         Class<? extends SkillEffect> clz = effect.getClass();
         List<Field> fields = getFields(clz);
@@ -77,8 +105,14 @@ public class DynamicSkillBuilder {
         Map<String, String> paramMap = new LinkedHashMap<>(fields.size());
         try {
             for (Field field : fields) {
-                if (field.isAnnotationPresent(SkillParam.class)) {
-                    field.setAccessible(true);
+                SkillParam annotation = field.getAnnotation(SkillParam.class);
+                if (annotation == null) {
+                    continue;
+                }
+                field.setAccessible(true);
+                if (annotation.universal()) {
+                    addUniversalParam(effect, field);
+                } else {
                     paramMap.put(field.getName(), field.get(effect).toString());
                 }
             }
@@ -88,7 +122,7 @@ public class DynamicSkillBuilder {
         effects.add(new Pair<>(effect, paramMap));
     }
 
-    public void addEffect(Class<? extends SkillEffect> clz) {
+    public void addEmptyEffect(Class<? extends SkillEffect> clz) {
         if (!effectSet.add(clz)) {
             return;
         }
@@ -98,7 +132,13 @@ public class DynamicSkillBuilder {
                 "effect could not be created.");
 
         for (Field field : fields) {
-            if (field.isAnnotationPresent(SkillParam.class)) {
+            SkillParam annotation = field.getAnnotation(SkillParam.class);
+            if (annotation == null) {
+                continue;
+            }
+            if (annotation.universal()) {
+                addUniversalParam(skillEffect, field);
+            } else {
                 // Remove parent class duplicated field name
                 paramMap.putIfAbsent(field.getName(), null);
             }
@@ -123,7 +163,7 @@ public class DynamicSkillBuilder {
 
         // Add new effect
         for (Class<? extends SkillEffect> clz : newSet) {
-            addEffect(clz);
+            addEmptyEffect(clz);
         }
     }
 

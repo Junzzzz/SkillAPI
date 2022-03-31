@@ -1,5 +1,6 @@
 package skillapi.utils;
 
+import cpw.mods.fml.relauncher.ReflectionHelper;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
@@ -27,7 +28,7 @@ public class ClientUtils {
     static {
         MC = Minecraft.getMinecraft();
         try {
-            Field timer = MC.getClass().getDeclaredField("timer");
+            Field timer = ReflectionHelper.findField(Minecraft.class, "timer", "field_71428_T");
             timer.setAccessible(true);
             TIMER = (Timer) timer.get(MC);
         } catch (Exception e) {
