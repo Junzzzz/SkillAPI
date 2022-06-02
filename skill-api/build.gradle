@@ -1,7 +1,7 @@
 buildscript {
     repositories {
         maven {
-            url = "https://maven.zustcs.cn/repository/public/"
+            url = "https://bmclapi.bangbang93.com/maven/"
         }
     }
     dependencies {
