@@ -11,6 +11,7 @@ import skillapi.utils.ReflectionUtils;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author Jun
@@ -20,7 +21,6 @@ public class DynamicSkillBuilder {
     private final int uniqueId;
 
     @Getter
-    @Setter
     private String name;
 
     @Getter
@@ -28,22 +28,30 @@ public class DynamicSkillBuilder {
     private String description = "";
 
     @Getter
-    @Setter
     private int mana;
 
     @Getter
-    @Setter
     private long cooldown;
 
     @Getter
     @Setter
     private int charge;
 
+    private final String PREFIX_NAME = UniversalParam.getNamePrefix() + ".name";
+    private final String PREFIX_MANA = UniversalParam.getNamePrefix() + ".mana";
+    private final String PREFIX_COOLDOWN = UniversalParam.getNamePrefix() + ".cooldown";
+
+    private final Map.Entry<SkillEffect, Map<String, String>> universalEffect = new Pair<>(UniversalParam.INSTANCE, new LinkedHashMap<>(8));
     private final List<Map.Entry<SkillEffect, Map<String, String>>> effects = new ArrayList<>();
     private final Set<Class<? extends SkillEffect>> effectSet = new HashSet<>(4);
 
     public DynamicSkillBuilder(SkillProfile profile) {
         this.uniqueId = profile.getSkillUniqueId();
+        initUniversal();
+    }
+
+    protected DynamicSkillBuilder(int uniqueId) {
+        this.uniqueId = uniqueId;
         initUniversal();
     }
 
@@ -63,20 +71,30 @@ public class DynamicSkillBuilder {
     }
 
     private void initUniversal() {
-        Map<String, String> map = new HashMap<>(8);
-        Map.Entry<SkillEffect, Map<String, String>> universal = new Pair<>(UniversalParam.INSTANCE, map);
-        map.put("name", this.name);
-        map.put("mana", String.valueOf(this.mana));
-        map.put("cooldown", String.format("%.3f", this.cooldown / 1000D));
-        this.effects.add(universal);
+        Map<String, String> map = this.getUniversalMap();
+        map.clear();
+        map.put(PREFIX_NAME, this.name);
+        map.put(PREFIX_MANA, String.valueOf(this.mana));
+        map.put(PREFIX_COOLDOWN, String.format("%.3f", this.cooldown / 1000D));
     }
 
     private Map<String, String> getUniversalMap() {
-        return this.effects.get(0).getValue();
+        return this.universalEffect.getValue();
     }
 
-    protected DynamicSkillBuilder(int uniqueId) {
-        this.uniqueId = uniqueId;
+    public void setName(String name) {
+        this.name = name;
+        this.getUniversalMap().put(PREFIX_NAME, this.name);
+    }
+
+    public void setMana(int mana) {
+        this.mana = mana;
+        this.getUniversalMap().put(PREFIX_MANA, String.valueOf(this.mana));
+    }
+
+    public void setCooldown(long cooldown) {
+        this.cooldown = cooldown;
+        this.getUniversalMap().put(PREFIX_COOLDOWN, String.format("%.3f", this.cooldown / 1000D));
     }
 
     public static List<Field> getFields(Class<? extends SkillEffect> clz) {
@@ -92,10 +110,17 @@ public class DynamicSkillBuilder {
         Map<String, String> universalMap = getUniversalMap();
         field.setAccessible(true);
         try {
-            universalMap.put(name, field.get(effect).toString());
+            Object obj = field.get(effect);
+            universalMap.put(name, obj == null ? null : obj.toString());
         } catch (IllegalAccessException e) {
             throw new SkillRuntimeException("Unknown Error");
         }
+    }
+
+    private String getUniversalParam(SkillEffect effect, Field field) {
+        String name = effect instanceof AbstractSkillEffect ? ((AbstractSkillEffect) effect).getParamName(field.getName()) : field.getName();
+        Map<String, String> universalMap = getUniversalMap();
+        return universalMap.get(name);
     }
 
     public void addEffect(SkillEffect effect) {
@@ -161,6 +186,7 @@ public class DynamicSkillBuilder {
         this.effects.clear();
         this.effects.addAll(newList);
 
+        initUniversal();
         // Add new effect
         for (Class<? extends SkillEffect> clz : newSet) {
             addEmptyEffect(clz);
@@ -171,17 +197,44 @@ public class DynamicSkillBuilder {
         return effects.isEmpty();
     }
 
+    public List<SkillEffect> getEffectsWithUniversal() {
+        List<SkillEffect> result = Stream.concat(Stream.of(this.universalEffect), this.effects.stream())
+                .map(Map.Entry::getKey).collect(Collectors.toList());
+        return Collections.unmodifiableList(result);
+    }
+
     public List<SkillEffect> getEffects() {
         return Collections.unmodifiableList(this.effects.stream().map(Map.Entry::getKey).collect(Collectors.toList()));
     }
 
+    public List<Map.Entry<String, String>> getUniversalParams() {
+        return this.universalEffect.getValue().entrySet().stream()
+                .map(e -> new Pair<>(e.getKey(), e.getValue() != null ? e.getValue() : ""))
+                .collect(Collectors.toList());
+    }
+
     public List<Map.Entry<String, String>> getParams(int index) {
+        if (index == -1) {
+            return getUniversalParams();
+        }
         if (index < 0 || index >= effects.size()) {
             return new ArrayList<>();
         }
         return effects.get(index).getValue().entrySet().stream()
                 .map(e -> new Pair<>(e.getKey(), e.getValue() != null ? e.getValue() : ""))
                 .collect(Collectors.toList());
+    }
+
+    public void setUniversalParam(String paramName, String value) {
+        if (paramName.equals(PREFIX_NAME)) {
+            setName(value);
+        } else if (paramName.equals(PREFIX_MANA)) {
+            setMana(Integer.parseInt(value));
+        } else if (paramName.equals(PREFIX_COOLDOWN)) {
+            setCooldown((long) (Double.parseDouble(value) * 1000));
+        } else {
+            getUniversalMap().put(paramName, value);
+        }
     }
 
     public void setParam(int index, String paramName, String value) {
@@ -202,10 +255,11 @@ public class DynamicSkillBuilder {
 
             Map<String, String> map = entry.getValue();
             for (Field field : getFields(clz)) {
-                if (field.getAnnotation(SkillParam.class) == null) {
+                SkillParam annotation = field.getAnnotation(SkillParam.class);
+                if (annotation == null) {
                     continue;
                 }
-                String value = map.get(field.getName());
+                String value = annotation.universal() ? getUniversalParam(skillEffect, field) : map.get(field.getName());
                 if (value == null) {
                     continue;
                 }

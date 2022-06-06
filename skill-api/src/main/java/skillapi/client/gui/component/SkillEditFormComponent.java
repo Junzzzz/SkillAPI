@@ -6,6 +6,7 @@ import skillapi.api.gui.component.TextFieldComponent;
 import skillapi.common.Translation;
 import skillapi.skill.AbstractSkillEffect;
 import skillapi.skill.SkillEffect;
+import skillapi.skill.UniversalParam;
 
 /**
  * @author Jun
@@ -37,6 +38,8 @@ public final class SkillEditFormComponent extends FormComponent {
     public void addParam(String param, String initialValue) {
         String translation = effect instanceof AbstractSkillEffect ?
                 Translation.format(((AbstractSkillEffect) effect).getParamName(param)) : param;
+        translation = effect instanceof UniversalParam ? Translation.format(translation) : translation;
+
         int width = Math.min((int) (this.layout.getWidth() / 2.5), getFontRenderer().getStringWidth(translation));
 
         Layout layout = Layout.builder()

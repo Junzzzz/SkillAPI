@@ -40,4 +40,8 @@ public final class UniversalParam implements SkillEffect {
     public String getUnlocalizedName() {
         return NAME;
     }
+
+    public static String getNamePrefix() {
+        return NAME;
+    }
 }

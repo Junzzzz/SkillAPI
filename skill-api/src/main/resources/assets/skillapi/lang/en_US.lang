@@ -26,12 +26,7 @@ skill.gui.profile.title=Profiles
 skill.gui.profile.dialog.title=Add new profile
 skill.gui.profile.dialog.label=Input profile name
 skill.gui.editProfile.title=Profile - %1$s
-skill.gui.editSkill.base.title.info=Base information
 skill.gui.editSkill.base.title.param=Skill param
-skill.gui.editSkill.base.name=Name
-skill.gui.editSkill.base.mana=Mana
-skill.gui.editSkill.base.cooldown=Cooldown(s)
-skill.gui.editSkill.base.charge=Charge(useless)
 
 skill.constant.error.sync=Data is out of sync
 skill.constant.invalidLeanBook=Invalid Book
@@ -43,6 +38,11 @@ skill.constant.skillBook=Skill Book:
 skill.constant.learnSkill=Successful Learning Skills [%1$s]
 skill.constant.knownSkill=The skill has already been learned
 skill.constant.noDescription=No description
+
+skill.effect.universal=Universal Params
+skill.effect.universal.name=Name
+skill.effect.universal.mana=Mana
+skill.effect.universal.cooldown=Cooldown(s)
 
 skill.static.skillapi.TestStaticSkill=Test Static Skill
 skill.static.skillapi.TestStaticSkill.description=Test Static Skill Description\nAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\nBBBBBBBBBBB

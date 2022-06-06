@@ -227,7 +227,7 @@ public class SkillProfile {
                 Iterator<JsonNode> effects = skillNode.get("effects").elements();
                 while (effects.hasNext()) {
                     JsonNode effectNode = effects.next();
-                    builder.addEffect(Skills.getSkillEffect(effectNode.get("name").textValue()));
+                    builder.addEmptyEffect(Skills.getSkillEffect(effectNode.get("name").textValue()));
                     Iterator<Map.Entry<String, JsonNode>> fields = effectNode.get("fields").fields();
                     while (fields.hasNext()) {
                         Map.Entry<String, JsonNode> entry = fields.next();

@@ -12,6 +12,7 @@ import lombok.Setter;
 import skillapi.common.SkillLog;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,7 +20,6 @@ import java.util.Map;
  * @author Jun
  */
 public class SkillExtraInfo {
-    private final static Map<String, ExtraObject> EMPTY_MAP = new HashMap<>(0);
     private final static SkillExtraInfo EMPTY_INFO = new SkillExtraInfo(null);
 
     private final Map<String, ExtraObject> extraInfo;
@@ -29,7 +29,7 @@ public class SkillExtraInfo {
     }
 
     public SkillExtraInfo(Map<String, ExtraObject> extraInfo) {
-        this.extraInfo = extraInfo == null ? EMPTY_MAP : extraInfo;
+        this.extraInfo = extraInfo == null ? Collections.emptyMap() : extraInfo;
     }
 
     public static SkillExtraInfo empty() {
@@ -45,7 +45,7 @@ public class SkillExtraInfo {
         if (old == null) {
             this.extraInfo.put(name, new ExtraObject(object.getClass(), object));
         } else {
-            SkillLog.error("Contains conflicting keys: %s. If you want to replace value, please use replace() function.", name);
+            SkillLog.warn("Contains conflicting keys: %s. If you want to replace value, please use replace() function.", name);
         }
     }
 
@@ -59,7 +59,11 @@ public class SkillExtraInfo {
 
     @SuppressWarnings("unchecked")
     public <T> T get(String name) {
-        return (T) this.extraInfo.get(name).obj;
+        ExtraObject extraObject = this.extraInfo.get(name);
+        if (extraObject == null) {
+            return null;
+        }
+        return (T) extraObject.obj;
     }
 
     public ExtraObject getExtraObject(String name) {
@@ -99,8 +103,8 @@ public class SkillExtraInfo {
         public void serialize(ExtraObject infoObject, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
             jsonGenerator.writeStartObject();
 
-            jsonGenerator.writeString(infoObject.clz.getName());
-            jsonGenerator.writeObject(infoObject.obj);
+            jsonGenerator.writeStringField("c", infoObject.clz.getName());
+            jsonGenerator.writeObjectField("o", infoObject.obj);
 
             jsonGenerator.writeEndObject();
         }
@@ -112,11 +116,11 @@ public class SkillExtraInfo {
             JsonNode node = jsonParser.readValueAsTree();
             ExtraObject extraObject = new ExtraObject();
             try {
-                extraObject.setClz(deserializationContext.findClass(node.get(0).textValue()));
+                extraObject.setClz(deserializationContext.findClass(node.get("c").textValue()));
             } catch (ClassNotFoundException e) {
                 throw new IOException("Class not found", e);
             }
-            Object obj = node.get(1).traverse(jsonParser.getCodec()).readValueAs(extraObject.clz);
+            Object obj = node.get("o").traverse(jsonParser.getCodec()).readValueAs(extraObject.clz);
             extraObject.setObj(obj);
             return extraObject;
         }

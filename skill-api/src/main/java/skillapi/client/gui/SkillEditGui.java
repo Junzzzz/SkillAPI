@@ -4,22 +4,18 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import lombok.val;
 import lombok.var;
-import net.minecraft.client.resources.I18n;
 import org.lwjgl.input.Keyboard;
 import skillapi.api.gui.base.BaseGui;
 import skillapi.api.gui.base.Layout;
 import skillapi.api.gui.base.ListenerRegistry;
 import skillapi.api.gui.base.listener.KeyTypedListener;
 import skillapi.api.gui.component.ButtonComponent;
-import skillapi.api.gui.component.RecordTextFieldComponent;
 import skillapi.api.gui.component.TextFieldComponent;
 import skillapi.api.gui.component.impl.ScrollingListComponent;
 import skillapi.client.gui.component.SkillEditFormComponent;
+import skillapi.common.Translation;
 import skillapi.skill.DynamicSkillBuilder;
 import skillapi.skill.SkillEffect;
-
-import static skillapi.api.gui.component.TextFieldComponent.TextFieldType.POSITIVE_INTEGER;
-import static skillapi.api.gui.component.TextFieldComponent.TextFieldType.POSITIVE_NUMBER;
 
 /**
  * @author Jun
@@ -33,10 +29,6 @@ public final class SkillEditGui extends BaseGui {
     ScrollingListComponent<SkillEffect> effectList;
     private SkillEditFormComponent form;
     private ButtonComponent saveButton;
-    private RecordTextFieldComponent name;
-    private RecordTextFieldComponent mana;
-    private RecordTextFieldComponent cooldown;
-    private RecordTextFieldComponent charge;
 
     final DynamicSkillBuilder skillBuilder;
 
@@ -47,46 +39,24 @@ public final class SkillEditGui extends BaseGui {
 
     @Override
     protected void init() {
-        this.formLayout = new Layout(110, 110, this.width - 125, this.height - 140);
+        this.formLayout = new Layout(110, 30, this.width - 125, this.height - 140);
         final Layout listLayout = new Layout(10, 10, 100, this.height - 10 - 30);
 
         ScrollingListComponent.SlotRenderer<SkillEffect> renderer = (data, x, y) -> {
-            drawString(I18n.format(data.getUnlocalizedName()), x + 2, y + 5, 0xFFFFFF);
+            drawString(Translation.format(data.getUnlocalizedName()), x + 2, y + 5, 0xFFFFFF);
         };
 
-        this.effectList = new ScrollingListComponent<>(listLayout, 25, skillBuilder.getEffects(), renderer);
+        this.effectList = new ScrollingListComponent<>(listLayout, 25, skillBuilder.getEffectsWithUniversal(), renderer);
         this.effectList.setClickEvent((item, index) -> {
             this.form.clear();
             this.form.setSkillEffect(item);
-            this.form.addParams(skillBuilder.getParams(index));
-            this.saveButton.setEnable(RecordTextFieldComponent.isChanged(this.name, this.mana, this.cooldown, this.charge));
+            this.form.addParams(skillBuilder.getParams(index - 1));
+            this.saveButton.setEnable(false);
         });
-
-        final Layout nameLayout = Layout.builder()
-                .x(this.formLayout.getX() + labelWidth + 10)
-                .y(30)
-                .width(this.formLayout.getWidth() / 2 - 10 - labelWidth)
-                .height(20).build();
-        final Layout manaLayout = new Layout(nameLayout.getRight() + labelWidth + 10, 30, nameLayout.getWidth(), 20);
-        final Layout cooldownLayout = new Layout(nameLayout.getLeft(), 55, nameLayout.getWidth(), 20);
-        final Layout chargeLayout = new Layout(manaLayout.getLeft(), 55, nameLayout.getWidth(), 20);
-
-        this.name = new RecordTextFieldComponent(nameLayout);
-        this.mana = new RecordTextFieldComponent(manaLayout);
-        this.cooldown = new RecordTextFieldComponent(cooldownLayout);
-        this.charge = new RecordTextFieldComponent(chargeLayout);
-
-        this.cooldown.setType(POSITIVE_NUMBER);
-        TextFieldComponent.setType(POSITIVE_INTEGER, this.mana, this.charge);
-
-        this.name.setText(skillBuilder.getName());
-        this.mana.setText(String.valueOf(skillBuilder.getMana()));
-        this.cooldown.setText(String.format("%.3f", skillBuilder.getCooldown() / 1000D));
-        this.charge.setText(String.valueOf(skillBuilder.getCharge()));
 
         this.form = new SkillEditFormComponent(formLayout, labelWidth);
 
-        addComponent(effectList, this.name, this.mana, this.cooldown, this.charge, form);
+        addComponent(effectList, form);
         // Button
         addButton(10, this.height - 5 - 20, 100, 20, "$skill.constant.edit", () -> displayGui(new SkillEffectChooseGui(this)));
 
@@ -109,13 +79,7 @@ public final class SkillEditGui extends BaseGui {
         super.drawBackground();
 
         // TODO Cache
-        drawCenteredString("$skill.gui.editSkill.base.title.info", this.formLayout.getCenterX(), 10, 0xEBEBEB);
-        drawCenteredString("$skill.gui.editSkill.base.title.param", this.formLayout.getCenterX(), 90, 0xEBEBEB);
-
-        drawTextFieldLabel(this.name, "$skill.gui.editSkill.base.name");
-        drawTextFieldLabel(this.mana, "$skill.gui.editSkill.base.mana");
-        drawTextFieldLabel(this.cooldown, "$skill.gui.editSkill.base.cooldown");
-        drawTextFieldLabel(this.charge, "$skill.gui.editSkill.base.charge");
+        drawCenteredString("$skill.gui.editSkill.base.title.param", this.formLayout.getCenterX(), 10, 0xEBEBEB);
     }
 
     private void drawTextFieldLabel(TextFieldComponent component, String label) {
@@ -131,17 +95,13 @@ public final class SkillEditGui extends BaseGui {
 
                 val originList = this.skillBuilder.getParams(getIndex());
 
-                boolean flag = RecordTextFieldComponent.isChanged(this.name, this.mana, this.cooldown, this.charge);
-
-                if (!flag) {
-                    for (var e : originList) {
-                        if (!e.getValue().equals(map.get(e.getKey()))) {
-                            flag = true;
-                            break;
-                        }
+                for (var e : originList) {
+                    if (!e.getValue().equals(map.get(e.getKey()))) {
+                        this.saveButton.setEnable(true);
+                        break;
                     }
                 }
-                this.saveButton.setEnable(flag);
+
             } else if (this.form.isFocused()) {
                 this.saveButton.setEnable(true);
             }
@@ -151,7 +111,7 @@ public final class SkillEditGui extends BaseGui {
     }
 
     public int getIndex() {
-        return this.effectList.getSelectedIndex();
+        return this.effectList.getSelectedIndex() - 1;
     }
 
     private boolean checkNumber(char c) {
@@ -159,12 +119,12 @@ public final class SkillEditGui extends BaseGui {
     }
 
     private void clickSave() {
-        this.form.getForm()
-                .forEach(param -> this.skillBuilder.setParam(getIndex(), param.getKey(), param.getValue()));
-        this.skillBuilder.setName(this.name.getText());
-        this.skillBuilder.setMana(Integer.parseInt(this.mana.getText()));
-        this.skillBuilder.setCooldown((long) (Double.parseDouble(this.cooldown.getText()) * 1000));
-        this.skillBuilder.setCharge(Integer.parseInt(this.charge.getText()));
+        final int index = getIndex();
+        if (index == -1) {
+            this.form.getForm().forEach(param -> this.skillBuilder.setUniversalParam(param.getKey(), param.getValue()));
+        } else {
+            this.form.getForm().forEach(param -> this.skillBuilder.setParam(index, param.getKey(), param.getValue()));
+        }
         this.saveButton.setEnable(false);
         try {
             parent.saveSkill(this.skillBuilder);
@@ -174,27 +134,7 @@ public final class SkillEditGui extends BaseGui {
         }
     }
 
-    private boolean checkEmpty(TextFieldComponent component) {
-        if (component.getText().isEmpty()) {
-            component.setFocused(true);
-            return true;
-        }
-        return false;
-    }
-
-    private boolean checkEmpty(TextFieldComponent... component) {
-        for (TextFieldComponent c : component) {
-            if (checkEmpty(c)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     private void clickFinish() {
-        if (checkEmpty(name, mana, cooldown, charge)) {
-            return;
-        }
         displayGui(parent);
     }
 }

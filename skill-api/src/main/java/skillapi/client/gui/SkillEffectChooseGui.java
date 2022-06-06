@@ -8,6 +8,7 @@ import skillapi.api.gui.component.ButtonComponent;
 import skillapi.client.gui.component.SkillEffectListComponent;
 import skillapi.skill.SkillEffect;
 import skillapi.skill.Skills;
+import skillapi.skill.UniversalParam;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,6 +57,7 @@ public class SkillEffectChooseGui extends BaseGui {
         final Layout leftListBox = new Layout(10, 30, listWidth, height - 30 - 40);
 
         val rightList = parent.effectList.getList().stream()
+                .filter(e -> e != UniversalParam.INSTANCE)
                 .map(SkillEffect::getUnlocalizedName)
                 .collect(Collectors.toList());
 

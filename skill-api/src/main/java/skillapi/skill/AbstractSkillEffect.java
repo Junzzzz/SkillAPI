@@ -3,6 +3,7 @@ package skillapi.skill;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.player.EntityPlayer;
+import skillapi.utils.ReflectionUtils;
 
 import java.util.Objects;
 
@@ -12,11 +13,16 @@ import java.util.Objects;
 public abstract class AbstractSkillEffect implements SkillEffect {
     @Override
     public String getUnlocalizedName() {
-        return "skill.effect." + Skills.getModId(getClass()) + "." + getClass().getSimpleName();
+        return Skills.PREFIX_EFFECT + Skills.getModId(getClass()) + "." + getClass().getSimpleName();
     }
 
+    @SuppressWarnings("unchecked")
     public String getParamName(String param) {
-        return getUnlocalizedName() + "." + param;
+        Class<?> clz = ReflectionUtils.findClassByFieldName(this.getClass(), param);
+        if (clz == null) {
+            return getUnlocalizedName() + "." + param;
+        }
+        return Skills.PREFIX_EFFECT + Skills.getModId((Class<? extends SkillEffect>) clz) + "." + clz.getSimpleName() + "." + param;
     }
 
     @SideOnly(Side.CLIENT)
