@@ -2,7 +2,6 @@ package skillapi.api.gui.base;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
@@ -110,15 +109,30 @@ public final class RenderUtils {
         tessellator.draw();
     }
 
+    public static void drawString(String text, int x, int y, int color) {
+        GuiApi.minecraft.fontRenderer.drawString(text, x, y, color, false);
+    }
+
+    public static void drawString(String text, int x, int y, int color, boolean dropShadow) {
+        GuiApi.minecraft.fontRenderer.drawString(text, x, y, color, dropShadow);
+    }
+
     /**
      * Renders the specified text to the screen, center-aligned.
      */
     public static void drawCenteredString(String text, int x, int y, int color) {
+        drawCenteredString(text, x, y, color, false);
+    }
+
+    /**
+     * Renders the specified text to the screen, center-aligned.
+     */
+    public static void drawCenteredString(String text, int x, int y, int color, boolean dropShadow) {
         FontRenderer fontRenderer = GuiApi.minecraft.fontRenderer;
-        fontRenderer.drawStringWithShadow(text, x - fontRenderer.getStringWidth(text) / 2, y, color);
+        fontRenderer.drawString(text, x - fontRenderer.getStringWidth(text) / 2, y, color, dropShadow);
     }
 
     public static void bindTexture(ResourceLocation resourceLocation) {
-        Minecraft.getMinecraft().getTextureManager().bindTexture(resourceLocation);
+        GuiApi.minecraft.getTextureManager().bindTexture(resourceLocation);
     }
 }

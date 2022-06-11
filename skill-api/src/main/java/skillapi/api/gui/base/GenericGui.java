@@ -117,11 +117,10 @@ public abstract class GenericGui {
     }
 
     protected final void drawCenteredString(String text, int centerX, int y, int color, boolean dropShadow, boolean translate) {
-        final FontRenderer fontRenderer = getFontRenderer();
         if (translate) {
             text = translate(text);
         }
-        fontRenderer.drawString(text, centerX - fontRenderer.getStringWidth(text) / 2, y, color, dropShadow);
+        RenderUtils.drawCenteredString(text, centerX, y, color, dropShadow);
     }
 
     protected final void drawString(String text, int x, int y, int color) {
@@ -136,7 +135,7 @@ public abstract class GenericGui {
         if (translate) {
             text = translate(text);
         }
-        getFontRenderer().drawString(text, x, y, color, dropShadow);
+        RenderUtils.drawString(text, x, y, color, dropShadow);
     }
 
     protected String translate(String text) {

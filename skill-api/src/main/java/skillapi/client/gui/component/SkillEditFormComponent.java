@@ -1,8 +1,8 @@
 package skillapi.client.gui.component;
 
 import skillapi.api.gui.base.Layout;
+import skillapi.api.gui.base.RenderUtils;
 import skillapi.api.gui.component.FormComponent;
-import skillapi.api.gui.component.TextFieldComponent;
 import skillapi.common.Translation;
 import skillapi.skill.AbstractSkillEffect;
 import skillapi.skill.SkillEffect;
@@ -24,18 +24,12 @@ public final class SkillEditFormComponent extends FormComponent {
     }
 
     @Override
-    public void render(int mouseX, int mouseY, float partialTicks) {
-        final int x = this.layout.getLeft() + 5;
-        int i = this.layout.getTop() + 5;
-        for (ParamTextField unit : params) {
-            drawString(((CacheParamTextField) unit).translation, x, i, 0xFFFFFF);
-            unit.textField.render(mouseX, mouseY, partialTicks);
-            i += 25;
-        }
+    public void addParam(String param, String initialValue) {
+        addParam(param, initialValue, initialValue.equals("false") || initialValue.equals("true"));
     }
 
     @Override
-    public void addParam(String param, String initialValue) {
+    public void addParam(String param, String initialValue, boolean bool) {
         String translation = effect instanceof AbstractSkillEffect ?
                 Translation.format(((AbstractSkillEffect) effect).getParamName(param)) : param;
         translation = effect instanceof UniversalParam ? Translation.format(translation) : translation;
@@ -48,18 +42,22 @@ public final class SkillEditFormComponent extends FormComponent {
                 .height(20)
                 .width(this.layout.getWidth() - 10 - width)
                 .build();
-        final TextFieldComponent component = new TextFieldComponent(layout);
-        component.setText(initialValue);
-
-
-        this.params.add(new CacheParamTextField(param, translation, addComponent(component)));
+        ParamField paramTextField = bool ? new ParamBooleanField(param, layout)
+                : new CacheParamTextField(param, translation, initialValue, layout);
+        addComponent(paramTextField.getComponent());
+        this.params.add(paramTextField);
     }
 
     private static final class CacheParamTextField extends ParamTextField {
         final String translation;
 
-        public CacheParamTextField(String param, String translation, TextFieldComponent textField) {
-            super(param, textField);
+        @Override
+        public void renderParam(int x, int y) {
+            RenderUtils.drawString(this.translation, x, y, 0xFFFFFF);
+        }
+
+        public CacheParamTextField(String param, String translation, String initialValue, Layout layout) {
+            super(param, initialValue, layout);
             this.translation = translation;
         }
     }

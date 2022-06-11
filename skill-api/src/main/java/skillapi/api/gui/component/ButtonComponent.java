@@ -16,7 +16,6 @@ import skillapi.api.util.function.EventFunction;
  * Button height cannot exceed 20, width cannot exceed 200.
  *
  * @author Jun
- * @date 2021/3/8.
  */
 public class ButtonComponent extends BaseComponent {
     private static final ResourceLocation BUTTON_TEXTURES = new ResourceLocation("textures/gui/widgets.png");
@@ -25,6 +24,7 @@ public class ButtonComponent extends BaseComponent {
     @Setter
     private boolean enable;
     private String text;
+    private int color;
     private final EventFunction clickEvent;
 
     private final CachedTexture disableTexture;
@@ -35,6 +35,7 @@ public class ButtonComponent extends BaseComponent {
         super(layout);
         this.enable = true;
         this.text = text;
+        this.color = 0xE0E0E0;
         this.clickEvent = event;
         this.disableTexture = new CachedTexture(layout.getWidth(), layout.getHeight());
         this.normalTexture = new CachedTexture(layout.getWidth(), layout.getHeight());
@@ -48,7 +49,7 @@ public class ButtonComponent extends BaseComponent {
         this.disableTexture.endDrawTexture();
 
         this.normalTexture.startDrawTexture();
-        drawButton(this.text, 1, 0xE0E0E0);
+        drawButton(this.text, 1, color);
         this.normalTexture.endDrawTexture();
 
         this.focusTexture.startDrawTexture();
@@ -58,6 +59,24 @@ public class ButtonComponent extends BaseComponent {
 
     public void setText(String text) {
         this.text = text;
+        this.disableTexture.clear();
+        this.normalTexture.clear();
+        this.focusTexture.clear();
+        init();
+    }
+
+    public void setColor(int color) {
+        this.color = color;
+
+        this.normalTexture.clear();
+        this.normalTexture.startDrawTexture();
+        drawButton(this.text, 1, color);
+        this.normalTexture.endDrawTexture();
+    }
+
+    public void setTextAndColor(String text, int color) {
+        this.text = text;
+        this.color = color;
         this.disableTexture.clear();
         this.normalTexture.clear();
         this.focusTexture.clear();
