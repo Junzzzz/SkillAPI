@@ -83,7 +83,7 @@ public class KnownSkillListComponent extends BaseComponent {
         }
 
         if (emptyDesc) {
-            width = Math.max(fontRenderer.getStringWidth(Translation.format("skill.constant.noDescription")), width);
+            width = Math.max(fontRenderer.getStringWidth(Translation.format("skill.constant.noDescription") + 10), width);
         }
 
         RenderUtils.drawRect(GL11.GL_POLYGON, x - 1, y - 1, x + 1 + width, y + 1 + height, 0xCC000000);

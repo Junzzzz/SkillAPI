@@ -4,11 +4,10 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import lombok.val;
 import lombok.var;
-import org.lwjgl.input.Keyboard;
 import skillapi.api.gui.base.BaseGui;
 import skillapi.api.gui.base.Layout;
 import skillapi.api.gui.base.ListenerRegistry;
-import skillapi.api.gui.base.listener.KeyTypedListener;
+import skillapi.api.gui.base.listener.ComponentUpdateListener;
 import skillapi.api.gui.component.ButtonComponent;
 import skillapi.api.gui.component.TextFieldComponent;
 import skillapi.api.gui.component.impl.ScrollingListComponent;
@@ -88,26 +87,21 @@ public final class SkillEditGui extends BaseGui {
 
     @Override
     protected void listener(ListenerRegistry listener) {
-        KeyTypedListener ktl = (c, key) -> {
-            if (key == Keyboard.KEY_BACK || checkNumber(c)) {
-                // TODO 校验不完善
-                val map = this.form.getFormMap();
+        ComponentUpdateListener cul = component -> {
+            val map = this.form.getFormMap();
 
-                val originList = this.skillBuilder.getParams(getIndex());
+            val originList = this.skillBuilder.getParams(getIndex());
 
-                for (var e : originList) {
-                    if (!e.getValue().equals(map.get(e.getKey()))) {
-                        this.saveButton.setEnable(true);
-                        break;
-                    }
+            for (var e : originList) {
+                if (!e.getValue().equals(map.get(e.getKey()))) {
+                    this.saveButton.setEnable(true);
+                    return;
                 }
-
-            } else if (this.form.isFocused()) {
-                this.saveButton.setEnable(true);
             }
+            this.saveButton.setEnable(false);
         };
 
-        listener.on(ktl);
+        listener.on(cul);
     }
 
     public int getIndex() {
@@ -115,7 +109,7 @@ public final class SkillEditGui extends BaseGui {
     }
 
     private boolean checkNumber(char c) {
-        return c >= '0' && c <= '9';
+        return c >= '0' && c <= '9' || c == '.';
     }
 
     private void clickSave() {
@@ -126,6 +120,10 @@ public final class SkillEditGui extends BaseGui {
             this.form.getForm().forEach(param -> this.skillBuilder.setParam(index, param.getKey(), param.getValue()));
         }
         this.saveButton.setEnable(false);
+        saveSkill();
+    }
+
+    public void saveSkill() {
         try {
             parent.saveSkill(this.skillBuilder);
         } catch (Exception e) {

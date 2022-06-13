@@ -110,8 +110,10 @@ public class DynamicSkillBuilder {
         Map<String, String> universalMap = getUniversalMap();
         field.setAccessible(true);
         try {
-            Object obj = field.get(effect);
-            universalMap.put(name, obj == null ? null : obj.toString());
+            if (!universalMap.containsKey(name)) {
+                Object obj = field.get(effect);
+                universalMap.put(name, obj == null ? null : obj.toString());
+            }
         } catch (IllegalAccessException e) {
             throw new SkillRuntimeException("Unknown Error");
         }
@@ -177,25 +179,24 @@ public class DynamicSkillBuilder {
     }
 
     public void setEffects(List<Class<? extends SkillEffect>> classes) {
-        List<Map.Entry<SkillEffect, Map<String, String>>> newList = new ArrayList<>(classes.size());
-        Set<Class<? extends SkillEffect>> newSet = new HashSet<>(classes);
-
-        // Retain the desired effect
-        this.effectSet.clear();
-        for (Map.Entry<SkillEffect, Map<String, String>> effect : this.effects) {
-            if (newSet.remove(effect.getKey().getClass())) {
-                newList.add(effect);
-                this.effectSet.add(effect.getKey().getClass());
-            }
-        }
-        this.effects.clear();
-        this.effects.addAll(newList);
-
+        Map<Class<? extends SkillEffect>, Map<String, String>> oldEffects = this.effects.stream().collect(
+                HashMap::new, (map, value) -> map.put(value.getKey().getClass(), value.getValue()), HashMap::putAll
+        );
+        Map<String, String> oldUniversalMap = new HashMap<>(getUniversalMap());
         initUniversal();
+        this.effects.clear();
+
         // Add new effect
-        for (Class<? extends SkillEffect> clz : newSet) {
-            addEmptyEffect(clz);
+        for (int i = 0; i < classes.size(); i++) {
+            addEmptyEffect(classes.get(i));
+            // Recover
+            Map.Entry<SkillEffect, Map<String, String>> entry = this.effects.get(i);
+            Map<String, String> replaceMap = oldEffects.get(entry.getKey().getClass());
+            entry.getValue().replaceAll((k, v) -> replaceMap.get(k));
         }
+
+        // Recover
+        getUniversalMap().replaceAll((k, v) -> oldUniversalMap.get(k));
     }
 
     public boolean isEmpty() {

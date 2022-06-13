@@ -48,6 +48,7 @@ public class SkillEffectChooseGui extends BaseGui {
                 effectClasses.add(Skills.getSkillEffect(s));
             }
             parent.skillBuilder.setEffects(effectClasses);
+            parent.saveSkill();
             displayGui(parent);
         });
 

@@ -1,5 +1,6 @@
 package skillapi.client.gui.component;
 
+import skillapi.api.gui.base.BaseComponent;
 import skillapi.api.gui.base.Layout;
 import skillapi.api.gui.base.RenderUtils;
 import skillapi.api.gui.component.FormComponent;
@@ -42,23 +43,37 @@ public final class SkillEditFormComponent extends FormComponent {
                 .height(20)
                 .width(this.layout.getWidth() - 10 - width)
                 .build();
-        ParamField paramTextField = bool ? new ParamBooleanField(param, layout)
-                : new CacheParamTextField(param, translation, initialValue, layout);
+        ParamField paramTextField = new TranslationFieldProxy(
+                bool ? new ParamBooleanField(param, initialValue, layout) : new ParamTextField(param, initialValue, layout),
+                translation
+        );
         addComponent(paramTextField.getComponent());
         this.params.add(paramTextField);
     }
 
-    private static final class CacheParamTextField extends ParamTextField {
+    private static final class TranslationFieldProxy extends ParamField {
+        ParamField paramField;
         final String translation;
+
+        public TranslationFieldProxy(ParamField paramField, String translation) {
+            super(paramField.getParam());
+            this.paramField = paramField;
+            this.translation = translation;
+        }
 
         @Override
         public void renderParam(int x, int y) {
             RenderUtils.drawString(this.translation, x, y, 0xFFFFFF);
         }
 
-        public CacheParamTextField(String param, String translation, String initialValue, Layout layout) {
-            super(param, initialValue, layout);
-            this.translation = translation;
+        @Override
+        public BaseComponent getComponent() {
+            return paramField.getComponent();
+        }
+
+        @Override
+        public String getText() {
+            return paramField.getText();
         }
     }
 }

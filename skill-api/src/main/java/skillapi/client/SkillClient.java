@@ -10,6 +10,7 @@ import org.lwjgl.input.Keyboard;
 import skillapi.api.annotation.SkillEvent;
 import skillapi.api.gui.base.GuiApi;
 import skillapi.client.gui.KnownSkillsGui;
+import skillapi.common.Message;
 import skillapi.packet.base.Packet;
 import skillapi.skill.*;
 
@@ -83,6 +84,16 @@ public class SkillClient {
             if (skill.clientBeforeUnleash(SKILL.getPlayer(), SKILL_EXTRA_INFO)) {
                 Packet.sendToServer(new PlayerUnleashSkillPacket(index, SKILL_EXTRA_INFO));
                 SKILL.consumeMana(skill.getMana());
+                cooldown.setCooling();
+            } else {
+                // TODO clear
+                Message.send(SKILL.getPlayer(), "释放条件不足");
+            }
+        } else {
+            if (cooldown.isCooledDown()) {
+                Message.send(SKILL.getPlayer(), "技能未冷却: " + cooldown);
+            } else {
+                Message.send(SKILL.getPlayer(), "魔力不足: " + SKILL.getMana() + "/" + skill.getMana());
             }
         }
     }
