@@ -1,6 +1,6 @@
 package genericskill.effects;
 
-import genericskill.potion.SkillPotions;
+import genericskill.potion.GenericSkillPotions;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.potion.PotionEffect;
@@ -20,6 +20,9 @@ public class ContinuousHealingEffect extends AbstractTargetSkillEffect {
     @SkillParam
     private int secondDuration;
 
+    @SkillParam
+    private boolean self;
+
     @Override
     public boolean canUnleash(EntityPlayer player, EntityLivingBase target, SkillExtraInfo extraInfo) {
         return player != null;
@@ -27,7 +30,11 @@ public class ContinuousHealingEffect extends AbstractTargetSkillEffect {
 
     @Override
     public boolean unleash(EntityPlayer player, EntityLivingBase target, SkillExtraInfo extraInfo) {
-        player.addPotionEffect(new PotionEffect(SkillPotions.SKILL_HEAL.id, secondDuration * 20, healAmount));
+        if (self) {
+            player.addPotionEffect(new PotionEffect(GenericSkillPotions.SKILL_HEAL.id, secondDuration * 20, healAmount));
+        } else {
+            target.addPotionEffect(new PotionEffect(GenericSkillPotions.SKILL_HEAL.id, secondDuration * 20, healAmount));
+        }
         return true;
     }
 }

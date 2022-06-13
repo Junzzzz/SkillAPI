@@ -6,6 +6,7 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import skillapi.Application;
 import skillapi.api.SkillApi;
 import skillapi.common.SkillProxy;
+import skillapi.potion.SkillPotions;
 import skillapi.skill.Cooldown;
 
 /**
@@ -16,6 +17,7 @@ public class SkillServerProxy implements SkillProxy {
     public void preInit(FMLPreInitializationEvent event) {
         // TODO replace package
         SkillApi.preInit(event, Application.MOD_ID);
+        SkillPotions.insurePotionSize(64);
     }
 
     @Override

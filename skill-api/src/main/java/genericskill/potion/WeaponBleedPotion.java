@@ -6,8 +6,8 @@ import skillapi.potion.SkillPotion;
  * @author Jun
  */
 public class WeaponBleedPotion extends SkillPotion {
-    protected WeaponBleedPotion() {
-        super(31, "weaponBleed", true, 0x932423);
+    protected WeaponBleedPotion(int id) {
+        super(id, "weaponBleed", true, 0x932423);
         setIconIndex(0, 4);
     }
 

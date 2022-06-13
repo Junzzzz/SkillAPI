@@ -7,8 +7,8 @@ import skillapi.potion.SkillPotion;
  * @author Jun
  */
 public class SkillHealPotion extends SkillPotion {
-    protected SkillHealPotion() {
-        super(30, "skillHeal", true, 0x932423);
+    protected SkillHealPotion(int id) {
+        super(id, "skillHeal", true, 0x932423);
         setIconIndex(0, 7);
     }
 

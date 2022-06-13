@@ -10,10 +10,10 @@ import skillapi.skill.SkillExtraInfo;
 /**
  * @author Jun
  */
-@SkillEffect
-public class InstantHealingEffect extends AbstractTargetSkillEffect {
+@SkillEffect(callSuper = true)
+public class DisposableAbsorptionEffect extends AbstractTargetSkillEffect {
     @SkillParam
-    private int healAmount;
+    private int amount;
 
     @SkillParam
     private boolean self;
@@ -21,9 +21,9 @@ public class InstantHealingEffect extends AbstractTargetSkillEffect {
     @Override
     public boolean unleash(EntityPlayer player, EntityLivingBase target, SkillExtraInfo extraInfo) {
         if (self) {
-            player.heal(healAmount);
+            player.setAbsorptionAmount(player.getAbsorptionAmount() + this.amount);
         } else {
-            target.heal(healAmount);
+            target.setAbsorptionAmount(player.getAbsorptionAmount() + this.amount);
         }
         return true;
     }

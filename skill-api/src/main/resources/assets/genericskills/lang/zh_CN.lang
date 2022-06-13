@@ -2,6 +2,16 @@
 skill.type.name.genericsskill=通用技能
 
 skill.effect.genericskills.AbstractPotionSkillEffect.duration=持续时间(秒)
+skill.effect.genericskills.AbstractStaticLevelPotionEffect.duration=持续时间(秒)
+skill.effect.genericskills.AbstractDynamicLevelPotionEffect.duration=持续时间(秒)
+skill.effect.genericskills.AbstractBilateralDynamicLevelPotionEffect.self=作用于施放者
+
+skill.effect.genericskills.DamageBoostEffect=力量BUFF
+skill.effect.genericskills.DamageBoostEffect.percentage=增加百分比(%%)
+
+skill.effect.genericskills.MoveSpeedEffect=速度BUFF
+skill.effect.genericskills.MoveSpeedEffect.percentage=增加百分比(%%)
+
 skill.effect.genericskills.BlindnessEffect=失明
 skill.effect.genericskills.BodyFixedEffect=定身
 skill.effect.genericskills.ConfusionEffect=反胃
@@ -13,8 +23,14 @@ skill.effect.genericskills.WitherEffect=凋零
 skill.effect.genericskills.BurningEffect=燃烧
 skill.effect.genericskills.BurningEffect.secondDuration=持续时间(秒)
 
+skill.effect.genericskills.ContinuousAbsorptionEffect=持续时间内伤害吸收
+skill.effect.genericskills.ContinuousAbsorptionEffect.amount=伤害吸收量
+skill.effect.genericskills.ContinuousAbsorptionEffect.self=作用于施放者
+skill.effect.genericskills.ContinuousAbsorptionEffect.secondDuration=持续时间(秒)
+
 skill.effect.genericskills.ContinuousHealingEffect=持续生命恢复
 skill.effect.genericskills.ContinuousHealingEffect.healAmount=治疗量
+skill.effect.genericskills.ContinuousAbsorptionEffect.self=作用于施放者
 skill.effect.genericskills.ContinuousHealingEffect.secondDuration=持续时间(秒)
 
 skill.effect.genericskills.DashEffect=冲刺
@@ -34,6 +50,10 @@ skill.effect.genericskills.WeaponDamageEffect=武器造成伤害
 skill.effect.genericskills.WeaponDamageEffect.damagePercentage=攻击伤害乘数
 
 skill.effect.genericskills.DestroyWeaponDamageEffect=销毁手上武器造成伤害
+
+skill.effect.genericskills.DisposableAbsorptionEffect=一次性伤害吸收
+skill.effect.genericskills.DisposableAbsorptionEffect.amount=伤害吸收量
+skill.effect.genericskills.DisposableAbsorptionEffect.self=作用于施放者
 
 skill.effect.genericskills.WeaponBleedingEffect=武器流血
 skill.effect.genericskills.WeaponBleedingEffect.duration=流血时间(秒)

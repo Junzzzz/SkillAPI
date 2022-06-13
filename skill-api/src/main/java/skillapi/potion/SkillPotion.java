@@ -7,7 +7,7 @@ import skillapi.api.gui.base.RenderUtils;
 /**
  * @author Jun
  */
-public class SkillPotion extends Potion {
+public abstract class SkillPotion extends Potion {
     private ResourceLocation resource;
 
     protected SkillPotion(int id, String name, boolean isBadEffect, int liquidColor) {
@@ -29,7 +29,7 @@ public class SkillPotion extends Potion {
     }
 
     /**
-     * From 0
+     * Start from 0
      */
     @Override
     protected Potion setIconIndex(int row, int column) {

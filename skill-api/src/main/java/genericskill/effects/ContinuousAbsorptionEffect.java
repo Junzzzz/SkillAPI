@@ -1,7 +1,9 @@
 package genericskill.effects;
 
+import genericskill.potion.GenericSkillPotions;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.potion.PotionEffect;
 import skillapi.api.annotation.SkillEffect;
 import skillapi.api.annotation.SkillParam;
 import skillapi.skill.AbstractTargetSkillEffect;
@@ -10,10 +12,13 @@ import skillapi.skill.SkillExtraInfo;
 /**
  * @author Jun
  */
-@SkillEffect
-public class InstantHealingEffect extends AbstractTargetSkillEffect {
+@SkillEffect(callSuper = true)
+public class ContinuousAbsorptionEffect extends AbstractTargetSkillEffect {
     @SkillParam
-    private int healAmount;
+    private int amount;
+
+    @SkillParam
+    private int secondDuration;
 
     @SkillParam
     private boolean self;
@@ -21,9 +26,9 @@ public class InstantHealingEffect extends AbstractTargetSkillEffect {
     @Override
     public boolean unleash(EntityPlayer player, EntityLivingBase target, SkillExtraInfo extraInfo) {
         if (self) {
-            player.heal(healAmount);
+            player.addPotionEffect(new PotionEffect(GenericSkillPotions.ABSORPTION.id, secondDuration * 20, amount));
         } else {
-            target.heal(healAmount);
+            target.addPotionEffect(new PotionEffect(GenericSkillPotions.ABSORPTION.id, secondDuration * 20, amount));
         }
         return true;
     }
