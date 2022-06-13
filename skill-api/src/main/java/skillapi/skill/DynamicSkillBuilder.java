@@ -134,10 +134,10 @@ public class DynamicSkillBuilder {
                 if (annotation == null) {
                     continue;
                 }
-                field.setAccessible(true);
                 if (annotation.universal()) {
                     addUniversalParam(effect, field);
                 } else {
+                    field.setAccessible(true);
                     paramMap.put(field.getName(), field.get(effect).toString());
                 }
             }
@@ -156,17 +156,22 @@ public class DynamicSkillBuilder {
         SkillEffect skillEffect = ReflectionUtils.newEmptyInstance(clz, "A fatal error occurred and the skill " +
                 "effect could not be created.");
 
-        for (Field field : fields) {
-            SkillParam annotation = field.getAnnotation(SkillParam.class);
-            if (annotation == null) {
-                continue;
+        try {
+            for (Field field : fields) {
+                SkillParam annotation = field.getAnnotation(SkillParam.class);
+                if (annotation == null) {
+                    continue;
+                }
+                if (annotation.universal()) {
+                    addUniversalParam(skillEffect, field);
+                } else {
+                    // Remove parent class duplicated field name
+                    field.setAccessible(true);
+                    paramMap.putIfAbsent(field.getName(), field.get(skillEffect).toString());
+                }
             }
-            if (annotation.universal()) {
-                addUniversalParam(skillEffect, field);
-            } else {
-                // Remove parent class duplicated field name
-                paramMap.putIfAbsent(field.getName(), null);
-            }
+        } catch (IllegalAccessException e) {
+            throw new SkillRuntimeException("Unknown Error");
         }
         effects.add(new Pair<>(skillEffect, paramMap));
     }
@@ -289,6 +294,8 @@ public class DynamicSkillBuilder {
             return Float.valueOf(value);
         } else if (double.class == type || Double.class == type) {
             return Double.valueOf(value);
+        } else if (boolean.class == type || Boolean.class == type) {
+            return Boolean.valueOf(value);
         } else if (type == String.class) {
             return value;
         } else {

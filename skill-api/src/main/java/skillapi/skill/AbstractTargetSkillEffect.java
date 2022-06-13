@@ -27,6 +27,10 @@ public abstract class AbstractTargetSkillEffect extends AbstractSkillEffect {
     @SideOnly(Side.CLIENT)
     @Override
     public boolean clientBeforeUnleash(EntityPlayer player, SkillExtraInfo extraInfo) {
+        if (this.distance == -1) {
+            return true;
+        }
+
         EntityLivingBase target = ClientUtils.getPointedLivingEntity(this.distance > 0 ? this.distance : DEFAULT_DISTANCE);
         if (target != null) {
             extraInfo.put(KEY_TARGET, target.getEntityId());
@@ -37,6 +41,10 @@ public abstract class AbstractTargetSkillEffect extends AbstractSkillEffect {
 
     @Override
     public final boolean canUnleash(EntityPlayer player, SkillExtraInfo extraInfo) {
+        if (this.distance == -1) {
+            return true;
+        }
+
         Object object = extraInfo.get(KEY_TARGET);
         if (object instanceof EntityLivingBase) {
             return canUnleash(player, targetCache = (EntityLivingBase) object, extraInfo);

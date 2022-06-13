@@ -41,9 +41,8 @@ public class PlayerUnleashSkillPacket extends AbstractPacket {
         }
         if (skills.getMana() >= skill.getMana() && cooldown.isCooledDown()) {
             skills.consumeMana(skill.getMana());
-
+            cooldown.setCooling();
             SkillExecutor.execute(skill, player, SkillExtraInfo.get(extraInfo));
-
         }
     }
 
@@ -55,7 +54,7 @@ public class PlayerUnleashSkillPacket extends AbstractPacket {
                 buffer.writeBoolean(false);
             } else {
                 buffer.writeBoolean(true);
-                JsonUtils.getMapper().writeValueAsString(packet.extraInfo);
+                PacketSerializer.writeString(buffer, JsonUtils.getMapper().writeValueAsString(packet.extraInfo));
             }
         }
 

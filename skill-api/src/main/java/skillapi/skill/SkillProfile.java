@@ -169,6 +169,8 @@ public class SkillProfile {
                 jsonGenerator.writeNumberField("cooldown", skill.getCooldown());
                 jsonGenerator.writeNumberField("charge", skill.getCharge());
 
+                Map<String, Object> universal = new HashMap<>(8);
+
                 jsonGenerator.writeArrayFieldStart("effects");
                 for (SkillEffect effect : skill.effects) {
                     jsonGenerator.writeStartObject();
@@ -176,12 +178,18 @@ public class SkillProfile {
                     jsonGenerator.writeObjectFieldStart("fields");
                     Class<? extends SkillEffect> clz = effect.getClass();
                     for (Field field : DynamicSkillBuilder.getFields(clz)) {
-                        if (field.getAnnotation(SkillParam.class) == null) {
+                        SkillParam annotation = field.getAnnotation(SkillParam.class);
+                        if (annotation == null) {
                             continue;
                         }
                         field.setAccessible(true);
                         try {
-                            jsonGenerator.writeObjectField(field.getName(), field.get(effect));
+                            if (annotation.universal()) {
+                                String name = effect instanceof AbstractSkillEffect ? ((AbstractSkillEffect) effect).getParamName(field.getName()) : field.getName();
+                                universal.put(name, field.get(effect));
+                            } else {
+                                jsonGenerator.writeObjectField(field.getName(), field.get(effect));
+                            }
                         } catch (IllegalAccessException e) {
                             throw new SkillRuntimeException("Failed to serialize dynamic skill config", e);
                         }
@@ -191,6 +199,12 @@ public class SkillProfile {
                     jsonGenerator.writeEndObject();
                 }
                 jsonGenerator.writeEndArray();
+
+                jsonGenerator.writeObjectFieldStart("universal");
+                for (Map.Entry<String, Object> entry : universal.entrySet()) {
+                    jsonGenerator.writeObjectField(entry.getKey(), entry.getValue());
+                }
+                jsonGenerator.writeEndObject();
 
                 jsonGenerator.writeEndObject();
             }
@@ -235,6 +249,14 @@ public class SkillProfile {
                     }
                     index++;
                 }
+
+                Iterator<Map.Entry<String, JsonNode>> universals = skillNode.get("universal").fields();
+
+                while (universals.hasNext()) {
+                    Map.Entry<String, JsonNode> universal = universals.next();
+                    builder.setUniversalParam(universal.getKey(), universal.getValue().asText(null));
+                }
+
                 config.put(builder);
             });
             return config;

@@ -36,7 +36,7 @@ public final class Skills {
     private static final SkillProfileManager profileManager = new SkillProfileManager();
     private static SkillProfile currentProfile;
 
-    private static final Map<Class<? extends SkillEffect>, String> MOD_ID_MAP = new HashMap<>(32);
+    private static final Map<Class<?>, String> MOD_ID_MAP = new HashMap<>(32);
 
     public static synchronized void init() {
         // Init dynamic skill
@@ -172,8 +172,10 @@ public final class Skills {
         return currentProfile.getDescription(skill);
     }
 
-    public static void putModId(Class<? extends SkillEffect> clz, String modId) {
-        MOD_ID_MAP.put(clz, modId);
+    public static void putModId(Class<?> clz, String modId) {
+        if (SkillEffect.class.isAssignableFrom(clz)) {
+            MOD_ID_MAP.put(clz, modId);
+        }
     }
 
     public static String getModId(Class<? extends SkillEffect> clz) {
