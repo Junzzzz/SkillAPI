@@ -192,7 +192,9 @@ public class DynamicSkillBuilder {
             // Recover
             Map.Entry<SkillEffect, Map<String, String>> entry = this.effects.get(i);
             Map<String, String> replaceMap = oldEffects.get(entry.getKey().getClass());
-            entry.getValue().replaceAll((k, v) -> replaceMap.get(k));
+            if (replaceMap != null) {
+                entry.getValue().replaceAll((k, v) -> replaceMap.get(k));
+            }
         }
 
         // Recover

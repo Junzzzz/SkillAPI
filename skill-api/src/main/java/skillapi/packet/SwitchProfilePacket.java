@@ -11,6 +11,7 @@ import skillapi.api.annotation.SkillPacket;
 import skillapi.packet.base.AbstractPacket;
 import skillapi.packet.base.Packet;
 import skillapi.server.SkillServer;
+import skillapi.skill.PlayerSkills;
 import skillapi.skill.SkillExecutor;
 import skillapi.skill.SkillProfile;
 import skillapi.skill.SkillProfile.SkillProfileInfo;
@@ -32,12 +33,12 @@ public class SwitchProfilePacket extends AbstractPacket {
         if (from.isClient() && SkillServer.hasHighestAuthority(player)) {
             SkillProfileInfo info = Skills.getCurrentProfileInfo();
             if (!info.getName().equals(profileName)) {
-                System.out.println("Change to: " + profileName);
                 SkillProfile profile = Skills.getProfile(profileName);
                 SkillExecutor.stop();
                 SkillServer.getManager().saveAllPlayerData();
                 Skills.serverSwitchConfig(profile);
                 for (EntityPlayerMP p : SkillServer.getPlayerList()) {
+                    PlayerSkills.get(p).reload();
                     Packet.sendToClient(Skills.getInitPacket(p), p);
                 }
                 SkillExecutor.resume();

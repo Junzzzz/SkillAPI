@@ -136,6 +136,12 @@ public class PlayerSkills implements IExtendedEntityProperties {
         this.lastManaUpdateTime = tag.getLong(TAG_TIME);
     }
 
+    public void reload() {
+        NBTTagCompound tag = new NBTTagCompound();
+        saveNBTData(tag);
+        loadNBTData(tag);
+    }
+
     @Override
     public void init(Entity entity, World world) {
         if (entity instanceof EntityPlayer) {

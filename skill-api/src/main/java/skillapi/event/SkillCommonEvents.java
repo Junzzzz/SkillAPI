@@ -4,6 +4,7 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.Clone;
 import skillapi.Application;
@@ -22,9 +23,7 @@ public class SkillCommonEvents {
     public void onConstructing(EntityEvent.EntityConstructing event) {
         if (event.entity instanceof EntityPlayer) {
             EntityPlayer player = (EntityPlayer) event.entity;
-            if (PlayerSkills.get(player) == null) {
-                player.registerExtendedProperties(Application.MOD_ID, new PlayerSkills());
-            }
+            addSkillProperties(player, Application.MOD_ID, new PlayerSkills());
         }
     }
 
@@ -32,7 +31,18 @@ public class SkillCommonEvents {
     public void onPlayerClone(Clone event) {
         PlayerSkills oldSkills = PlayerSkills.get(event.original);
         if (oldSkills != null) {
-            event.entityPlayer.registerExtendedProperties(Application.MOD_ID, oldSkills);
+            addSkillProperties(event.entityPlayer, Application.MOD_ID, oldSkills);
+        }
+    }
+
+    private void addSkillProperties(EntityPlayer player, String id, PlayerSkills properties) {
+        PlayerSkills playerSkills = PlayerSkills.get(player);
+        if (playerSkills == null) {
+            player.registerExtendedProperties(id, properties);
+        } else {
+            NBTTagCompound tag = new NBTTagCompound();
+            properties.saveNBTData(tag);
+            playerSkills.loadNBTData(tag);
         }
     }
 

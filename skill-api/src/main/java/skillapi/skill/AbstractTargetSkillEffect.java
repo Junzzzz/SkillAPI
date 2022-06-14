@@ -45,18 +45,16 @@ public abstract class AbstractTargetSkillEffect extends AbstractSkillEffect {
             return true;
         }
 
-        Object object = extraInfo.get(KEY_TARGET);
-        if (object instanceof EntityLivingBase) {
-            return canUnleash(player, targetCache = (EntityLivingBase) object, extraInfo);
-        } else if (object instanceof SkillExtraInfo.ExtraObject) {
-            SkillExtraInfo.ExtraObject idObject = (SkillExtraInfo.ExtraObject) object;
-            if (idObject.clz == Integer.class) {
-                EntityLivingBase entity = (EntityLivingBase) player.getEntityWorld().getEntityByID((int) idObject.obj);
-                extraInfo.replace(KEY_TARGET, entity);
-                targetCache = entity;
-                return canUnleash(player, entity, extraInfo);
-            }
+        SkillExtraInfo.ExtraObject extraObject = extraInfo.getExtraObject(KEY_TARGET);
+        if (extraObject.clz == Integer.class) {
+            EntityLivingBase entity = (EntityLivingBase) player.getEntityWorld().getEntityByID((int) extraObject.obj);
+            extraInfo.replace(KEY_TARGET, entity);
+            targetCache = entity;
+            return canUnleash(player, entity, extraInfo);
+        } else if (extraObject.obj instanceof EntityLivingBase) {
+            return canUnleash(player, targetCache = (EntityLivingBase) extraObject.obj, extraInfo);
         }
+
         return false;
     }
 
