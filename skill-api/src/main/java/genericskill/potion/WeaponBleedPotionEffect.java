@@ -13,7 +13,7 @@ public class WeaponBleedPotionEffect extends PotionEffect {
     private final float damage;
 
     public WeaponBleedPotionEffect(EntityPlayer fromPlayer, int duration, float damage) {
-        super(GenericSkillPotions.WEAPON_BLEED.id, duration * 20, 0);
+        super(GenericSkillPotions.BLEED.id, duration * 20, 0);
         this.fromPlayer = fromPlayer;
         this.damage = damage;
     }

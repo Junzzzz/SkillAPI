@@ -7,8 +7,8 @@ import skillapi.api.annotation.SkillEffect;
  * @author Jun
  */
 @SkillEffect(callSuper = true)
-public class SlowdownEffect extends AbstractPotionSkillEffect {
-    public SlowdownEffect() {
-        super(Potion.moveSlowdown);
+public class JumpEffect extends AbstractBilateralParamLevelPotionEffect {
+    public JumpEffect() {
+        super(Potion.jump);
     }
 }

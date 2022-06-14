@@ -7,7 +7,6 @@ import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.player.EntityPlayer;
 import skillapi.api.annotation.SkillEffect;
 import skillapi.api.annotation.SkillParam;
-import skillapi.common.Message;
 import skillapi.skill.SkillExtraInfo;
 
 /**
@@ -25,8 +24,6 @@ public class WeaponBleedingEffect extends WeaponDamageEffect {
         // Effect addition
         damage *= this.damagePercentage;
 
-        // TODO clear
-        Message.send(player, String.format("Damage: %f", SkillUtils.getDamage(damage)));
         target.addPotionEffect(new WeaponBleedPotionEffect(player, duration, SkillUtils.getDamage(damage)));
         return true;
     }

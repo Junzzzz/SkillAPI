@@ -7,8 +7,8 @@ import skillapi.api.annotation.SkillEffect;
  * @author Jun
  */
 @SkillEffect(callSuper = true)
-public class ConfusionEffect extends AbstractPotionSkillEffect {
-    public ConfusionEffect() {
-        super(Potion.confusion);
+public class ResistanceEffect extends AbstractBilateralParamLevelPotionEffect {
+    public ResistanceEffect() {
+        super(Potion.resistance);
     }
 }

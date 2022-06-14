@@ -7,9 +7,9 @@ import skillapi.api.annotation.SkillEffect;
  * @author Jun
  */
 @SkillEffect(callSuper = true)
-public class NightVisionEffect extends AbstractBilateralDynamicLevelPotionEffect {
-    public NightVisionEffect() {
-        super(Potion.nightVision);
+public class InvisibilityEffect extends AbstractBilateralDynamicLevelPotionEffect {
+    public InvisibilityEffect() {
+        super(Potion.invisibility);
     }
 
     @Override

@@ -7,8 +7,8 @@ import skillapi.api.annotation.SkillEffect;
  * @author Jun
  */
 @SkillEffect(callSuper = true)
-public class BodyFixedEffect extends AbstractPotionSkillEffect {
-    public BodyFixedEffect() {
-        super(Potion.moveSlowdown, 999);
+public class NauseaEffect extends AbstractParamLevelPotionEffect {
+    public NauseaEffect() {
+        super(Potion.confusion);
     }
 }

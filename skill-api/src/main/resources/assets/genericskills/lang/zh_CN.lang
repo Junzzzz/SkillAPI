@@ -1,27 +1,32 @@
 ﻿
 skill.type.name.genericsskill=通用技能
 
-skill.effect.genericskills.AbstractPotionSkillEffect.duration=持续时间(秒)
-skill.effect.genericskills.AbstractStaticLevelPotionEffect.duration=持续时间(秒)
-skill.effect.genericskills.AbstractDynamicLevelPotionEffect.duration=持续时间(秒)
 skill.effect.genericskills.AbstractBilateralDynamicLevelPotionEffect.self=作用于施放者
-
-skill.effect.genericskills.DamageBoostEffect=力量BUFF
-skill.effect.genericskills.DamageBoostEffect.percentage=增加百分比(%%)
-
-skill.effect.genericskills.MoveSpeedEffect=速度BUFF
-skill.effect.genericskills.MoveSpeedEffect.percentage=增加百分比(%%)
+skill.effect.genericskills.AbstractBilateralParamLevelPotionEffect.self=作用于施放者
+skill.effect.genericskills.AbstractDynamicFrequencyPotionEffect.duration=持续时间(秒)
+skill.effect.genericskills.AbstractDynamicFrequencyPotionEffect.damage=造成伤害
+skill.effect.genericskills.AbstractDynamicFrequencyPotionEffect.triggerFrequency=触发频率(秒)
+skill.effect.genericskills.AbstractDynamicLevelPotionEffect.duration=持续时间(秒)
+skill.effect.genericskills.AbstractParamLevelPotionEffect.level=药水等级
 
 skill.effect.genericskills.BlindnessEffect=失明
-skill.effect.genericskills.BodyFixedEffect=定身
-skill.effect.genericskills.ConfusionEffect=反胃
+skill.effect.genericskills.DamageBoostEffect=力量BUFF
+skill.effect.genericskills.DamageBoostEffect.percentage=增加百分比(%%)
+skill.effect.genericskills.HarmEffect=持续伤害
+skill.effect.genericskills.IgniteEffect=点燃
+skill.effect.genericskills.InvisibilityEffect=隐身
+skill.effect.genericskills.JumpEffect=跳跃提升
+skill.effect.genericskills.MoveSlowdownEffect=迟缓
+skill.effect.genericskills.MoveSlowdownEffect.percentage=增加百分比(%%)
+skill.effect.genericskills.MoveSpeedEffect=速度
+skill.effect.genericskills.MoveSpeedEffect.percentage=增加百分比(%%)
+skill.effect.genericskills.NauseaEffect=反胃
 skill.effect.genericskills.NightVisionEffect=夜视
 skill.effect.genericskills.PoisonEffect=中毒
-skill.effect.genericskills.SlowdownEffect=迟缓
+skill.effect.genericskills.ResistanceEffect=抗性提升
+skill.effect.genericskills.SaturationEffect=饱和
+skill.effect.genericskills.WeaknessEffect=虚弱(降攻)
 skill.effect.genericskills.WitherEffect=凋零
-
-skill.effect.genericskills.BurningEffect=燃烧
-skill.effect.genericskills.BurningEffect.secondDuration=持续时间(秒)
 
 skill.effect.genericskills.ContinuousAbsorptionEffect=持续时间内伤害吸收
 skill.effect.genericskills.ContinuousAbsorptionEffect.amount=伤害吸收量
@@ -30,12 +35,18 @@ skill.effect.genericskills.ContinuousAbsorptionEffect.secondDuration=持续时�
 
 skill.effect.genericskills.ContinuousHealingEffect=持续生命恢复
 skill.effect.genericskills.ContinuousHealingEffect.healAmount=治疗量
-skill.effect.genericskills.ContinuousAbsorptionEffect.self=作用于施放者
+skill.effect.genericskills.ContinuousHealingEffect.self=作用于施放者
 skill.effect.genericskills.ContinuousHealingEffect.secondDuration=持续时间(秒)
 
 skill.effect.genericskills.DashEffect=冲刺
 skill.effect.genericskills.DashEffect.distance=冲刺距离(格)
 skill.effect.genericskills.DashEffect.damagePercentage=攻击伤害乘数
+
+skill.effect.genericskills.DestroyWeaponDamageEffect=销毁手上武器造成伤害
+
+skill.effect.genericskills.DisposableAbsorptionEffect=一次性伤害吸收
+skill.effect.genericskills.DisposableAbsorptionEffect.amount=伤害吸收量
+skill.effect.genericskills.DisposableAbsorptionEffect.self=作用于施放者
 
 skill.effect.genericskills.InstantHealingEffect=瞬间治疗
 skill.effect.genericskills.InstantHealingEffect.healAmount=治疗量
@@ -46,14 +57,8 @@ skill.effect.genericskills.LifeStealingEffect.damagePercentage=偷取伤害占�
 skill.effect.genericskills.RepelEffect=击退
 skill.effect.genericskills.RepelEffect.distance=击退距离(格)
 
-skill.effect.genericskills.WeaponDamageEffect=武器造成伤害
-skill.effect.genericskills.WeaponDamageEffect.damagePercentage=攻击伤害乘数
-
-skill.effect.genericskills.DestroyWeaponDamageEffect=销毁手上武器造成伤害
-
-skill.effect.genericskills.DisposableAbsorptionEffect=一次性伤害吸收
-skill.effect.genericskills.DisposableAbsorptionEffect.amount=伤害吸收量
-skill.effect.genericskills.DisposableAbsorptionEffect.self=作用于施放者
-
 skill.effect.genericskills.WeaponBleedingEffect=武器流血
 skill.effect.genericskills.WeaponBleedingEffect.duration=流血时间(秒)
+
+skill.effect.genericskills.WeaponDamageEffect=武器造成伤害
+skill.effect.genericskills.WeaponDamageEffect.damagePercentage=攻击伤害乘数
