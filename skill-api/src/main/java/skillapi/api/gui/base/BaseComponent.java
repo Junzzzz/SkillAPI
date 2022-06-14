@@ -2,10 +2,11 @@ package skillapi.api.gui.base;
 
 import lombok.Getter;
 import lombok.Setter;
+import skillapi.api.gui.base.ListenerRegistry.Caller;
+import skillapi.api.gui.base.ListenerRegistry.ComponentCaller;
 
 /**
  * @author Jun
- * @date 2020/11/18.
  */
 public abstract class BaseComponent extends GenericGui {
     @Getter
@@ -18,6 +19,22 @@ public abstract class BaseComponent extends GenericGui {
     protected BaseComponent(Layout layout) {
         this.layout = layout;
         this.visible = true;
+    }
+
+    public final <T extends GenericListener> void callParent(Class<T> clz, Caller<T> caller) {
+        if (this.parent instanceof BaseComponent) {
+            this.parent.parent.listenerRegistry.call(clz, caller, false);
+        } else if (this.parent instanceof BaseGui) {
+            this.parent.listenerRegistry.call(clz, caller, false);
+        }
+    }
+
+    public final <T extends GenericListener> void callParent(Class<T> clz, ComponentCaller<T> caller) {
+        if (this.parent instanceof BaseComponent) {
+            this.parent.parent.listenerRegistry.call(clz, caller, false);
+        } else if (this.parent instanceof BaseGui) {
+            this.parent.listenerRegistry.call(clz, caller, false);
+        }
     }
 
     @Override

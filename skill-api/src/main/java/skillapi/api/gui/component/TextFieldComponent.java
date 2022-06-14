@@ -6,10 +6,7 @@ import org.lwjgl.input.Keyboard;
 import skillapi.api.gui.base.BaseComponent;
 import skillapi.api.gui.base.Layout;
 import skillapi.api.gui.base.ListenerRegistry;
-import skillapi.api.gui.base.listener.FocusChangedListener;
-import skillapi.api.gui.base.listener.KeyTypedListener;
-import skillapi.api.gui.base.listener.MousePressedListener;
-import skillapi.api.gui.base.listener.UpdateScreenListener;
+import skillapi.api.gui.base.listener.*;
 
 import java.math.BigInteger;
 
@@ -57,6 +54,9 @@ public class TextFieldComponent extends BaseComponent {
             if (character == 1 || character == 3 || character == 22 || character == 24 ||
                     key == KEY_BACK || key == KEY_HOME || key == KEY_LEFT || key == KEY_RIGHT || key == KEY_END || key == KEY_DELETE) {
                 this.textField.textboxKeyTyped(character, key);
+
+                // Call listener
+                callParent(ComponentUpdateListener.class, l -> l.onUpdate(this));
             } else {
                 if (this.type == TextFieldType.NORMAL) {
                     if (filter != null && filter.filter(character, key, this)) {
@@ -68,6 +68,9 @@ public class TextFieldComponent extends BaseComponent {
                     }
                 }
                 this.textField.textboxKeyTyped(character, key);
+
+                // Call listener
+                callParent(ComponentUpdateListener.class, l -> l.onUpdate(this));
             }
         };
         UpdateScreenListener update = this.textField::updateCursorCounter;

@@ -7,9 +7,12 @@ import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 import skillapi.api.gui.base.*;
+import skillapi.api.gui.base.listener.ComponentUpdateListener;
 import skillapi.api.gui.base.listener.MousePressedListener;
 import skillapi.api.gui.base.listener.MouseReleasedListener;
 import skillapi.api.util.function.EventFunction;
+
+import java.awt.*;
 
 /**
  * Remake the original GuiButton component.
@@ -45,6 +48,7 @@ public class ButtonComponent extends BaseComponent {
 
     private void init() {
         this.disableTexture.startDrawTexture();
+
         drawButton(this.text, 0, 0xA0A0A0);
         this.disableTexture.endDrawTexture();
 
@@ -53,9 +57,22 @@ public class ButtonComponent extends BaseComponent {
         this.normalTexture.endDrawTexture();
 
         this.focusTexture.startDrawTexture();
-        drawButton(this.text, 2, 0xFFFFA0);
+        drawButton(this.text, 2, new Color(color).brighter().getRGB());
         this.focusTexture.endDrawTexture();
+
+        callParent(ComponentUpdateListener.class, listener -> listener.onUpdate(this));
     }
+
+//    private int colorMultiply(int colorA, int colorB) {
+//        colorA = 0xff000000 | colorA;
+//        colorB = 0xff000000 | colorB;
+//
+//        int b = (colorA & 0xFF + colorB & 0xFF) >>> 1;
+//        int g = ((colorA >> 8) & 0xFF + (colorB >> 8) & 0xFF) >>> 1;
+//        int r = ((colorA >> 16) & 0xFF + (colorB >> 16) & 0xFF) >>> 1;
+//        int a = ((colorA >> 24) & 0xFF + (colorB >> 24) & 0xFF) >>> 1;
+//        return a << 24 | r << 16 | g << 8 | b;
+//    }
 
     public void setText(String text) {
         this.text = text;
@@ -68,10 +85,10 @@ public class ButtonComponent extends BaseComponent {
     public void setColor(int color) {
         this.color = color;
 
+        this.disableTexture.clear();
         this.normalTexture.clear();
-        this.normalTexture.startDrawTexture();
-        drawButton(this.text, 1, color);
-        this.normalTexture.endDrawTexture();
+        this.focusTexture.clear();
+        init();
     }
 
     public void setTextAndColor(String text, int color) {

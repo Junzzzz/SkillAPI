@@ -5,12 +5,12 @@ import skillapi.api.gui.base.BaseComponent;
 import skillapi.api.gui.base.Layout;
 import skillapi.api.gui.base.ListenerRegistry;
 import skillapi.api.gui.base.RenderUtils;
+import skillapi.api.gui.base.listener.ComponentUpdateListener;
 import skillapi.api.util.Pair;
 
 import java.awt.*;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -21,6 +21,8 @@ import java.util.stream.Collectors;
 public class FormComponent extends BaseComponent {
     protected final int labelWidth;
     protected final List<ParamField> params = new LinkedList<>();
+
+    private final Set<BaseComponent> formComponents = new HashSet<>(8);
 
     public FormComponent(Layout layout, int labelWidth) {
         super(layout);
@@ -40,7 +42,13 @@ public class FormComponent extends BaseComponent {
 
     @Override
     protected void listener(ListenerRegistry listener) {
+        ComponentUpdateListener cul = component -> {
+            if (formComponents.contains(component)) {
+                callParent(ComponentUpdateListener.class, l -> l.onUpdate(this));
+            }
+        };
 
+        listener.on(cul);
     }
 
     public boolean isFocused() {
@@ -63,9 +71,14 @@ public class FormComponent extends BaseComponent {
                 .height(20)
                 .width(this.layout.getWidth() - 10 - labelWidth - 5)
                 .build();
-        ParamField paramField = bool ? new ParamBooleanField(param, layout) : new ParamTextField(param, initialValue, layout);
-        addComponent(paramField.getComponent());
+        ParamField paramField = bool ? new ParamBooleanField(param, initialValue, layout) : new ParamTextField(param, initialValue, layout);
+        addFormComponent(paramField.getComponent());
         this.params.add(paramField);
+    }
+
+    private void addFormComponent(BaseComponent component) {
+        addComponent(component);
+        formComponents.add(component);
     }
 
     public void addParams(List<Map.Entry<String, String>> params) {
@@ -77,6 +90,7 @@ public class FormComponent extends BaseComponent {
     public void clear() {
         removeComponents(this.params.stream().map(ParamField::getComponent).collect(Collectors.toList()));
         this.params.clear();
+        this.formComponents.clear();
     }
 
     public List<Pair<String, String>> getForm() {
@@ -133,16 +147,19 @@ public class FormComponent extends BaseComponent {
 
         protected boolean bool;
 
-        public ParamBooleanField(String param, Layout layout) {
+        public ParamBooleanField(String param, String initialValue, Layout layout) {
             super(param);
-            this.bool = false;
             this.button = new ButtonComponent(layout, getText(), this::clickButton);
+            setBool(Boolean.parseBoolean(initialValue));
+        }
+
+        public void setBool(boolean bool) {
+            this.bool = bool;
+            this.button.setTextAndColor(getText(), bool ? Color.green.getRGB() : Color.red.getRGB());
         }
 
         private void clickButton() {
-            this.bool = !this.bool;
-
-            this.button.setTextAndColor(getText(), bool ? Color.green.getRGB() : Color.red.getRGB());
+            setBool(!this.bool);
         }
 
         @Override

@@ -99,13 +99,18 @@ public final class ListenerRegistry {
         }
     }
 
+    public <T extends GenericListener> void call(Class<T> clz, ComponentCaller<T> caller) {
+        call(clz, caller, true);
+    }
 
     @SuppressWarnings("unchecked")
-    public <T extends GenericListener> void call(Class<T> clz, ComponentCaller<T> caller) {
+    public <T extends GenericListener> void call(Class<T> clz, ComponentCaller<T> caller, boolean recursive) {
         var map = GLOBAL;
         if (LocalListener.class.isAssignableFrom(clz)) {
-            for (BaseComponent component : this.base.components) {
-                component.listenerRegistry.call(clz, caller);
+            if (recursive) {
+                for (BaseComponent component : this.base.components) {
+                    component.listenerRegistry.call(clz, caller);
+                }
             }
             map = this.local;
         }
@@ -120,12 +125,18 @@ public final class ListenerRegistry {
                 .forEach(l -> caller.call(l.component, (T) l.listener));
     }
 
-    @SuppressWarnings("unchecked")
     public <T extends GenericListener> void call(Class<T> clz, Caller<T> caller) {
+        call(clz, caller, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T extends GenericListener> void call(Class<T> clz, Caller<T> caller, boolean recursive) {
         var map = GLOBAL;
         if (LocalListener.class.isAssignableFrom(clz)) {
-            for (BaseComponent component : this.base.components) {
-                component.listenerRegistry.call(clz, caller);
+            if (recursive) {
+                for (BaseComponent component : this.base.components) {
+                    component.listenerRegistry.call(clz, caller);
+                }
             }
             map = this.local;
         }

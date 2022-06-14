@@ -32,7 +32,7 @@ public class SliderComponent extends BaseComponent {
     public SliderComponent(Layout sliderBox) {
         super(sliderBox);
         this.sliderButton = new Layout(sliderBox.getX(), sliderBox.getY(), sliderBox.getWidth(), sliderBox.getHeight());
-
+        this.moveDistanceMax = 0;
         this.isDragging = false;
         this.buttonClickPosY = -1;
     }
@@ -55,8 +55,26 @@ public class SliderComponent extends BaseComponent {
         this.buttonMinY = this.layout.getY();
         this.buttonMaxY = this.layout.getBottom() - this.sliderButton.getHeight();
 
+        // Adjust button position
+        int y = this.sliderButton.getY();
+        if (y > this.buttonMaxY) {
+            setSliderButtonY(this.buttonMaxY);
+        }
+        if (y < this.buttonMinY) {
+            setSliderButtonY(this.buttonMinY);
+        }
+
         // The maximum distance the button can move
         this.moveDistanceMax = this.layout.getHeight() - this.sliderButton.getHeight();
+    }
+
+    public void setSliderButtonY(int y) {
+        if (y > this.buttonMaxY) {
+            y = this.buttonMaxY;
+        } else if (y < this.buttonMinY) {
+            y = this.buttonMinY;
+        }
+        this.sliderButton.setY(y);
     }
 
     /**
@@ -65,10 +83,10 @@ public class SliderComponent extends BaseComponent {
      * @return Value of ratio
      */
     public double getRatio() {
-        if (this.layout.getHeight() == this.sliderButton.getHeight() || !this.movable) {
-            return 1.0;
+        if (this.moveDistanceMax == 0 || !this.movable) {
+            return 1.0D;
         }
-        return 1.0 * (this.sliderButton.getY() - this.layout.getY()) / (this.layout.getHeight() - this.sliderButton.getHeight());
+        return Math.min(1.0D, 1.0 * (this.sliderButton.getY() - this.layout.getY()) / this.moveDistanceMax);
     }
 
     @Override
