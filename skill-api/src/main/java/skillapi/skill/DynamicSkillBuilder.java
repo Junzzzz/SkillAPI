@@ -21,7 +21,7 @@ public class DynamicSkillBuilder {
     private final int uniqueId;
 
     @Getter
-    private String name;
+    private String name = "";
 
     @Getter
     @Setter
@@ -83,7 +83,7 @@ public class DynamicSkillBuilder {
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.name = name == null ? "" : name;
         this.getUniversalMap().put(PREFIX_NAME, this.name);
     }
 

@@ -44,7 +44,7 @@ public class WeaponDamageEffect extends AbstractTargetSkillEffect {
         ItemStack heldItem = inv.getCurrentItem();
 
         // Item can attack
-        if (heldItem == null || !heldItem.isItemStackDamageable() || heldItem.isStackable()) {
+        if (heldItem == null) {
             return false;
         }
         return target.canAttackWithItem() && !target.hitByEntity(player);

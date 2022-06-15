@@ -7,7 +7,6 @@ import com.fasterxml.jackson.core.TreeNode;
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.node.TextNode;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -227,7 +226,7 @@ public class SkillProfile {
             TreeNode constantNode = node.get("constant");
             Map<String, String> constant = new HashMap<>(32);
             constantNode.fieldNames().forEachRemaining(field ->
-                    constant.put(field, ((TextNode) constantNode.get(field)).textValue())
+                    constant.put(field, ((JsonNode) constantNode.get(field)).asText(""))
             );
             node.get("skills").elements().forEachRemaining(skillNode -> {
                 DynamicSkillBuilder builder = new DynamicSkillBuilder(skillNode.get("id").intValue());

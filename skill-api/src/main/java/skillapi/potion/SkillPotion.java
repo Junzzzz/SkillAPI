@@ -43,4 +43,10 @@ public abstract class SkillPotion extends Potion {
         }
         return super.getStatusIconIndex();
     }
+
+    @Override
+    public boolean isReady(int duration, int amplifier) {
+        // Do not use original function
+        return false;
+    }
 }

@@ -4,6 +4,7 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import net.minecraft.entity.player.EntityPlayer;
 import skillapi.api.annotation.SkillEvent;
+import skillapi.common.Message;
 import skillapi.common.SkillLog;
 import skillapi.packet.ClientSkillUnleashPacket;
 import skillapi.packet.base.Packet;
@@ -70,7 +71,10 @@ public final class SkillExecutor {
         SkillExtraInfo extraInfo;
 
         public void unleash() {
-            if (player != null && player.isEntityAlive() && skill.canUnleash(player, extraInfo)) {
+            if (player == null) {
+                return;
+            }
+            if (player.isEntityAlive() && skill.canUnleash(player, extraInfo)) {
                 try {
                     if (skill.unleash(player, extraInfo)) {
                         skill.afterUnleash(player, extraInfo);
@@ -83,6 +87,8 @@ public final class SkillExecutor {
                     SkillLog.error(e, "Unleash skill failed! Player: %s, Profile: %s, Skill: %s",
                             player.getCommandSenderName(), profileName, skill.getLocalizedName());
                 }
+            } else {
+                Message.send(player, "[服务端] 释放技能条件不足");
             }
         }
     }

@@ -6,6 +6,7 @@ import cpw.mods.fml.relauncher.Side;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import skillapi.api.annotation.SkillPacket;
+import skillapi.common.Message;
 import skillapi.packet.base.AbstractPacket;
 import skillapi.packet.serializer.PacketSerializer;
 import skillapi.skill.SkillExtraInfo.ExtraObject;
@@ -39,11 +40,16 @@ public class PlayerUnleashSkillPacket extends AbstractPacket {
         if (skill == null || cooldown == null) {
             return;
         }
-        if (skills.getMana() >= skill.getMana() && cooldown.isCooledDown()) {
-            skills.consumeMana(skill.getMana());
-            cooldown.setCooling();
-            SkillExecutor.execute(skill, player, SkillExtraInfo.get(extraInfo));
+        if (skills.getMana() < skill.getMana()) {
+            Message.send(player, "[服务端] 魔力不足: " + skills.getMana() + "/" + skill.getMana());
+            return;
         }
+        if (!cooldown.isCooledDown()) {
+            Message.send(player, "[服务端] 技能未冷却");
+        }
+        skills.consumeMana(skill.getMana());
+        cooldown.setCooling();
+        SkillExecutor.execute(skill, player, SkillExtraInfo.get(extraInfo));
     }
 
     static class Serializer implements PacketSerializer<PlayerUnleashSkillPacket> {
