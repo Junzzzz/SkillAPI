@@ -24,6 +24,14 @@ public class ContinuousHealingEffect extends AbstractTargetSkillEffect {
     private boolean self;
 
     @Override
+    public boolean clientBeforeUnleash(EntityPlayer player, SkillExtraInfo extraInfo) {
+        if (this.self) {
+            return true;
+        }
+        return super.clientBeforeUnleash(player, extraInfo);
+    }
+
+    @Override
     public boolean canUnleash(EntityPlayer player, EntityLivingBase target, SkillExtraInfo extraInfo) {
         return player != null;
     }

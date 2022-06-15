@@ -21,6 +21,14 @@ public abstract class AbstractBilateralDynamicLevelPotionEffect extends Abstract
     }
 
     @Override
+    public boolean clientBeforeUnleash(EntityPlayer player, SkillExtraInfo extraInfo) {
+        if (this.self) {
+            return true;
+        }
+        return super.clientBeforeUnleash(player, extraInfo);
+    }
+
+    @Override
     public boolean unleash(EntityPlayer player, EntityLivingBase target, SkillExtraInfo extraInfo) {
         if (self) {
             player.addPotionEffect(new PotionEffect(this.potion.id, this.duration * 20, getLevel()));

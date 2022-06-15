@@ -24,6 +24,14 @@ public class ContinuousAbsorptionEffect extends AbstractTargetSkillEffect {
     private boolean self;
 
     @Override
+    public boolean clientBeforeUnleash(EntityPlayer player, SkillExtraInfo extraInfo) {
+        if (this.self) {
+            return true;
+        }
+        return super.clientBeforeUnleash(player, extraInfo);
+    }
+
+    @Override
     public boolean unleash(EntityPlayer player, EntityLivingBase target, SkillExtraInfo extraInfo) {
         if (self) {
             player.addPotionEffect(new PotionEffect(GenericSkillPotions.ABSORPTION.id, secondDuration * 20, amount));
