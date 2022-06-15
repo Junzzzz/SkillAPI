@@ -1,6 +1,15 @@
 ﻿
 skill.type.name.genericsskill=通用技能
 
+skill.potion.skillHeal=生命恢复
+skill.potion.bleed=流血
+skill.potion.moveSpeed=速度
+skill.potion.slowdown=缓慢
+skill.potion.damageBoost=攻击加成
+skill.potion.absorption=临时护甲
+skill.potion.weakness=攻击降低
+skill.potion.ignite=点燃
+
 skill.effect.genericskills.AbstractBilateralDynamicLevelPotionEffect.self=作用于施放者
 skill.effect.genericskills.AbstractBilateralParamLevelPotionEffect.self=作用于施放者
 skill.effect.genericskills.AbstractDynamicFrequencyPotionEffect.duration=持续时间(秒)
