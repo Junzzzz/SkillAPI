@@ -8,6 +8,8 @@ import skillapi.Application;
 public interface Cooldown {
     boolean isCooledDown();
 
+    double getCooledRate();
+
     void setCooldown(long millis);
 
     void setCooling();

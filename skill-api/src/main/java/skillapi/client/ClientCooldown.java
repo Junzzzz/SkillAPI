@@ -24,6 +24,14 @@ public class ClientCooldown implements Cooldown {
     }
 
     @Override
+    public double getCooledRate() {
+        if (!this.initTime || cooldown == 0) {
+            return 1.0D;
+        }
+        return Math.min(1.0D, (System.nanoTime() - this.lastTime) * 1.0D / cooldown);
+    }
+
+    @Override
     public void setCooldown(long millis) {
         this.cooldown = millis * 1000000;
     }

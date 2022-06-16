@@ -6,10 +6,10 @@ import net.minecraft.util.MathHelper;
 import net.minecraftforge.client.GuiIngameForge;
 import org.lwjgl.opengl.GL11;
 import skillapi.api.gui.base.RenderUtils;
+import skillapi.common.Point;
 import skillapi.skill.AbstractSkill;
 import skillapi.skill.Cooldown;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,6 +65,7 @@ public class SkillHud {
             Cooldown cooldown = cooldowns[i];
             AbstractSkill skill = skillBar[i];
             if (cooldown != null && cooldown.isCooledDown()) {
+                RenderUtils.bindTexture(GuiKnownSkills.GUI);
                 RenderUtils.drawTexturedModalRect(x - 2 - 8, y - 2 - 5 + (20 * i), 219, 102, 20, 20);
             }
             if (skill != null) {
@@ -96,7 +97,7 @@ public class SkillHud {
             OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
             Tessellator tessellator = Tessellator.instance;
             tessellator.startDrawing(GL11.GL_POLYGON);
-            tessellator.setColorRGBA(0, 0, 0, 127);
+            tessellator.setColorRGBA(255, 255, 255, 127);
             for (Point point : points) {
                 tessellator.addVertex(point.x, point.y, 0.0D);
             }
@@ -109,32 +110,29 @@ public class SkillHud {
 
     private static Point[] getCooldownPointArray(double rate, int x, int y) {
         List<Point> points = new ArrayList<>(8);
-        final int diameter = 2 * 8;
-        Point[] vertex = new Point[]{new Point(x + diameter, y), new Point(x + diameter, y + diameter), new Point(x, y + diameter), new Point(x, y)};
-        Point start = new Point(x + 8, y + 8);
-        points.add(start);
+        Point[] vertex = new Point[]{new Point(x + 16, y), new Point(x + 16, y + 16), new Point(x, y + 16), new Point(x, y)};
         int i;
         if (rate < 0.125) {
             i = 0;
-            points.add(new Point(x + 8 + (int) (tan(rate) * 8), y));
+            points.add(new Point(x + 8 + (tan(rate) * 8), y));
         } else if (rate < 0.375) {
             i = 1;
-            points.add(new Point(x + diameter, y + 8 + (int) (tan(0.25 - rate) * 8)));
+            points.add(new Point(x + 16, y + 8 - (tan(0.25 - rate) * 8)));
         } else if (rate < 0.625) {
             i = 2;
-            points.add(new Point(x + 8 + (int) (tan(0.5 - rate) * 8), y + diameter));
+            points.add(new Point(x + 8 + (tan(0.5 - rate) * 8), y + 16));
         } else if (rate < 0.875) {
             i = 3;
-            points.add(new Point(x, y + 8 + (int) (tan(0.75 - rate) * 8)));
+            points.add(new Point(x, y + 8 + (tan(0.75 - rate) * 8)));
         } else {
             i = 4;
-            points.add(new Point(x + (int) (tan(1 - rate) * 8), y));
+            points.add(new Point(x + 8 - (tan(1 - rate) * 8), y));
         }
         for (; i < 4; i++) {
             points.add(vertex[i]);
         }
         points.add(new Point(x + 8, y));
-
+        points.add(new Point(x + 8, y + 8));
         Point[] result = new Point[points.size()];
         for (int j = points.size() - 1; j >= 0; j--) {
             result[points.size() - 1 - j] = points.get(j);
@@ -143,6 +141,7 @@ public class SkillHud {
     }
 
     private static float tan(double a) {
-        return MathHelper.sin((float) a * (float) Math.PI) / MathHelper.cos((float) a * (float) Math.PI);
+        float f = (float) (a * 2 * Math.PI);
+        return MathHelper.sin(f) / MathHelper.cos(f);
     }
 }

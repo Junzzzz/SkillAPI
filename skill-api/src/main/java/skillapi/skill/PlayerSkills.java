@@ -65,6 +65,10 @@ public class PlayerSkills implements IExtendedEntityProperties {
         return insureIndex(index) ? this.cooldowns[index] : null;
     }
 
+    public Cooldown[] getCooldowns() {
+        return cooldowns;
+    }
+
     public void setSkillBar(int index, AbstractSkill skill) {
         if (index < skillBar.length && index >= 0) {
             this.skillBar[index] = skill;

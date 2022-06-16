@@ -20,6 +20,14 @@ public class ServerCooldown implements Cooldown {
     }
 
     @Override
+    public double getCooledRate() {
+        if (this.lastTime == -1 || cooldown == 0) {
+            return 1.0D;
+        }
+        return Math.min(1.0D, (System.currentTimeMillis() - this.lastTime) * 1.0D / cooldown);
+    }
+
+    @Override
     public void setCooldown(long millis) {
         this.cooldown = millis;
     }
