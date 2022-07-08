@@ -1,8 +1,12 @@
 package skillapi.skill;
 
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ChatComponentText;
 import skillapi.api.annotation.StaticSkill;
+import skillapi.utils.ClientUtils;
+
+import java.util.List;
 
 /**
  * @author Jun
@@ -19,5 +23,14 @@ public class TestStaticSkill extends AbstractStaticSkill {
     @Override
     public void effect(EntityPlayer player, SkillExtraInfo info) {
         player.addChatComponentMessage(new ChatComponentText("Static Skill!"));
+    }
+
+    @Override
+    public void clientUnleash(EntityPlayer player) {
+        super.clientUnleash(player);
+        List<EntityLivingBase> entities = ClientUtils.getPointedDirectionEntitiesByBox(2, 1.8, 2);
+        for (EntityLivingBase entity : entities) {
+            System.out.println(entity.getCommandSenderName());
+        }
     }
 }

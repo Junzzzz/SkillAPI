@@ -13,8 +13,12 @@ import net.minecraft.util.Timer;
 import net.minecraft.util.Vec3;
 import skillapi.common.SkillRuntimeException;
 
+import javax.vecmath.Vector2d;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Jun
@@ -88,6 +92,40 @@ public class ClientUtils {
             }
         }
         return null;
+    }
+
+    /**
+     * @param width  宽度
+     * @param height 高度
+     * @param length 长度
+     * @return 玩家面向方向范围内的实体集合
+     */
+    public static List<EntityLivingBase> getPointedDirectionEntitiesByBox(double width, double height, double length) {
+        EntityLivingBase player = MC.renderViewEntity;
+        Vec3 position = player.getPosition(TIMER.renderPartialTicks);
+        Vec3 look = MC.renderViewEntity.getLook(TIMER.renderPartialTicks);
+        Set<EntityLivingBase> result = new HashSet<>(4);
+
+        double look2DLength = Math.sqrt(look.xCoord * look.xCoord + look.zCoord * look.zCoord);
+        Vector2d unitLook2D = new Vector2d(look.xCoord / look2DLength, look.zCoord / look2DLength);
+        Vector2d sideA = new Vector2d(-unitLook2D.y * width / 2, unitLook2D.x * width / 2);
+        Vector2d sideB = new Vector2d(unitLook2D.y * width / 2, -unitLook2D.x * width / 2);
+        Vector2d v0 = new Vector2d(position.xCoord + sideA.x, position.zCoord + sideA.y);
+        Vector2d v3 = new Vector2d(position.xCoord + sideB.x, position.zCoord + sideB.y);
+
+        Vector2d v1 = new Vector2d(position.xCoord + sideA.x + unitLook2D.x * length, position.zCoord + sideA.y + unitLook2D.y * length);
+        Vector2d v2 = new Vector2d(position.xCoord + sideB.x + unitLook2D.x * length, position.zCoord + sideB.y + unitLook2D.y * length);
+
+        YAxisAlignedBoundingBox range = new YAxisAlignedBoundingBox(player.boundingBox.minY, player.boundingBox.minY + height, v0, v1, v2, v3);
+        List<Entity> entities = range.searchWorldEntities(MC.theWorld);
+        for (Entity entity : entities) {
+            if (entity instanceof EntityLivingBase) {
+                result.add((EntityLivingBase) entity);
+            }
+        }
+        result.remove(player);
+
+        return new ArrayList<>(result);
     }
 
     public static boolean isInGame() {
