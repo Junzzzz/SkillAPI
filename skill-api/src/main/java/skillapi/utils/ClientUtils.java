@@ -12,8 +12,10 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Timer;
 import net.minecraft.util.Vec3;
 import skillapi.common.SkillRuntimeException;
+import skillapi.entity.EntityBrightReddustFX;
 
 import javax.vecmath.Vector2d;
+import javax.vecmath.Vector3d;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -126,6 +128,14 @@ public class ClientUtils {
         result.remove(player);
 
         return new ArrayList<>(result);
+    }
+
+    public static void spawnParticle(Vec3 position, Vec3 motion) {
+        spawnParticle(MathUtils.tranform(position), MathUtils.tranform(motion));
+    }
+
+    public static void spawnParticle(Vector3d position, Vector3d motion) {
+        MC.effectRenderer.addEffect(new EntityBrightReddustFX(MC.theWorld, position.x, position.y, position.z, motion.x, motion.y, motion.z));
     }
 
     public static boolean isInGame() {

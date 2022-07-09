@@ -75,7 +75,11 @@ public class SkillProfile {
     }
 
     public String getLocalizedName(DynamicSkill skill) {
-        return this.constant.get(skill.getUniqueId() + ".name");
+        String result = this.constant.get(skill.getUniqueId() + ".name");
+        if (result == null) {
+            return skill.getUniqueId() + ".name";
+        }
+        return result;
     }
 
     public String getDescription(DynamicSkill skill) {

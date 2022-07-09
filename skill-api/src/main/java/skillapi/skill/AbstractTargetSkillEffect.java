@@ -7,7 +7,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import skillapi.api.annotation.SkillEffect;
 import skillapi.api.annotation.SkillParam;
 import skillapi.utils.ClientUtils;
+import skillapi.utils.MathUtils;
 
+import javax.vecmath.Vector3d;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,20 +38,14 @@ public abstract class AbstractTargetSkillEffect extends AbstractSkillEffect {
     @SideOnly(Side.CLIENT)
     @Override
     public boolean clientBeforeUnleash(EntityPlayer player, SkillExtraInfo extraInfo) {
-//        if (this.distance == -1) {
-//            return true;
-//        }
-
-//        EntityLivingBase target = ClientUtils.getPointedLivingEntity(this.distance > 0 ? this.distance : DEFAULT_DISTANCE);
-//        if (target != null) {
-//            extraInfo.put(KEY_TARGET, target.getEntityId());
-//            return true;
-//        }
         if (this.width == -1 && this.length == -1) {
             return true;
         }
         if (this.width <= 0 || this.length <= 0) {
             return false;
+        }
+        if (extraInfo.get(KEY_TARGET) != null) {
+            return true;
         }
         double height = player.boundingBox.maxY - player.boundingBox.minY;
         List<EntityLivingBase> targets = ClientUtils.getPointedDirectionEntitiesByBox(this.width, height, this.length);
@@ -59,6 +55,7 @@ public abstract class AbstractTargetSkillEffect extends AbstractSkillEffect {
                 result[i] = targets.get(i).getEntityId();
             }
             extraInfo.put(KEY_TARGET, result);
+            targetsCache = targets;
             return true;
         }
 
@@ -66,12 +63,7 @@ public abstract class AbstractTargetSkillEffect extends AbstractSkillEffect {
     }
 
     @SuppressWarnings("unchecked")
-    @Override
-    public final boolean canUnleash(EntityPlayer player, SkillExtraInfo extraInfo) {
-        if (this.width == -1 && this.length == -1) {
-            return true;
-        }
-
+    private void loadExtraInfo(EntityPlayer player, SkillExtraInfo extraInfo) {
         SkillExtraInfo.ExtraObject extraObject = extraInfo.getExtraObject(KEY_TARGET);
         if (extraObject.clz == int[].class) {
             int[] ids = (int[]) extraObject.obj;
@@ -80,12 +72,19 @@ public abstract class AbstractTargetSkillEffect extends AbstractSkillEffect {
                 targets.add((EntityLivingBase) player.getEntityWorld().getEntityByID(id));
             }
             extraInfo.replace(KEY_TARGET, targets);
-            return canUnleash(player, targetsCache = targets, extraInfo);
+            targetsCache = targets;
         } else if (extraObject.obj instanceof List) {
-            return canUnleash(player, targetsCache = (List<EntityLivingBase>) extraObject.obj, extraInfo);
+            targetsCache = (List<EntityLivingBase>) extraObject.obj;
         }
+    }
 
-        return false;
+    @Override
+    public final boolean canUnleash(EntityPlayer player, SkillExtraInfo extraInfo) {
+        if (this.width == -1 && this.length == -1) {
+            return true;
+        }
+        loadExtraInfo(player, extraInfo);
+        return canUnleash(player, targetsCache, extraInfo);
     }
 
     @Override
@@ -98,6 +97,25 @@ public abstract class AbstractTargetSkillEffect extends AbstractSkillEffect {
             unleash(player, target, extraInfo);
         }
         return true;
+    }
+
+
+    @Override
+    public void clientUnleash(EntityPlayer player, SkillExtraInfo extraInfo) {
+        super.clientUnleash(player, extraInfo);
+        if (targetsCache != null) {
+            extraInfo.replace(KEY_TARGET, targetsCache);
+        } else {
+            loadExtraInfo(player, extraInfo);
+        }
+
+        if (targetsCache != null) {
+            for (EntityLivingBase target : targetsCache) {
+                clientUnleash(player, target, extraInfo);
+            }
+            targetsCache.clear();
+            targetsCache = null;
+        }
     }
 
     @Override
@@ -131,6 +149,12 @@ public abstract class AbstractTargetSkillEffect extends AbstractSkillEffect {
     }
 
     public abstract boolean unleash(EntityPlayer player, EntityLivingBase target, SkillExtraInfo extraInfo);
+
+    public void clientUnleash(EntityPlayer player, EntityLivingBase target, SkillExtraInfo extraInfo) {
+        Vector3d position = MathUtils.tranform(player.getPosition(1.0F));
+        Vector3d look = MathUtils.tranform(player.getLookVec());
+        ClientUtils.spawnParticle(position, look);
+    }
 
     public void afterUnleash(EntityPlayer player, EntityLivingBase target, SkillExtraInfo extraInfo) {
         // Default: none

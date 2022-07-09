@@ -24,7 +24,7 @@ public interface SkillEffect {
      * Used to perform client side effects
      */
     @SideOnly(Side.CLIENT)
-    void clientUnleash(EntityPlayer player);
+    void clientUnleash(EntityPlayer player, SkillExtraInfo extraInfo);
 
     /**
      * Fully qualified name

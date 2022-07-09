@@ -32,7 +32,7 @@ public final class UniversalParam implements SkillEffect {
     }
 
     @Override
-    public void clientUnleash(EntityPlayer player) {
+    public void clientUnleash(EntityPlayer player, SkillExtraInfo extraInfo) {
         // NOP
     }
 

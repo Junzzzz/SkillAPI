@@ -26,8 +26,8 @@ public class TestStaticSkill extends AbstractStaticSkill {
     }
 
     @Override
-    public void clientUnleash(EntityPlayer player) {
-        super.clientUnleash(player);
+    public void clientUnleash(EntityPlayer player, SkillExtraInfo extraInfo) {
+        super.clientUnleash(player, extraInfo);
         List<EntityLivingBase> entities = ClientUtils.getPointedDirectionEntitiesByBox(2, 1.8, 2);
         for (EntityLivingBase entity : entities) {
             System.out.println(entity.getCommandSenderName());

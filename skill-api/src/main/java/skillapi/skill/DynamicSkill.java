@@ -76,9 +76,10 @@ public class DynamicSkill extends AbstractSkill {
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void clientUnleash(EntityPlayer player) {
+    public void clientUnleash(EntityPlayer player, SkillExtraInfo extraInfo) {
+        super.clientUnleash(player, extraInfo);
         for (SkillEffect effect : effects) {
-            effect.clientUnleash(player);
+            effect.clientUnleash(player, extraInfo);
         }
     }
 

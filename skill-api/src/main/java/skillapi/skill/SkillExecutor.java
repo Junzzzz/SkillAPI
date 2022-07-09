@@ -6,8 +6,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import skillapi.api.annotation.SkillEvent;
 import skillapi.common.Message;
 import skillapi.common.SkillLog;
-import skillapi.packet.ClientSkillUnleashPacket;
-import skillapi.packet.base.Packet;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -78,9 +76,6 @@ public final class SkillExecutor {
                 try {
                     if (skill.unleash(player, extraInfo)) {
                         skill.afterUnleash(player, extraInfo);
-
-                        // Client
-                        Packet.send(new ClientSkillUnleashPacket(skill), player);
                     }
                 } catch (Exception e) {
                     String profileName = Skills.getCurrentProfileInfo().getName();

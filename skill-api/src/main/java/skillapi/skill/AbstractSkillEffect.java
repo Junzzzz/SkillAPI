@@ -43,8 +43,8 @@ public abstract class AbstractSkillEffect implements SkillEffect {
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void clientUnleash(EntityPlayer player) {
-        // Default: none
+    public void clientUnleash(EntityPlayer player, SkillExtraInfo extraInfo) {
+        player.swingItem();
     }
 
     @Override

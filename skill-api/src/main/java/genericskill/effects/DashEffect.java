@@ -152,7 +152,7 @@ public class DashEffect extends AbstractSkillEffect {
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void clientUnleash(EntityPlayer player) {
+    public void clientUnleash(EntityPlayer player, SkillExtraInfo extraInfo) {
         playerDash(player);
     }
 

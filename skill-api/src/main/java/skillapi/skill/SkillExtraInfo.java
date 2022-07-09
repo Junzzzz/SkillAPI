@@ -87,6 +87,16 @@ public class SkillExtraInfo {
         return this.extraInfo;
     }
 
+    public SkillExtraInfo copy() {
+        SkillExtraInfo result = new SkillExtraInfo(new HashMap<>(this.extraInfo.size()));
+        Map<String, ExtraObject> map = result.getMap();
+        for (Map.Entry<String, ExtraObject> entry : extraInfo.entrySet()) {
+            Object obj = entry.getValue().obj;
+            map.put(entry.getKey(), new ExtraObject(obj.getClass(), obj));
+        }
+        return result;
+    }
+
     @Getter
     @Setter
     @NoArgsConstructor
