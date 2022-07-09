@@ -48,6 +48,7 @@ skill.effect.universal.cooldown=冷却时间(秒)
 skill.static.skillapi.TestStaticSkill=测试静态技能
 skill.static.skillapi.TestStaticSkill.description=测试技能描述\nAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\nBBBBBBBBBBB
 
-skill.effect.skillapi.AbstractTargetSkillEffect.distance=指向目标生效距离(格)
+skill.effect.skillapi.AbstractTargetSkillEffect.width=指向目标范围宽度
+skill.effect.skillapi.AbstractTargetSkillEffect.length=指向目标范围长度
 skill.effect.skillapi.TestSkillEffect=测试技能效果
 skill.effect.skillapi.TestSkillEffect.testParam=测试参数
