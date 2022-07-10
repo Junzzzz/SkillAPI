@@ -14,7 +14,7 @@ public class DynamicSkill extends AbstractSkill {
     public DynamicSkill(SkillProfile profile, int uniqueId, SkillEffect[] effects) {
         this.uniqueId = uniqueId;
         this.effects = effects;
-        this.name = Skills.PREFIX_DYNAMIC + profile.getName() + "." + uniqueId;
+        this.unlocalizedName = Skills.PREFIX_DYNAMIC + profile.getName() + "." + uniqueId;
     }
 
     public int getUniqueId() {

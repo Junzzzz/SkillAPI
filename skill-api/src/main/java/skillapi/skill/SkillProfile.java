@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import net.minecraft.util.ResourceLocation;
 import skillapi.api.annotation.SkillParam;
 import skillapi.common.SkillLog;
 import skillapi.common.SkillRuntimeException;
@@ -172,6 +173,17 @@ public class SkillProfile {
                 jsonGenerator.writeNumberField("cooldown", skill.getCooldown());
                 jsonGenerator.writeNumberField("charge", skill.getCharge());
 
+                ResourceLocation iconResource = skill.getIconResource();
+                if (iconResource != null) {
+                    String mod = iconResource.getResourceDomain();
+                    String path = iconResource.getResourcePath();
+                    int i = path.indexOf(AbstractSkill.RESOURCE_ICON_PREFIX);
+                    if (i != -1) {
+                        i += AbstractSkill.RESOURCE_ICON_PREFIX.length();
+                        jsonGenerator.writeStringField("icon", mod + ":" + path.substring(i));
+                    }
+                }
+
                 Map<String, Object> universal = new HashMap<>(8);
 
                 jsonGenerator.writeArrayFieldStart("effects");
@@ -237,6 +249,10 @@ public class SkillProfile {
                 builder.setMana(skillNode.get("mana").intValue());
                 builder.setCooldown(skillNode.get("cooldown").longValue());
                 builder.setCharge(skillNode.get("charge").intValue());
+                JsonNode iconNode = skillNode.get("icon");
+                if (iconNode != null) {
+                    builder.setIcon(iconNode.textValue());
+                }
                 builder.setName(constant.get(builder.getUniqueId() + ".name"));
                 builder.setDescription(constant.get(builder.getUniqueId() + ".description"));
 

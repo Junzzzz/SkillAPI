@@ -7,6 +7,7 @@ import skillapi.api.gui.base.ListenerRegistry;
 import skillapi.api.gui.base.RenderUtils;
 import skillapi.api.gui.base.listener.ComponentUpdateListener;
 import skillapi.api.util.Pair;
+import skillapi.skill.DynamicSkillParam;
 
 import java.awt.*;
 import java.util.List;
@@ -60,18 +61,20 @@ public class FormComponent extends BaseComponent {
         return false;
     }
 
-    public void addParam(String param, String initialValue) {
-        addParam(param, initialValue, false);
-    }
-
-    public void addParam(String param, String initialValue, boolean bool) {
+    public void addParam(String paramName, DynamicSkillParam param) {
         Layout textfield = Layout.builder()
                 .x(this.layout.getLeft() + 10 + labelWidth)
                 .y(this.layout.getTop() + this.params.size() * 25)
                 .height(20)
                 .width(this.layout.getWidth() - 10 - labelWidth - 5)
                 .build();
-        ParamField paramField = bool ? new ParamBooleanField(param, initialValue, layout) : new ParamTextField(param, initialValue, layout);
+        Class<?> type = param.getOriginalType();
+        ParamField paramField;
+        if (type == boolean.class || type == Boolean.class) {
+            paramField = new ParamBooleanField(paramName, param.getValue(), layout);
+        } else {
+            paramField = new ParamTextField(paramName, param.getValue(), layout);
+        }
         addFormComponent(paramField.getComponent());
         this.params.add(paramField);
     }
@@ -81,8 +84,8 @@ public class FormComponent extends BaseComponent {
         formComponents.add(component);
     }
 
-    public void addParams(List<Map.Entry<String, String>> params) {
-        for (Map.Entry<String, String> param : params) {
+    public void addParams(List<Map.Entry<String, DynamicSkillParam>> params) {
+        for (Map.Entry<String, DynamicSkillParam> param : params) {
             addParam(param.getKey(), param.getValue());
         }
     }

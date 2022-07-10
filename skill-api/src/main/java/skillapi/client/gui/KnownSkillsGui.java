@@ -2,12 +2,11 @@ package skillapi.client.gui;
 
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
-import skillapi.api.gui.base.BaseGui;
-import skillapi.api.gui.base.Layout;
-import skillapi.api.gui.base.ListenerRegistry;
-import skillapi.api.gui.base.RenderUtils;
+import skillapi.api.gui.base.*;
 import skillapi.api.gui.base.listener.FocusChangedListener;
 import skillapi.api.gui.base.listener.MousePressedListener;
 import skillapi.api.gui.base.listener.MouseReleasedListener;
@@ -16,6 +15,7 @@ import skillapi.client.SkillClient;
 import skillapi.client.gui.component.KnownSkillListComponent;
 import skillapi.packet.SkillBarSyncPacket;
 import skillapi.packet.base.Packet;
+import skillapi.server.SkillServer;
 import skillapi.skill.AbstractSkill;
 import skillapi.skill.PlayerSkills;
 import skillapi.utils.ClientUtils;
@@ -28,9 +28,10 @@ import static skillapi.skill.PlayerSkills.MAX_SKILL_BAR;
  * @author Jun
  */
 public class KnownSkillsGui extends BaseGui {
+    private final Layout[] skillBarLayouts = new Layout[5];
     private final String[] skillKeys = new String[MAX_SKILL_BAR];
     private KnownSkillListComponent skillListComponent;
-    private PlayerSkills properties;
+    private PlayerSkills playerSkills;
 
     private boolean isDragging = false;
     private int draggingOffsetX;
@@ -42,14 +43,19 @@ public class KnownSkillsGui extends BaseGui {
         for (int i = 0; i < skillKeys.length; i++) {
             skillKeys[i] = Keyboard.getKeyName(SkillClient.unleashSkillKey[i].getKeyCode());
         }
-        this.properties = PlayerSkills.get(ClientUtils.getPlayer());
+
+        for (int i = 0; i < skillBarLayouts.length; i++) {
+            skillBarLayouts[i] = new Layout(width / 2 - 96, height / 2 - 49 + (23 * i), 16, 16);
+        }
+
+        this.playerSkills = PlayerSkills.get(ClientUtils.getPlayer());
         Layout listLayout = new Layout(width / 2 - 75, height / 2 - 49, 154, 108);
         Layout sliderLayout = new Layout(width / 2 + 83, height / 2 - 49, 12, 108);
 
-        skillListComponent = new KnownSkillListComponent(listLayout, sliderLayout, new ArrayList<>(properties.getKnownSkills()));
+        skillListComponent = new KnownSkillListComponent(listLayout, sliderLayout, new ArrayList<>(playerSkills.getKnownSkills()));
         addComponent(skillListComponent);
 
-        if (properties.getPlayer().capabilities.isCreativeMode) {
+        if (SkillServer.hasHighestAuthority(playerSkills.getPlayer())) {
             addButton((width - 206) / 2 - 20, (height - 134) / 2, 20, 20, "</>", SkillProfilesGui::open);
         }
     }
@@ -58,7 +64,7 @@ public class KnownSkillsGui extends BaseGui {
     public void render(int mouseX, int mouseY, float partialTicks) {
         drawDefaultBackground();
         drawBackground();
-        renderSkillBar();
+        renderSkillBar(mouseX, mouseY);
         // Dragging
         if (isDragging) {
             renderDragging(mouseX, mouseY);
@@ -68,7 +74,7 @@ public class KnownSkillsGui extends BaseGui {
     @Override
     public void drawBackground() {
         GL11.glEnable(GL11.GL_BLEND);
-        getTextureManager().bindTexture(GuiKnownSkills.GUI);
+        RenderUtils.bindTexture(GuiKnownSkills.GUI);
         // Frame
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         RenderUtils.drawTexturedModalRect((width - 206) / 2, (height - 134) / 2, 0, 0, 206, 134);
@@ -91,22 +97,19 @@ public class KnownSkillsGui extends BaseGui {
                 }
             }
         };
-        Layout[] layouts = new Layout[5];
-        for (int i = 0; i < layouts.length; i++) {
-            layouts[i] = new Layout(width / 2 - 96, height / 2 - 49 + (23 * i), 16, 16);
-        }
+
         MouseReleasedListener release = (x, y) -> {
             if (isDragging) {
                 isDragging = false;
-                for (int i = 0; i < layouts.length; i++) {
-                    if (layouts[i].isIn(x, y)) {
+                for (int i = 0; i < skillBarLayouts.length; i++) {
+                    if (skillBarLayouts[i].isIn(x, y)) {
                         // Set skill bar
-                        properties.setSkillBar(i, draggingSkill);
+                        playerSkills.setSkillBar(i, draggingSkill);
                         break;
                     }
                 }
                 // Sync
-                Packet.sendToServer(new SkillBarSyncPacket(properties.getSkillBar()));
+                Packet.sendToServer(new SkillBarSyncPacket(playerSkills.getSkillBar()));
             }
         };
         FocusChangedListener focus = f -> {
@@ -119,14 +122,26 @@ public class KnownSkillsGui extends BaseGui {
         listener.on(pressed, release, focus);
     }
 
-    private void renderSkillBar() {
-        AbstractSkill[] skillBar = properties.getSkillBar();
+    private void renderSkillBar(int x, int y) {
+        AbstractSkill[] skillBar = playerSkills.getSkillBar();
         for (int i = 0; i < MAX_SKILL_BAR; i++) {
             if (skillBar[i] == null) {
                 drawCenteredString(skillKeys[i], width / 2 - 88, height / 2 - 44 + (23 * i), 0xE2E2E9);
             } else {
-                String firstName = skillBar[i].getLocalizedName().substring(0, 1);
-                drawCenteredString(firstName, width / 2 - 88, height / 2 - 44 + (23 * i), 0xE2E2E9);
+                ResourceLocation iconResource = skillBar[i].getIconResource();
+                if (iconResource == null) {
+                    // Render initials
+                    String firstName = skillBar[i].getLocalizedName().substring(0, 1);
+                    drawCenteredString(firstName, width / 2 - 88, height / 2 - 44 + (23 * i), 0xE2E2E9);
+                    continue;
+                }
+                GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+                RenderUtils.bindTexture(iconResource);
+                Layout layout = skillBarLayouts[i];
+                RenderUtils.drawTexturedModalRect(layout.getX(), layout.getY(), 0, 0, 16, 16, 0.0625D);
+                if (!Mouse.isButtonDown(MouseButton.LEFT.button) && skillBarLayouts[i].isIn(x, y)) {
+                    RenderUtils.drawGradientRect(layout.getX(), layout.getY(), layout.getRight(), layout.getBottom(), 0x80BCC4D0, 0x80293445);
+                }
             }
         }
     }

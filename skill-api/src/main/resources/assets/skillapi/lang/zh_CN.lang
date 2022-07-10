@@ -41,9 +41,11 @@ skill.constant.knownSkill=已学过该技能
 skill.constant.noDescription=无描述
 
 skill.effect.universal=通用参数
+skill.effect.universal.icon=技能图标
 skill.effect.universal.name=技能名
 skill.effect.universal.mana=所需魔力
 skill.effect.universal.cooldown=冷却时间(秒)
+skill.effect.universal.description=技能描述
 
 skill.static.skillapi.TestStaticSkill=测试静态技能
 skill.static.skillapi.TestStaticSkill.description=测试技能描述\nAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\nBBBBBBBBBBB

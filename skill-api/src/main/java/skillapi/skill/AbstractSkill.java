@@ -1,12 +1,16 @@
 package skillapi.skill;
 
+import net.minecraft.util.ResourceLocation;
 import skillapi.common.Translation;
 
 /**
  * @author Jun
  */
 public abstract class AbstractSkill extends AbstractSkillEffect {
-    protected String name;
+    public static final String RESOURCE_ICON_PREFIX = "textures/icons/";
+
+    protected String unlocalizedName;
+    protected ResourceLocation iconResource;
 
     protected int mana;
     protected long cooldown;
@@ -26,19 +30,23 @@ public abstract class AbstractSkill extends AbstractSkillEffect {
 
     @Override
     public String getUnlocalizedName() {
-        return this.name;
+        return this.unlocalizedName;
     }
 
     public String getLocalizedName() {
-        return Translation.format(this.name);
+        return Translation.format(this.unlocalizedName);
     }
 
     public String getDescription() {
-        return Translation.format(this.name + ".description");
+        return Translation.format(this.unlocalizedName + ".description");
+    }
+
+    public ResourceLocation getIconResource() {
+        return this.iconResource;
     }
 
     @Override
     public int hashCode() {
-        return name != null ? name.hashCode() : 0;
+        return unlocalizedName != null ? unlocalizedName.hashCode() : 0;
     }
 }

@@ -1,6 +1,7 @@
 package skillapi.skill;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.ResourceLocation;
 import skillapi.common.SkillRuntimeException;
 
 /**
@@ -8,10 +9,10 @@ import skillapi.common.SkillRuntimeException;
  */
 public abstract class AbstractStaticSkill extends AbstractSkill {
     public AbstractStaticSkill() {
-        init(new StaticSkillBuilder());
+        init(new StaticSkillBuilder(this));
 
         // Default name
-        this.name = Skills.PREFIX_STATIC + Skills.getModId(this.getClass()) + "." + this.getClass().getSimpleName();
+        this.unlocalizedName = Skills.PREFIX_STATIC + Skills.getModId(this.getClass()) + "." + this.getClass().getSimpleName();
     }
 
     protected abstract void init(StaticSkillBuilder builder);
@@ -24,12 +25,18 @@ public abstract class AbstractStaticSkill extends AbstractSkill {
         return true;
     }
 
-    final class StaticSkillBuilder {
+    static final class StaticSkillBuilder {
+        AbstractStaticSkill skill;
+
+        public StaticSkillBuilder(AbstractStaticSkill skill) {
+            this.skill = skill;
+        }
+
         StaticSkillBuilder mana(int mana) {
             if (mana < 0) {
                 throw new SkillRuntimeException("Invalid skill parameter [mana]: %d", mana);
             }
-            AbstractStaticSkill.this.mana = mana;
+            skill.mana = mana;
             return this;
         }
 
@@ -37,7 +44,7 @@ public abstract class AbstractStaticSkill extends AbstractSkill {
             if (cooldown < 0) {
                 throw new SkillRuntimeException("Invalid skill parameter [cooldown]: %d", cooldown);
             }
-            AbstractStaticSkill.this.cooldown = cooldown;
+            skill.cooldown = cooldown;
             return this;
         }
 
@@ -45,7 +52,12 @@ public abstract class AbstractStaticSkill extends AbstractSkill {
             if (charge < 0) {
                 throw new SkillRuntimeException("Invalid skill parameter [charge]: %d", charge);
             }
-            AbstractStaticSkill.this.charge = charge;
+            skill.charge = charge;
+            return this;
+        }
+
+        StaticSkillBuilder icon(ResourceLocation iconResourceLocation) {
+            skill.iconResource = iconResourceLocation;
             return this;
         }
     }

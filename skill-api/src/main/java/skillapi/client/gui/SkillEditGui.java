@@ -93,7 +93,7 @@ public final class SkillEditGui extends BaseGui {
             val originList = this.skillBuilder.getParams(getIndex());
 
             for (var e : originList) {
-                if (!e.getValue().equals(map.get(e.getKey()))) {
+                if (!e.getValue().getValue().equals(map.get(e.getKey()))) {
                     this.saveButton.setEnable(true);
                     return;
                 }

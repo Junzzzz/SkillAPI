@@ -74,6 +74,21 @@ public final class RenderUtils {
     /**
      * Draw a textured rectangle at the zero point of the Z axis
      *
+     * @param x        Window coordinate X
+     * @param y        Window coordinate Y
+     * @param u        Texture coordinate X
+     * @param v        Texture coordinate Y
+     * @param width    The width of the texture to be drawn
+     * @param height   The height of the texture to be drawn
+     * @param unitSize Texture unit length. Usually equal to 1 / (ImageMaxSize)
+     */
+    public static void drawTexturedModalRect(int x, int y, int u, int v, int width, int height, double unitSize) {
+        drawTexturedModalRect(x, y, u, v, width, height, width, height, unitSize);
+    }
+
+    /**
+     * Draw a textured rectangle at the zero point of the Z axis
+     *
      * @param x      Window coordinate X
      * @param y      Window coordinate Y
      * @param u      Texture coordinate X
@@ -82,30 +97,31 @@ public final class RenderUtils {
      * @param height The height of the texture to be drawn
      */
     public static void drawTexturedModalRect(int x, int y, int u, int v, int width, int height) {
-        drawTexturedModalRect(x, y, u, v, width, height, width, height);
+        // Default unit size = 1 / 256
+        drawTexturedModalRect(x, y, u, v, width, height, width, height, 0.00390625D);
     }
 
     /**
      * Draw a textured rectangle at the zero point of the Z axis
      *
-     * @param x       Window coordinate X
-     * @param y       Window coordinate Y
-     * @param u       Texture coordinate X
-     * @param v       Texture coordinate Y
-     * @param width   The width to be drawn in the window
-     * @param height  The height to be drawn in the window
-     * @param uWidth  The width to be drawn in the window
-     * @param vHeight The height to be drawn in the texture
+     * @param x        Window coordinate X
+     * @param y        Window coordinate Y
+     * @param u        Texture coordinate X
+     * @param v        Texture coordinate Y
+     * @param width    The width to be drawn in the window
+     * @param height   The height to be drawn in the window
+     * @param uWidth   The width to be drawn in the window
+     * @param vHeight  The height to be drawn in the texture
+     * @param unitSize Texture unit length. Usually equal to 1 / (ImageMaxSize)
      */
     public static void drawTexturedModalRect(int x, int y, int u, int v, int width, int height, int uWidth,
-                                             int vHeight) {
-        double f = 0.00390625F;
+                                             int vHeight, double unitSize) {
         Tessellator tessellator = Tessellator.instance;
         tessellator.startDrawingQuads();
-        tessellator.addVertexWithUV(x, y + height, 0, u * f, (v + vHeight) * f);
-        tessellator.addVertexWithUV(x + width, y + height, 0, (u + uWidth) * f, (v + vHeight) * f);
-        tessellator.addVertexWithUV(x + width, y, 0, (u + uWidth) * f, v * f);
-        tessellator.addVertexWithUV(x, y, 0, u * f, v * f);
+        tessellator.addVertexWithUV(x, y + height, 0, u * unitSize, (v + vHeight) * unitSize);
+        tessellator.addVertexWithUV(x + width, y + height, 0, (u + uWidth) * unitSize, (v + vHeight) * unitSize);
+        tessellator.addVertexWithUV(x + width, y, 0, (u + uWidth) * unitSize, v * unitSize);
+        tessellator.addVertexWithUV(x, y, 0, u * unitSize, v * unitSize);
         tessellator.draw();
     }
 

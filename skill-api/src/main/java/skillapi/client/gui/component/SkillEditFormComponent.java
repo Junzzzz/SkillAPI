@@ -6,6 +6,7 @@ import skillapi.api.gui.base.RenderUtils;
 import skillapi.api.gui.component.FormComponent;
 import skillapi.common.Translation;
 import skillapi.skill.AbstractSkillEffect;
+import skillapi.skill.DynamicSkillParam;
 import skillapi.skill.SkillEffect;
 import skillapi.skill.UniversalParam;
 
@@ -25,14 +26,9 @@ public final class SkillEditFormComponent extends FormComponent {
     }
 
     @Override
-    public void addParam(String param, String initialValue) {
-        addParam(param, initialValue, initialValue.equals("false") || initialValue.equals("true"));
-    }
-
-    @Override
-    public void addParam(String param, String initialValue, boolean bool) {
+    public void addParam(String paramName, DynamicSkillParam param) {
         String translation = effect instanceof AbstractSkillEffect ?
-                Translation.format(((AbstractSkillEffect) effect).getParamName(param)) : param;
+                Translation.format(((AbstractSkillEffect) effect).getParamName(paramName)) : paramName;
         translation = effect instanceof UniversalParam ? Translation.format(translation) : translation;
 
         int width = Math.min((int) (this.layout.getWidth() / 2.5), getFontRenderer().getStringWidth(translation));
@@ -43,12 +39,15 @@ public final class SkillEditFormComponent extends FormComponent {
                 .height(20)
                 .width(this.layout.getWidth() - 10 - width)
                 .build();
-        ParamField paramTextField = new TranslationFieldProxy(
-                bool ? new ParamBooleanField(param, initialValue, layout) : new ParamTextField(param, initialValue, layout),
-                translation
-        );
-        addComponent(paramTextField.getComponent());
-        this.params.add(paramTextField);
+        Class<?> type = param.getOriginalType();
+        ParamField paramField;
+        if (type == boolean.class || type == Boolean.class) {
+            paramField = new TranslationFieldProxy(new ParamBooleanField(paramName, param.getValue(), layout), translation);
+        } else {
+            paramField = new TranslationFieldProxy(new ParamTextField(paramName, param.getValue(), layout), translation);
+        }
+        addComponent(paramField.getComponent());
+        this.params.add(paramField);
     }
 
     private static final class TranslationFieldProxy extends ParamField {
