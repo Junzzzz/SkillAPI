@@ -126,7 +126,7 @@ public abstract class AbstractScrollingListComponent<T> extends BaseComponent {
     }
 
     private void refreshCachedTexture() {
-        this.movableWindowHeight = getContentHeight() - this.layout.getHeight();
+        this.movableWindowHeight = getContentHeight() - this.elementsLayout.getHeight();
         this.elementsLayout.setWidth(layout.getWidth() - 2 - (this.movableWindowHeight > 0 ? 6 : 0));
         final CachedTexture temp = this.cachedTexture;
         this.cachedTexture = createCachedTexture();
@@ -265,8 +265,7 @@ public abstract class AbstractScrollingListComponent<T> extends BaseComponent {
     protected void renderList() {
         final int y = (int) (slider.getRatio() * this.movableWindowHeight);
 
-        final int showHeight = this.movableWindowHeight > 0 ? this.layout.getHeight() - 2 :
-                this.cachedTexture.getHeight();
+        final int showHeight = this.movableWindowHeight > 0 ? this.elementsLayout.getHeight() : this.cachedTexture.getHeight();
 
         // Render elements
         this.cachedTexture.render(elementsLayout.getX(),
