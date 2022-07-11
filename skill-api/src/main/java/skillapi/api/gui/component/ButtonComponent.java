@@ -8,6 +8,7 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 import skillapi.api.gui.base.*;
 import skillapi.api.gui.base.listener.ComponentUpdateListener;
+import skillapi.api.gui.base.listener.FocusChangedListener;
 import skillapi.api.gui.base.listener.MousePressedListener;
 import skillapi.api.gui.base.listener.MouseReleasedListener;
 import skillapi.api.util.function.EventFunction;
@@ -22,6 +23,8 @@ import java.awt.*;
  */
 public class ButtonComponent extends BaseComponent {
     private static final ResourceLocation BUTTON_TEXTURES = new ResourceLocation("textures/gui/widgets.png");
+
+    private boolean _buttonClick;
 
     @Getter
     @Setter
@@ -119,11 +122,18 @@ public class ButtonComponent extends BaseComponent {
     @Override
     protected void listener(ListenerRegistry listener) {
         MousePressedListener pressed = (x, y) -> {
+            this._buttonClick = true;
             getSoundHandler().playSound(PositionedSoundRecord.func_147674_a(new ResourceLocation("gui.button.press"), 1.0F));
         };
         MouseReleasedListener released = (x, y) -> {
-            if (this.enable && this.clickEvent != null) {
+            if (this.enable && this.clickEvent != null && this._buttonClick) {
                 this.clickEvent.apply();
+            }
+            this._buttonClick = false;
+        };
+        FocusChangedListener focus = f -> {
+            if (!f) {
+                this._buttonClick = false;
             }
         };
 

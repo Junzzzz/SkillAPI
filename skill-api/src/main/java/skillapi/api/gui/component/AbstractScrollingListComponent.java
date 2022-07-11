@@ -3,6 +3,8 @@ package skillapi.api.gui.component;
 import net.minecraft.client.renderer.Tessellator;
 import org.lwjgl.opengl.GL11;
 import skillapi.api.gui.base.*;
+import skillapi.api.gui.base.listener.FocusChangedListener;
+import skillapi.api.gui.base.listener.MousePressedListener;
 import skillapi.api.gui.base.listener.MouseReleasedListener;
 
 import java.util.ArrayList;
@@ -14,6 +16,7 @@ import java.util.List;
  * @date 2021/2/24.
  */
 public abstract class AbstractScrollingListComponent<T> extends BaseComponent {
+    private boolean _itemClick = false;
     private CachedTexture cachedTexture;
     protected final SliderComponent slider;
 
@@ -189,8 +192,13 @@ public abstract class AbstractScrollingListComponent<T> extends BaseComponent {
 
     @Override
     protected void listener(ListenerRegistry listener) {
-        MouseReleasedListener release = (x, y) -> {
+        MousePressedListener press = (x, y) -> {
             if (this.elementsLayout.isIn(x, y)) {
+                this._itemClick = true;
+            }
+        };
+        MouseReleasedListener release = (x, y) -> {
+            if (this._itemClick && this.elementsLayout.isIn(x, y)) {
                 int tempIndex =
                         ((int) (slider.getRatio() * this.movableWindowHeight) + y - this.elementsLayout.getY()) / this.slotHeight;
                 if (tempIndex >= this.dataList.size()) {
@@ -204,9 +212,14 @@ public abstract class AbstractScrollingListComponent<T> extends BaseComponent {
                     }
                 }
             }
+            this._itemClick = false;
         };
-
-        listener.on(release);
+        FocusChangedListener focus = f -> {
+            if (this._itemClick && !f) {
+                this._itemClick = false;
+            }
+        };
+        listener.on(press, release, focus);
     }
 
     private void renderListBackground() {
