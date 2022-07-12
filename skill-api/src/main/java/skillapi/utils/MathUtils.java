@@ -15,4 +15,8 @@ public class MathUtils {
     public static Vector3d tranform(Vec3 vector) {
         return new Vector3d(vector.xCoord, vector.yCoord, vector.zCoord);
     }
+
+    public static int ceilDiv(int x, int y) {
+        return (x + y - 1) / y;
+    }
 }

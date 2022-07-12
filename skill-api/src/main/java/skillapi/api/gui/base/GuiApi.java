@@ -94,6 +94,13 @@ public final class GuiApi extends GuiScreen {
         }
     }
 
+    public static BaseGui getCurrentGui() {
+        if (minecraft.currentScreen instanceof GuiApi) {
+            return ((GuiApi) minecraft.currentScreen).currentGui;
+        }
+        return null;
+    }
+
     public static void closeGui() {
         minecraft.displayGuiScreen(null);
         minecraft.setIngameFocus();

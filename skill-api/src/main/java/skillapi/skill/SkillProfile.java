@@ -175,12 +175,9 @@ public class SkillProfile {
 
                 ResourceLocation iconResource = skill.getIconResource();
                 if (iconResource != null) {
-                    String mod = iconResource.getResourceDomain();
-                    String path = iconResource.getResourcePath();
-                    int i = path.indexOf(AbstractSkill.RESOURCE_ICON_PREFIX);
-                    if (i != -1) {
-                        i += AbstractSkill.RESOURCE_ICON_PREFIX.length();
-                        jsonGenerator.writeStringField("icon", mod + ":" + path.substring(i));
+                    String icon = SkillIcon.stringify(iconResource);
+                    if (!icon.isEmpty()) {
+                        jsonGenerator.writeStringField("icon", icon);
                     }
                 }
 

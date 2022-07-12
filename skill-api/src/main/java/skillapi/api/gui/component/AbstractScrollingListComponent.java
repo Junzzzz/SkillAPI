@@ -13,21 +13,19 @@ import java.util.List;
 
 /**
  * @author Jun
- * @date 2021/2/24.
  */
 public abstract class AbstractScrollingListComponent<T> extends BaseComponent {
-    private boolean _itemClick = false;
+    protected boolean _itemClick = false;
     private CachedTexture cachedTexture;
     protected final SliderComponent slider;
 
-    private final Layout elementsLayout;
-    private final int slotHeight;
+    protected final Layout elementsLayout;
+    protected final int slotHeight;
     protected int movableWindowHeight;
-    private final ArrayList<T> dataList;
-
     protected int selectedIndex = -1;
+    protected final ArrayList<T> dataList;
 
-    public AbstractScrollingListComponent(Layout layout, int slotHeight, List<T> data, boolean lazyLoad) {
+    public AbstractScrollingListComponent(Layout layout, int slotHeight, List<T> data, boolean lazyInit) {
         super(layout);
         this.slotHeight = slotHeight;
 
@@ -47,10 +45,9 @@ public abstract class AbstractScrollingListComponent<T> extends BaseComponent {
                 .y(layout.getY() + 1)
                 .width(layout.getWidth() - 2)
                 .height(layout.getHeight() - 2).build();
-        setSliderButtonHeight();
 
         // Initialize the list texture
-        if (!lazyLoad) {
+        if (!lazyInit) {
             this.init();
         }
     }
@@ -74,6 +71,20 @@ public abstract class AbstractScrollingListComponent<T> extends BaseComponent {
      * @param index Element index
      */
     protected abstract void elementChosen(int index);
+
+    protected int calculateIndex(int mouseX, int mouseY) {
+        return ((int) (slider.getRatio() * this.movableWindowHeight) + mouseY - this.elementsLayout.getY()) / this.slotHeight;
+    }
+
+    public void setSelectedIndex(int index) {
+        if (this.selectedIndex != index) {
+            this.selectedIndex = index;
+            refreshCachedTexture();
+            if (this.selectedIndex > -1) {
+                elementChosen(this.selectedIndex);
+            }
+        }
+    }
 
     public int getSelectedIndex() {
         return this.selectedIndex;
@@ -111,6 +122,10 @@ public abstract class AbstractScrollingListComponent<T> extends BaseComponent {
         return this.dataList.contains(item);
     }
 
+    protected void init() {
+        refresh();
+    }
+
     public void refresh() {
         refreshCachedTexture();
         setSliderButtonHeight();
@@ -124,11 +139,7 @@ public abstract class AbstractScrollingListComponent<T> extends BaseComponent {
         return this.dataList.size();
     }
 
-    protected void init() {
-        refreshCachedTexture();
-    }
-
-    private void refreshCachedTexture() {
+    protected void refreshCachedTexture() {
         this.movableWindowHeight = getContentHeight() - this.elementsLayout.getHeight();
         this.elementsLayout.setWidth(layout.getWidth() - 2 - (this.movableWindowHeight > 0 ? 6 : 0));
         final CachedTexture temp = this.cachedTexture;
@@ -143,20 +154,13 @@ public abstract class AbstractScrollingListComponent<T> extends BaseComponent {
         CachedTexture texture = new CachedTexture(elementsLayout.getWidth(), getContentHeight());
         texture.startDrawTexture();
 
-        if (this.selectedIndex > -1 && this.selectedIndex < this.dataList.size()) {
-            renderSelected(0, this.selectedIndex * this.slotHeight);
-        }
+        renderList();
 
-        int i = 0;
-        for (T data : this.dataList) {
-            this.renderSlot(data, 1, i * this.slotHeight);
-            i++;
-        }
         texture.endDrawTexture();
         return texture;
     }
 
-    private int getContentHeight() {
+    protected int getContentHeight() {
         return this.slotHeight * this.dataList.size();
     }
 
@@ -186,7 +190,7 @@ public abstract class AbstractScrollingListComponent<T> extends BaseComponent {
             slider.render(mouseX, mouseY, partialTicks);
         }
         if (this.dataList.size() > 0) {
-            renderList();
+            renderCachedTextureList();
         }
     }
 
@@ -199,18 +203,11 @@ public abstract class AbstractScrollingListComponent<T> extends BaseComponent {
         };
         MouseReleasedListener release = (x, y) -> {
             if (this._itemClick && this.elementsLayout.isIn(x, y)) {
-                int tempIndex =
-                        ((int) (slider.getRatio() * this.movableWindowHeight) + y - this.elementsLayout.getY()) / this.slotHeight;
+                int tempIndex = calculateIndex(x, y);
                 if (tempIndex >= this.dataList.size()) {
                     tempIndex = -1;
                 }
-                if (this.selectedIndex != tempIndex) {
-                    this.selectedIndex = tempIndex;
-                    refreshCachedTexture();
-                    if (this.selectedIndex > -1) {
-                        elementChosen(this.selectedIndex);
-                    }
-                }
+                setSelectedIndex(tempIndex);
             }
             this._itemClick = false;
         };
@@ -222,11 +219,11 @@ public abstract class AbstractScrollingListComponent<T> extends BaseComponent {
         listener.on(press, release, focus);
     }
 
-    private void renderListBackground() {
+    protected void renderListBackground() {
         RenderUtils.drawGradientRect(layout.getLeft(), layout.getTop(), layout.getRight(), layout.getBottom(), 0xC0101010, 0xD0101010);
     }
 
-    private void renderEdgeShadow() {
+    protected void renderEdgeShadow() {
         final Tessellator tessellator = Tessellator.instance;
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -252,30 +249,48 @@ public abstract class AbstractScrollingListComponent<T> extends BaseComponent {
         tessellator.addVertexWithUV(layout.getRight(), layout.getBottom() - shadowLength, 0.0D, 1.0D, 0.0D);
         tessellator.addVertexWithUV(layout.getLeft(), layout.getBottom() - shadowLength, 0.0D, 0.0D, 0.0D);
         tessellator.draw();
+        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        GL11.glEnable(GL11.GL_TEXTURE_2D);
+        GL11.glDisable(GL11.GL_LIGHTING);
+        GL11.glEnable(GL11.GL_COLOR_MATERIAL);
     }
 
-    private void renderSelected(int x, int y) {
-        final int x1 = x + this.elementsLayout.getWidth();
-        final int y1 = y + this.slotHeight;
+    protected void renderSelected(int x, int y) {
+        renderSelected(x, y, x + this.elementsLayout.getWidth(), y + this.slotHeight);
+    }
+
+    protected void renderSelected(int x, int y, int right, int bottom) {
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         Tessellator tessellator = Tessellator.instance;
         tessellator.startDrawingQuads();
         tessellator.setColorOpaque_I(0x808080);
-        tessellator.addVertexWithUV(x, y1, 0.0D, 0.0D, 1.0D);
-        tessellator.addVertexWithUV(x1, y1, 0.0D, 1.0D, 1.0D);
-        tessellator.addVertexWithUV(x1, y, 0.0D, 1.0D, 0.0D);
+        tessellator.addVertexWithUV(x, bottom, 0.0D, 0.0D, 1.0D);
+        tessellator.addVertexWithUV(right, bottom, 0.0D, 1.0D, 1.0D);
+        tessellator.addVertexWithUV(right, y, 0.0D, 1.0D, 0.0D);
         tessellator.addVertexWithUV(x, y, 0.0D, 0.0D, 0.0D);
         tessellator.setColorOpaque_I(0);
-        tessellator.addVertexWithUV(x + 1, y1 - 1, 0.0D, 0.0D, 1.0D);
-        tessellator.addVertexWithUV(x1 - 1, y1 - 1, 0.0D, 1.0D, 1.0D);
-        tessellator.addVertexWithUV(x1 - 1, y + 1, 0.0D, 1.0D, 0.0D);
+        tessellator.addVertexWithUV(x + 1, bottom - 1, 0.0D, 0.0D, 1.0D);
+        tessellator.addVertexWithUV(right - 1, bottom - 1, 0.0D, 1.0D, 1.0D);
+        tessellator.addVertexWithUV(right - 1, y + 1, 0.0D, 1.0D, 0.0D);
         tessellator.addVertexWithUV(x + 1, y + 1, 0.0D, 0.0D, 0.0D);
         tessellator.draw();
         GL11.glEnable(GL11.GL_TEXTURE_2D);
     }
 
     protected void renderList() {
+        if (this.selectedIndex > -1 && this.selectedIndex < this.dataList.size()) {
+            renderSelected(0, this.selectedIndex * this.slotHeight);
+        }
+
+        int i = 0;
+        for (T data : this.dataList) {
+            this.renderSlot(data, 1, i * this.slotHeight);
+            i++;
+        }
+    }
+
+    protected void renderCachedTextureList() {
         final int y = (int) (slider.getRatio() * this.movableWindowHeight);
 
         final int showHeight = this.movableWindowHeight > 0 ? this.elementsLayout.getHeight() : this.cachedTexture.getHeight();
@@ -287,10 +302,5 @@ public abstract class AbstractScrollingListComponent<T> extends BaseComponent {
                 y,
                 this.cachedTexture.getWidth(),
                 showHeight);
-    }
-
-    @Override
-    protected void finalize() throws Throwable {
-        super.finalize();
     }
 }

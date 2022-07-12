@@ -23,6 +23,7 @@ import skillapi.skill.SkillEffect;
 public final class SkillEditGui extends BaseGui {
     private final SkillEditProfileGui parent;
     private final int labelWidth = 40;
+    private int initSelectedIndex;
     private Layout formLayout;
 
     ScrollingListComponent<SkillEffect> effectList;
@@ -32,8 +33,13 @@ public final class SkillEditGui extends BaseGui {
     final DynamicSkillBuilder skillBuilder;
 
     public SkillEditGui(SkillEditProfileGui parent, DynamicSkillBuilder builder) {
+        this(parent, builder, -1);
+    }
+
+    public SkillEditGui(SkillEditProfileGui parent, DynamicSkillBuilder builder, int initSelectedIndex) {
         this.parent = parent;
         this.skillBuilder = builder;
+        this.initSelectedIndex = initSelectedIndex;
     }
 
     @Override
@@ -47,6 +53,7 @@ public final class SkillEditGui extends BaseGui {
 
         this.effectList = new ScrollingListComponent<>(listLayout, 25, skillBuilder.getEffectsWithUniversal(), renderer);
         this.effectList.setClickEvent((item, index) -> {
+            this.initSelectedIndex = index;
             this.form.clear();
             this.form.setSkillEffect(item);
             this.form.addParams(skillBuilder.getParams(index - 1));
@@ -70,6 +77,11 @@ public final class SkillEditGui extends BaseGui {
         if (skillBuilder.isEmpty()) {
             // Need to be placed at the end
             displayGui(new SkillEffectChooseGui(this));
+        }
+
+        // Recover selected index (Must be placed at the end)
+        if (this.initSelectedIndex != -1) {
+            this.effectList.setSelectedIndex(this.initSelectedIndex);
         }
     }
 

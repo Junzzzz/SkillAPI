@@ -111,7 +111,7 @@ public abstract class BaseGui extends GenericGui {
     }
 
     protected void mouseMovedOrUp(int mouseX, int mouseY, int which) {
-        if (which == 0) {
+        if (which == MouseButton.LEFT.button) {
             loseFocus(mouseX, mouseY);
             listenerRegistry.call(MouseReleasedListener.class, (c, l) -> {
                 if (c != null) {
@@ -132,13 +132,15 @@ public abstract class BaseGui extends GenericGui {
     protected void loseFocus(int mouseX, int mouseY) {
         listenerRegistry.call(FocusChangedListener.class, (c, l) -> {
             if (c != null) {
+                // Gui component
                 if (c.parent.focusComponent == c && !c.layout.isIn(mouseX, mouseY)) {
-                    ListenerRegistry.call(c, FocusChangedListener.class, fl -> fl.onFocus(false));
+                    l.onFocus(false);
                     c.focusComponent = null;
                 }
             } else {
+                // Gui
                 if (!Mouse.isInsideWindow()) {
-                    this.listenerRegistry.call(FocusChangedListener.class, fl -> fl.onFocus(false));
+                    l.onFocus(false);
                 }
             }
         });

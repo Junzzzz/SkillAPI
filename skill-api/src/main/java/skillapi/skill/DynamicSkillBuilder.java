@@ -103,17 +103,7 @@ public class DynamicSkillBuilder {
     }
 
     private String getIconResourceStr() {
-        if (this.icon != null) {
-            String mod = this.icon.getResourceDomain();
-            String path = this.icon.getResourcePath();
-            int i = path.indexOf(AbstractSkill.RESOURCE_ICON_PREFIX);
-            if (i != -1) {
-                i += AbstractSkill.RESOURCE_ICON_PREFIX.length();
-                return mod + ":" + path.substring(i);
-            }
-        }
-
-        return "";
+        return SkillIcon.stringify(this.icon);
     }
 
     public void setIcon(ResourceLocation icon) {
@@ -127,16 +117,12 @@ public class DynamicSkillBuilder {
     }
 
     public void setIcon(String icon) {
-        if (icon != null) {
-            int i = icon.indexOf(":");
-            if (i != -1) {
-                this.icon = new ResourceLocation(icon.substring(0, i), AbstractSkill.RESOURCE_ICON_PREFIX + icon.substring(i + 1));
-                putUniversalMap(PREFIX_ICON, icon, ResourceLocation.class);
-                return;
-            }
+        this.icon = SkillIcon.valueOf(icon);
+        if (this.icon == null) {
+            putUniversalMap(PREFIX_ICON, "", ResourceLocation.class);
+        } else {
+            putUniversalMap(PREFIX_ICON, icon, ResourceLocation.class);
         }
-        this.icon = null;
-        putUniversalMap(PREFIX_ICON, "", ResourceLocation.class);
     }
 
     public void setName(String name) {
@@ -246,6 +232,7 @@ public class DynamicSkillBuilder {
         );
         Map<String, DynamicSkillParam> oldUniversalMap = new HashMap<>(getUniversalMap());
         initUniversal();
+        this.effectSet.clear();
         this.effects.clear();
 
         // Add new effect

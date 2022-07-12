@@ -36,6 +36,7 @@ public final class Skills {
     private static final SkillProfileManager profileManager = new SkillProfileManager();
     private static SkillProfile currentProfile;
 
+    private static final Set<String> MOD_ID = new HashSet<>(4);
     private static final Map<Class<?>, String> MOD_ID_MAP = new HashMap<>(32);
 
     public static synchronized void init() {
@@ -174,6 +175,7 @@ public final class Skills {
 
     public static void putModId(Class<?> clz, String modId) {
         if (SkillEffect.class.isAssignableFrom(clz)) {
+            MOD_ID.add(modId);
             MOD_ID_MAP.put(clz, modId);
         }
     }
@@ -181,6 +183,10 @@ public final class Skills {
     public static String getModId(Class<? extends SkillEffect> clz) {
         String s = MOD_ID_MAP.get(clz);
         return s == null ? "" : s;
+    }
+
+    public static List<String> getModIds() {
+        return new ArrayList<>(MOD_ID);
     }
 
     public static ClientSkillInitPacket getInitPacket(EntityPlayerMP player) {

@@ -1,14 +1,13 @@
 package skillapi.client.gui.component;
 
+import net.minecraft.util.ResourceLocation;
 import skillapi.api.gui.base.BaseComponent;
 import skillapi.api.gui.base.Layout;
 import skillapi.api.gui.base.RenderUtils;
 import skillapi.api.gui.component.FormComponent;
+import skillapi.client.gui.SkillIconChooseGui.SkillIconChooseButtonComponent;
 import skillapi.common.Translation;
-import skillapi.skill.AbstractSkillEffect;
-import skillapi.skill.DynamicSkillParam;
-import skillapi.skill.SkillEffect;
-import skillapi.skill.UniversalParam;
+import skillapi.skill.*;
 
 /**
  * @author Jun
@@ -39,13 +38,23 @@ public final class SkillEditFormComponent extends FormComponent {
                 .height(20)
                 .width(this.layout.getWidth() - 10 - width)
                 .build();
+
         Class<?> type = param.getOriginalType();
+
         ParamField paramField;
         if (type == boolean.class || type == Boolean.class) {
-            paramField = new TranslationFieldProxy(new ParamBooleanField(paramName, param.getValue(), layout), translation);
+            // Boolean field
+            paramField = new ParamBooleanField(paramName, param.getValue(), layout);
+        } else if (type == ResourceLocation.class) {
+            // Skill icon field
+            paramField = new IconChooseField(paramName, param.getValue(), layout.getX(), layout.getY());
         } else {
-            paramField = new TranslationFieldProxy(new ParamTextField(paramName, param.getValue(), layout), translation);
+            // Text field
+            paramField = new ParamTextField(paramName, param.getValue(), layout);
         }
+        paramField = new TranslationFieldProxy(paramField, translation);
+
+        // Save component
         addComponent(paramField.getComponent());
         this.params.add(paramField);
     }
@@ -73,6 +82,25 @@ public final class SkillEditFormComponent extends FormComponent {
         @Override
         public String getText() {
             return paramField.getText();
+        }
+    }
+
+    private static final class IconChooseField extends ParamField {
+        final SkillIconChooseButtonComponent component;
+
+        public IconChooseField(String param, String skillIconStr, int x, int y) {
+            super(param);
+            this.component = new SkillIconChooseButtonComponent(x, y, SkillIcon.valueOf(skillIconStr));
+        }
+
+        @Override
+        public BaseComponent getComponent() {
+            return this.component;
+        }
+
+        @Override
+        public String getText() {
+            return this.component.getIconStr();
         }
     }
 }
