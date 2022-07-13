@@ -6,11 +6,11 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
+import skillapi.Application;
 import skillapi.api.gui.base.*;
 import skillapi.api.gui.base.listener.FocusChangedListener;
 import skillapi.api.gui.base.listener.MousePressedListener;
 import skillapi.api.gui.base.listener.MouseReleasedListener;
-import skillapi.client.GuiKnownSkills;
 import skillapi.client.SkillClient;
 import skillapi.client.gui.component.KnownSkillListComponent;
 import skillapi.packet.SkillBarSyncPacket;
@@ -28,6 +28,8 @@ import static skillapi.skill.PlayerSkills.MAX_SKILL_BAR;
  * @author Jun
  */
 public class KnownSkillsGui extends BaseGui {
+    public static final ResourceLocation GUI = new ResourceLocation(Application.MOD_ID, "textures/gui/skill-gui.png");
+
     private final Layout[] skillBarLayouts = new Layout[5];
     private final String[] skillKeys = new String[MAX_SKILL_BAR];
     private KnownSkillListComponent skillListComponent;
@@ -74,7 +76,7 @@ public class KnownSkillsGui extends BaseGui {
     @Override
     public void drawBackground() {
         GL11.glEnable(GL11.GL_BLEND);
-        RenderUtils.bindTexture(GuiKnownSkills.GUI);
+        RenderUtils.bindTexture(KnownSkillsGui.GUI);
         // Frame
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         RenderUtils.drawTexturedModalRect((width - 206) / 2, (height - 134) / 2, 0, 0, 206, 134);

@@ -6,6 +6,7 @@ import net.minecraft.util.MathHelper;
 import net.minecraftforge.client.GuiIngameForge;
 import org.lwjgl.opengl.GL11;
 import skillapi.api.gui.base.RenderUtils;
+import skillapi.client.gui.KnownSkillsGui;
 import skillapi.common.Point;
 import skillapi.skill.AbstractSkill;
 import skillapi.skill.Cooldown;
@@ -37,7 +38,7 @@ public class SkillHud {
         int y = height - GuiIngameForge.right_height;
         GuiIngameForge.right_height += 10;
         int mana = SKILL.getMana();
-        RenderUtils.bindTexture(GuiKnownSkills.GUI);
+        RenderUtils.bindTexture(KnownSkillsGui.GUI);
         for (int i = 0; i < 10; i++) {
             int idx = i * 2 + 1;
             int x = left - i * 8;
@@ -65,7 +66,7 @@ public class SkillHud {
             Cooldown cooldown = cooldowns[i];
             AbstractSkill skill = skillBar[i];
             if (cooldown != null && cooldown.isCooledDown()) {
-                RenderUtils.bindTexture(GuiKnownSkills.GUI);
+                RenderUtils.bindTexture(KnownSkillsGui.GUI);
                 RenderUtils.drawTexturedModalRect(x - 2 - 8, y - 2 - 5 + (20 * i), 219, 102, 20, 20);
             }
             if (skill != null) {

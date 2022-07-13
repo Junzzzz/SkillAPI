@@ -5,7 +5,7 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 import skillapi.api.gui.base.*;
 import skillapi.api.gui.component.SliderComponent;
-import skillapi.client.GuiKnownSkills;
+import skillapi.client.gui.KnownSkillsGui;
 import skillapi.common.Translation;
 import skillapi.skill.AbstractSkill;
 import skillapi.skill.Skills;
@@ -29,7 +29,7 @@ public class KnownSkillListComponent extends BaseComponent {
         this.slider = new SliderComponent(sliderLayout);
         this.slider.setButtonHeight(15);
         this.slider.setRenderer((c, b, x, y) -> {
-            RenderUtils.bindTexture(GuiKnownSkills.GUI);
+            RenderUtils.bindTexture(KnownSkillsGui.GUI);
             GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
             RenderUtils.drawTexturedModalRect(b.getX(), b.getY(), 206, 0, 12, 15);
         });
