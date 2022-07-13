@@ -1,6 +1,7 @@
 package skillapi.client.gui.component;
 
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 import skillapi.api.gui.base.*;
 import skillapi.api.gui.component.SliderComponent;
@@ -17,7 +18,7 @@ import java.util.List;
 public class KnownSkillListComponent extends BaseComponent {
     private final SliderComponent slider;
     private final List<AbstractSkill> skillList;
-    private final int slotHeight = 27;
+    private final int slotHeight = 28;
     private int movableWindowHeight;
     private CachedTexture listTexture;
 
@@ -115,12 +116,11 @@ public class KnownSkillListComponent extends BaseComponent {
     }
 
     public int getOffsetX(int mouseX) {
-        return this.layout.getX() + 12 - mouseX;
+        return this.layout.getX() + 4 - mouseX;
     }
 
     public int getOffsetY(int index, int mouseY) {
-        return (int) ((index * slotHeight) + 9 - (slider.getRatio() * movableWindowHeight + mouseY - layout.getY()));
-
+        return (int) ((index * slotHeight) + 6 - (slider.getRatio() * movableWindowHeight + mouseY - layout.getY()));
     }
 
     private CachedTexture createListTexture() {
@@ -130,7 +130,7 @@ public class KnownSkillListComponent extends BaseComponent {
         CachedTexture cachedTexture = new CachedTexture(this.layout.getWidth(), getContentHeight());
         cachedTexture.startDrawTexture();
         for (int i = 0; i < this.skillList.size(); i++) {
-            renderSlot(this.skillList.get(i), i * 27);
+            renderSlot(this.skillList.get(i), i * slotHeight);
         }
         cachedTexture.endDrawTexture();
         return cachedTexture;
@@ -138,9 +138,16 @@ public class KnownSkillListComponent extends BaseComponent {
 
     private void renderSlot(AbstractSkill skill, int y) {
         String skillName = Skills.getLocalizedName(skill);
-        String first = skillName.substring(0, 1);
-        drawCenteredString(first, 4 + 8, y + 9, 0xFFFFFF);
         drawString(skillName, 24, y + 4, 0xFFFFFF);
+
+        ResourceLocation iconResource = skill.getIconResource();
+        if (iconResource != null) {
+            RenderUtils.bindTexture(iconResource);
+            RenderUtils.drawTexturedModalRect(4, y + 6, 0, 0, 16, 16, 0.0625D);
+        } else {
+            String first = skillName.substring(0, 1);
+            drawCenteredString(first, 4 + 8, y + 9, 0xFFFFFF);
+        }
     }
 
     public AbstractSkill getSkill(int index) {

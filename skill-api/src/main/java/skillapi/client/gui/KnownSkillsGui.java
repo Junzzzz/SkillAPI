@@ -150,7 +150,13 @@ public class KnownSkillsGui extends BaseGui {
         if (draggingSkill == null) {
             return;
         }
-        String firstStr = draggingSkill.getLocalizedName().substring(0, 1);
-        drawCenteredString(firstStr, x + draggingOffsetX, y + draggingOffsetY, 0xFFFFFF);
+        ResourceLocation iconResource = draggingSkill.getIconResource();
+        if (iconResource == null) {
+            String firstStr = draggingSkill.getLocalizedName().substring(0, 1);
+            drawCenteredString(firstStr, x + draggingOffsetX + 8, y + draggingOffsetY + 3, 0xFFFFFF);
+        } else {
+            RenderUtils.bindTexture(iconResource);
+            RenderUtils.drawTexturedModalRect(x + draggingOffsetX, y + draggingOffsetY, 0, 0, 16, 16, 0.0625D);
+        }
     }
 }
