@@ -22,8 +22,8 @@ public final class UniversalParam implements SkillEffect {
     }
 
     @Override
-    public boolean unleash(EntityPlayer player, SkillExtraInfo extraInfo) {
-        return false;
+    public void unleash(EntityPlayer player, SkillExtraInfo extraInfo) {
+        // NOP
     }
 
     @Override

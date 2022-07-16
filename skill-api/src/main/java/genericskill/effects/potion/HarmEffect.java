@@ -16,10 +16,9 @@ import java.util.function.BiConsumer;
 @SkillEffect(callSuper = true)
 public class HarmEffect extends AbstractDynamicFrequencyPotionEffect {
     @Override
-    public boolean unleash(EntityPlayer player, EntityLivingBase target, SkillExtraInfo extraInfo) {
+    public void unleash(EntityPlayer player, EntityLivingBase target, SkillExtraInfo extraInfo) {
         BiConsumer<DynamicPotionEffect, EntityLivingBase> trigger = (effect, entity) -> entity.attackEntityFrom(DamageSource.causePlayerDamage(player), damage);
         DynamicPotionEffect effect = new DynamicPotionEffect(GenericSkillPotions.BLEED, (int) (duration * 20), (int) (triggerFrequency * 20), trigger);
         target.addPotionEffect(effect);
-        return true;
     }
 }

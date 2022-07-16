@@ -88,15 +88,14 @@ public abstract class AbstractTargetSkillEffect extends AbstractSkillEffect {
     }
 
     @Override
-    public final boolean unleash(EntityPlayer player, SkillExtraInfo extraInfo) {
+    public final void unleash(EntityPlayer player, SkillExtraInfo extraInfo) {
         if (this.width == -1 && this.length == -1) {
-            return unleash(player, null, extraInfo);
+            unleash(player, null, extraInfo);
         }
 
         for (EntityLivingBase target : targetsCache) {
             unleash(player, target, extraInfo);
         }
-        return true;
     }
 
 
@@ -148,7 +147,7 @@ public abstract class AbstractTargetSkillEffect extends AbstractSkillEffect {
         return player != null;
     }
 
-    public abstract boolean unleash(EntityPlayer player, EntityLivingBase target, SkillExtraInfo extraInfo);
+    public abstract void unleash(EntityPlayer player, EntityLivingBase target, SkillExtraInfo extraInfo);
 
     public void clientUnleash(EntityPlayer player, EntityLivingBase target, SkillExtraInfo extraInfo) {
         Vector3d position = MathUtils.tranform(player.getPosition(1.0F));

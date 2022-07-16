@@ -16,12 +16,16 @@ public class LifeStealingEffect extends AbstractTargetSkillEffect {
     private float damagePercentage;
 
     @Override
-    public boolean unleash(EntityPlayer player, EntityLivingBase target, SkillExtraInfo extraInfo) {
-        return true;
+    public void unleash(EntityPlayer player, EntityLivingBase target, SkillExtraInfo extraInfo) {
+        // Use with other skill effects
     }
 
     @Override
     public void afterUnleash(EntityPlayer player, EntityLivingBase target, SkillExtraInfo extraInfo) {
+        if (target == null) {
+            return;
+        }
+        // Calculate target damage
         float damage = target.prevHealth - target.getHealth();
         player.heal(damage * damagePercentage);
     }

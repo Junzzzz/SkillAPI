@@ -16,7 +16,7 @@ public interface SkillEffect {
     /**
      * Will be executed on the server side
      */
-    boolean unleash(EntityPlayer player, SkillExtraInfo extraInfo);
+    void unleash(EntityPlayer player, SkillExtraInfo extraInfo);
 
     void afterUnleash(EntityPlayer player, SkillExtraInfo extraInfo);
 

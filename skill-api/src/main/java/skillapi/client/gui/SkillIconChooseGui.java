@@ -114,7 +114,7 @@ public class SkillIconChooseGui extends BaseGui {
                 RenderUtils.bindTexture(currentIcon);
                 RenderUtils.drawTexturedModalRect(layout.getX(), layout.getY(), 0, 0, 16, 16, 0.0625D);
             } else {
-                RenderUtils.drawCenteredString("+", layout.getCenterX(), layout.getY(), Color.WHITE.getRGB());
+                RenderUtils.drawCenteredString("+", layout.getCenterX(), layout.getY() + 6, Color.WHITE.getRGB());
             }
             if (!Mouse.isButtonDown(MouseButton.LEFT.button) && layout.isIn(mouseX, mouseY)) {
                 RenderUtils.drawGradientRect(layout.getX(), layout.getY(), layout.getRight(), layout.getBottom(), 0x80BCC4D0, 0x80293445);

@@ -1,5 +1,0 @@
-skillapi/api/annotation/SkillPacket.java
- skillapi.api.annotation.SkillPacket
-skillapi/api/processor/NoArgsConstructorAnnotationProcessor.java
- skillapi.api.processor.NoArgsConstructorAnnotationProcessor
- skillapi.api.processor.NoArgsConstructorAnnotationProcessor$1

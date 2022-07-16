@@ -19,12 +19,11 @@ public class InstantHealingEffect extends AbstractTargetSkillEffect {
     private boolean self;
 
     @Override
-    public boolean unleash(EntityPlayer player, EntityLivingBase target, SkillExtraInfo extraInfo) {
+    public void unleash(EntityPlayer player, EntityLivingBase target, SkillExtraInfo extraInfo) {
         if (self) {
             player.heal(healAmount);
         } else {
             target.heal(healAmount);
         }
-        return true;
     }
 }

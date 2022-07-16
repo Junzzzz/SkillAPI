@@ -29,12 +29,11 @@ public abstract class AbstractBilateralParamLevelPotionEffect extends AbstractPa
     }
 
     @Override
-    public boolean unleash(EntityPlayer player, EntityLivingBase target, SkillExtraInfo extraInfo) {
+    public void unleash(EntityPlayer player, EntityLivingBase target, SkillExtraInfo extraInfo) {
         if (self) {
             player.addPotionEffect(new PotionEffect(this.potion.id, this.duration * 20, getLevel()));
         } else {
             target.addPotionEffect(new PotionEffect(this.potion.id, this.duration * 20, getLevel()));
         }
-        return true;
     }
 }

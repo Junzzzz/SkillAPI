@@ -247,7 +247,13 @@ public class DynamicSkillBuilder {
         }
 
         // Recover
-        getUniversalMap().replaceAll((k, v) -> oldUniversalMap.get(k));
+        getUniversalMap().replaceAll((k, v) -> {
+            DynamicSkillParam param = oldUniversalMap.get(k);
+            if (param != null) {
+                return param;
+            }
+            return v;
+        });
     }
 
     public boolean isEmpty() {

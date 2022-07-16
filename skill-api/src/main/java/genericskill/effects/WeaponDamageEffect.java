@@ -51,7 +51,7 @@ public class WeaponDamageEffect extends AbstractTargetSkillEffect {
     }
 
     @Override
-    public boolean unleash(EntityPlayer player, EntityLivingBase target, SkillExtraInfo extraInfo) {
+    public void unleash(EntityPlayer player, EntityLivingBase target, SkillExtraInfo extraInfo) {
         double damage = player.getEntityAttribute(SharedMonsterAttributes.attackDamage).getAttributeValue();
 
 //        float enchantmentAddition = EnchantmentHelper.getEnchantmentModifierLiving(player, entity);
@@ -67,11 +67,8 @@ public class WeaponDamageEffect extends AbstractTargetSkillEffect {
 
             if (createDamage) {
                 afterCreateDamage(player, target);
-                return true;
             }
         }
-
-        return false;
     }
 
     public void afterCreateDamage(EntityPlayer player, EntityLivingBase entity) {

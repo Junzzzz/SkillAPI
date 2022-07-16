@@ -24,9 +24,8 @@ public abstract class AbstractDynamicLevelPotionEffect extends AbstractTargetSki
     }
 
     @Override
-    public boolean unleash(EntityPlayer player, EntityLivingBase target, SkillExtraInfo extraInfo) {
+    public void unleash(EntityPlayer player, EntityLivingBase target, SkillExtraInfo extraInfo) {
         target.addPotionEffect(new PotionEffect(this.potion.id, this.duration * 20, getLevel()));
-        return true;
     }
 
     protected abstract int getLevel();

@@ -18,13 +18,12 @@ public class WeaponBleedingEffect extends WeaponDamageEffect {
     private int duration;
 
     @Override
-    public boolean unleash(EntityPlayer player, EntityLivingBase target, SkillExtraInfo info) {
+    public void unleash(EntityPlayer player, EntityLivingBase target, SkillExtraInfo info) {
         double damage = player.getEntityAttribute(SharedMonsterAttributes.attackDamage).getAttributeValue();
 
         // Effect addition
         damage *= this.damagePercentage;
 
         target.addPotionEffect(new WeaponBleedPotionEffect(player, duration, SkillUtils.getDamage(damage)));
-        return true;
     }
 }

@@ -27,12 +27,11 @@ public class DisposableAbsorptionEffect extends AbstractTargetSkillEffect {
     }
 
     @Override
-    public boolean unleash(EntityPlayer player, EntityLivingBase target, SkillExtraInfo extraInfo) {
+    public void unleash(EntityPlayer player, EntityLivingBase target, SkillExtraInfo extraInfo) {
         if (self) {
             player.setAbsorptionAmount(player.getAbsorptionAmount() + this.amount);
         } else {
             target.setAbsorptionAmount(player.getAbsorptionAmount() + this.amount);
         }
-        return true;
     }
 }

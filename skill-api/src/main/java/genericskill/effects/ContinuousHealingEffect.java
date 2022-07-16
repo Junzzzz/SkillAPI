@@ -32,12 +32,11 @@ public class ContinuousHealingEffect extends AbstractTargetSkillEffect {
     }
 
     @Override
-    public boolean unleash(EntityPlayer player, EntityLivingBase target, SkillExtraInfo extraInfo) {
+    public void unleash(EntityPlayer player, EntityLivingBase target, SkillExtraInfo extraInfo) {
         if (self) {
             player.addPotionEffect(new PotionEffect(GenericSkillPotions.SKILL_HEAL.id, secondDuration * 20, healAmount));
         } else {
             target.addPotionEffect(new PotionEffect(GenericSkillPotions.SKILL_HEAL.id, secondDuration * 20, healAmount));
         }
-        return true;
     }
 }

@@ -74,9 +74,8 @@ public final class SkillExecutor {
             }
             if (player.isEntityAlive() && skill.canUnleash(player, extraInfo)) {
                 try {
-                    if (skill.unleash(player, extraInfo)) {
-                        skill.afterUnleash(player, extraInfo);
-                    }
+                    skill.unleash(player, extraInfo);
+                    skill.afterUnleash(player, extraInfo);
                 } catch (Exception e) {
                     String profileName = Skills.getCurrentProfileInfo().getName();
                     SkillLog.error(e, "Unleash skill failed! Player: %s, Profile: %s, Skill: %s",

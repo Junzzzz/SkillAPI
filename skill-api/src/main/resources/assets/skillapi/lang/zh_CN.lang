@@ -47,10 +47,10 @@ skill.effect.universal.mana=所需魔力
 skill.effect.universal.cooldown=冷却时间(秒)
 skill.effect.universal.description=技能描述
 
-skill.static.skillapi.TestStaticSkill=测试静态技能
-skill.static.skillapi.TestStaticSkill.description=测试技能描述\nAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\nBBBBBBBBBBB
+skill.static.skillapi.DemoStaticSkill=测试静态技能
+skill.static.skillapi.DemoStaticSkill.description=测试技能描述\nAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\nBBBBBBBBBBB
 
 skill.effect.skillapi.AbstractTargetSkillEffect.width=指向目标范围宽度
 skill.effect.skillapi.AbstractTargetSkillEffect.length=指向目标范围长度
-skill.effect.skillapi.TestSkillEffect=测试技能效果
-skill.effect.skillapi.TestSkillEffect.testParam=测试参数
+skill.effect.skillapi.DemoSkillEffect=测试技能效果
+skill.effect.skillapi.DemoSkillEffect.testParam=测试参数

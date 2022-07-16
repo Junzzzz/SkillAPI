@@ -3,6 +3,7 @@ package skillapi.client;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.util.MathHelper;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.GuiIngameForge;
 import org.lwjgl.opengl.GL11;
 import skillapi.api.gui.base.RenderUtils;
@@ -69,7 +70,14 @@ public class SkillHud {
                 RenderUtils.bindTexture(KnownSkillsGui.GUI);
                 RenderUtils.drawTexturedModalRect(x - 2 - 8, y - 2 - 5 + (20 * i), 219, 102, 20, 20);
             }
-            if (skill != null) {
+            if (skill == null) {
+                continue;
+            }
+            ResourceLocation icon = skill.getIconResource();
+            if (icon != null) {
+                RenderUtils.bindTexture(icon);
+                RenderUtils.drawTexturedModalRect(x - 8, y - 5 + (20 * i), 0, 0, 16, 16, 0.0625D);
+            } else {
                 String first = skill.getLocalizedName().substring(0, 1);
                 RenderUtils.drawCenteredString(first, x, y + (20 * i), 0xFFFFFF);
             }

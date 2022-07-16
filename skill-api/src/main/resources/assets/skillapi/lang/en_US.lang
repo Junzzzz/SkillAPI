@@ -44,7 +44,3 @@ skill.effect.universal.name=Name
 skill.effect.universal.mana=Mana
 skill.effect.universal.cooldown=Cooldown(s)
 
-skill.static.skillapi.TestStaticSkill=Test Static Skill
-skill.static.skillapi.TestStaticSkill.description=Test Static Skill Description\nAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\nBBBBBBBBBBB
-skill.effect.skillapi.TestSkillEffect=Test Skill Effect
-skill.effect.skillapi.TestSkillEffect.testParam=Test Skill Effect Param

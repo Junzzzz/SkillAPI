@@ -23,7 +23,7 @@ public class IgniteEffect extends AbstractDynamicFrequencyPotionEffect {
     private static final DamageSource damageSource = new DamageSource("onFire").setDamageBypassesArmor().setFireDamage();
 
     @Override
-    public boolean unleash(EntityPlayer player, EntityLivingBase target, SkillExtraInfo extraInfo) {
+    public void unleash(EntityPlayer player, EntityLivingBase target, SkillExtraInfo extraInfo) {
         BiConsumer<DynamicPotionEffect, EntityLivingBase> trigger = (effect, entity) -> {
             if (entity.isBurning()) {
                 entity.attackEntityFrom(damageSource, damage);
@@ -33,7 +33,6 @@ public class IgniteEffect extends AbstractDynamicFrequencyPotionEffect {
         };
         target.addPotionEffect(new DynamicPotionEffect(GenericSkillPotions.IGNITE, (int) (duration * 20), (int) (triggerFrequency * 20), trigger));
         target.setFire((int) duration);
-        return true;
     }
 
     @SubscribeEvent

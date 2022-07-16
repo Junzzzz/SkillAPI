@@ -17,12 +17,9 @@ public abstract class AbstractStaticSkill extends AbstractSkill {
 
     protected abstract void init(StaticSkillBuilder builder);
 
-    protected abstract void effect(EntityPlayer player, SkillExtraInfo info);
-
     @Override
-    public final boolean unleash(EntityPlayer player, SkillExtraInfo info) {
-        this.effect(player, info);
-        return true;
+    public final void afterUnleash(EntityPlayer player, SkillExtraInfo extraInfo) {
+        // NOP
     }
 
     static final class StaticSkillBuilder {
@@ -48,6 +45,7 @@ public abstract class AbstractStaticSkill extends AbstractSkill {
             return this;
         }
 
+        @Deprecated
         StaticSkillBuilder charge(int charge) {
             if (charge < 0) {
                 throw new SkillRuntimeException("Invalid skill parameter [charge]: %d", charge);

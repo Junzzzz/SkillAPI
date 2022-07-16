@@ -33,7 +33,7 @@ public class EventBusHandler {
             MC_REGISTER = MC_EVENT_BUS.getClass().getDeclaredMethod("register", Class.class, Object.class, Method.class, ModContainer.class);
             MC_REGISTER.setAccessible(true);
         } catch (NoSuchMethodException e) {
-            throw new SkillRuntimeException("Can't find Forge event class");
+            throw new SkillRuntimeException("Can't find event bus class");
         }
     }
 

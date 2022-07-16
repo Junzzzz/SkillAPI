@@ -77,24 +77,26 @@ public class SkillClient {
         if (skill == null || cooldown == null) {
             return;
         }
-        if (SKILL.getMana() >= skill.getMana() && cooldown.isCooledDown()) {
-            // Reuse
-            SKILL_EXTRA_INFO.reset();
+        if (SKILL.getMana() < skill.getMana()) {
+            Message.send(SKILL.getPlayer(), "[客户端] 魔力不足: " + SKILL.getMana() + "/" + skill.getMana());
+            return;
+        }
+        if (!cooldown.isCooledDown()) {
+            Message.send(SKILL.getPlayer(), "[客户端] 技能未冷却: " + cooldown);
+            return;
+        }
 
-            if (skill.clientBeforeUnleash(SKILL.getPlayer(), SKILL_EXTRA_INFO)) {
-                Packet.sendToServer(new PlayerUnleashSkillPacket(index, SKILL_EXTRA_INFO));
-                SKILL.consumeMana(skill.getMana());
-                cooldown.setCooling();
-            } else {
-                // TODO clear
-                Message.send(SKILL.getPlayer(), "释放条件不足");
-            }
+        // Reuse
+        SKILL_EXTRA_INFO.reset();
+
+        if (skill.clientBeforeUnleash(SKILL.getPlayer(), SKILL_EXTRA_INFO)) {
+            Packet.sendToServer(new PlayerUnleashSkillPacket(index, SKILL_EXTRA_INFO));
+            SKILL.consumeMana(skill.getMana());
+            cooldown.setCooling();
+            skill.clientUnleash(SKILL.getPlayer(), SKILL_EXTRA_INFO.copy());
         } else {
-            if (cooldown.isCooledDown()) {
-                Message.send(SKILL.getPlayer(), "技能未冷却: " + cooldown);
-            } else {
-                Message.send(SKILL.getPlayer(), "魔力不足: " + SKILL.getMana() + "/" + skill.getMana());
-            }
+            // TODO clear
+            Message.send(SKILL.getPlayer(), "[客户端] 释放条件不足");
         }
     }
 }

@@ -1,8 +1,9 @@
 package genericskill.effects;
 
+import genericskill.utils.SkillUtils;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.MathHelper;
+import net.minecraft.util.Vec3;
 import skillapi.api.annotation.SkillEffect;
 import skillapi.api.annotation.SkillParam;
 import skillapi.skill.AbstractTargetSkillEffect;
@@ -17,11 +18,11 @@ public class RepelEffect extends AbstractTargetSkillEffect {
     private double distance;
 
     @Override
-    public boolean unleash(EntityPlayer player, EntityLivingBase target, SkillExtraInfo info) {
-        target.motionX += -MathHelper.sin(player.rotationYaw * (float) Math.PI / 180.0F) * distance;
+    public void unleash(EntityPlayer player, EntityLivingBase target, SkillExtraInfo info) {
+        Vec3 look = player.getLookVec();
+        target.motionX += SkillUtils.getMotionXZ(look.xCoord * distance);
         target.motionY += 0.1D;
-        target.motionZ += MathHelper.cos(player.rotationYaw * (float) Math.PI / 180.0F) * distance;
+        target.motionZ += SkillUtils.getMotionXZ(look.zCoord * distance);
         target.isAirBorne = true;
-        return true;
     }
 }
