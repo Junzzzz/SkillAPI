@@ -67,17 +67,31 @@ public class YAxisAlignedBoundingBox {
         if (box.minY > this.maxY || box.maxY < this.minY) {
             return false;
         }
-        return checkPointInBox(box.minX, box.minZ)
+        if (checkPointInBox(box.minX, box.minZ)
                 || checkPointInBox(box.minX, box.maxZ)
                 || checkPointInBox(box.maxX, box.minZ)
-                || checkPointInBox(box.maxX, box.maxZ);
+                || checkPointInBox(box.maxX, box.maxZ)) {
+            return true;
+        } else {
+            Vector2d[] boxVectors = {new Vector2d(box.minX, box.minZ), new Vector2d(box.minX, box.maxZ), new Vector2d(box.maxX, box.maxZ), new Vector2d(maxX, box.minZ)};
+            for (Vector2d vec : this.vertex) {
+                if (checkPointInBox(boxVectors, vec.x, vec.y)) {
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 
     private boolean checkPointInBox(double x, double y) {
+        return checkPointInBox(this.vertex, x, y);
+    }
+
+    private boolean checkPointInBox(Vector2d[] vertices, double x, double y) {
         int crossings = 0;
-        for (int i = 0, j = vertex.length - 1; i < vertex.length; j = i++) {
-            if (((vertex[i].x > x) != (vertex[j].x > x))
-                    && (x > (vertex[j].x - vertex[i].x) * (y - vertex[i].y) / (vertex[j].y - vertex[i].y) + vertex[i].x))
+        for (int i = 0, j = vertices.length - 1; i < vertices.length; j = i++) {
+            if (((vertices[i].x > x) != (vertices[j].x > x))
+                    && (x > (vertices[j].x - vertices[i].x) * (y - vertices[i].y) / (vertices[j].y - vertices[i].y) + vertices[i].x))
                 crossings++;
         }
         return (crossings % 2 != 0);
@@ -96,7 +110,7 @@ public class YAxisAlignedBoundingBox {
         for (int chunkX = i; chunkX <= j; chunkX++) {
             for (int chunkY = k; chunkY <= l; chunkY++) {
                 if (chunkProvider.chunkExists(chunkX, chunkY)) {
-                    searchChunkEntities(world.getChunkFromChunkCoords(chunkX, chunkY),result);
+                    searchChunkEntities(world.getChunkFromChunkCoords(chunkX, chunkY), result);
                 }
             }
         }
