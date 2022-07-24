@@ -1,7 +1,0 @@
-allprojects {
-    repositories {
-        maven {
-            url = "https://bmclapi.bangbang93.com/maven/"
-        }
-    }
-}
