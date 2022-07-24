@@ -16,7 +16,7 @@ plugins {
 apply plugin: 'forge'
 
 version = "0.1"
-archivesBaseName = "SkillAPI+GenericPack"
+archivesBaseName = "SkillAPI GenericPack"
 group = "com.github.junzzzz"
 
 sourceCompatibility = 1.8
@@ -64,30 +64,31 @@ jar {
     includeEmptyDirs = false
 }
 
-task unJar(type:Copy, dependsOn:'build') {
+task unJar(type: Copy, dependsOn: 'build') {
     from zipTree(jar.archiveFile)
     into 'build/unjar'
 }
 
-task buildAPI(type:Jar, dependsOn:'unJar') {
-    archiveFileName = "SkillAPI" + "-" + archiveVersion + "(" + minecraft.version + ")." + archiveExtension
+task buildAPI(type: Jar, dependsOn: 'unJar') {
+    archiveFileName = "[" + minecraft.version + "] SkillAPI-" + version + "." + extension
     from 'build/unjar'
     include('assets/skillapi/**', 'skillapi/**')
-    from('api_info') {
-        include('mcmod.info', 'pack.mcmeta')
-        // replace version and mcversion
+    // Mod info
+    from('api-info') {
+        include('mcmod-api.info', 'pack.mcmeta')
         expand([version: archiveVersion, mcversion: minecraft.version])
     }
 }
 
-task buildPack(type:Jar, dependsOn:'unJar') {
-    archiveFileName = "GenericSkill Pack" + "-" + archiveVersion + "(" + minecraft.version + ")." + archiveExtension
+task buildPack(type: Jar, dependsOn: 'unJar') {
+    archiveFileName = "[" + minecraft.version + "] GenericSkill Pack-" + version + "." + extension
     from 'build/unjar'
     include('assets/genericskill/**', 'genericskill/**')
-    from('pack_info') {
-        include('mcmod.info')
-        // replace version and mcversion
+    // Mod info
+    from('pack-info') {
+        include('mcmod-pack.info')
         expand([version: archiveVersion, mcversion: minecraft.version])
     }
 }
-task buildBoth(dependsOn:['buildAPI','buildPack'])
+
+task buildBoth(dependsOn: ['buildAPI', 'buildPack'])

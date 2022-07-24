@@ -7,9 +7,9 @@
       "credits": "",
       "logoFile": "",
       "mcversion": $mcversion,
-      "url": "http://www.minecraftforum.net/topic/542774-",
+      "url": "https://github.com/Junzzzz/SkillAPI",
       "updateUrl": "",
-      "authorList": ["Paraknight","GotoLink"],
+      "authorList": ["Junzzzz","GotoLink"],
       "parent":"",
       "screenshots": [],
       "dependencies": ["required-after:skillapi"]
