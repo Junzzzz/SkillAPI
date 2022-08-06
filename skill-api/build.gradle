@@ -94,7 +94,7 @@ task buildAPI(type: Jar, dependsOn: 'unJar') {
 task buildPack(type: Jar, dependsOn: 'unJar') {
     archiveFileName = "[" + minecraft.version + "] GenericSkill Pack-" + version + "." + extension
     from 'build/unjar'
-    include('assets/genericskill/**', 'genericskill/**')
+    include('assets/genericskills/**', 'genericskills/**')
     // Mod info
     from('pack-info') {
         include('mcmod-pack.info')
