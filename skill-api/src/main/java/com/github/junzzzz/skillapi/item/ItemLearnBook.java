@@ -33,7 +33,7 @@ public class ItemLearnBook extends Item {
         super();
 
         setUnlocalizedName("skillLearnBook");
-        setTextureName("skillapi:golden_egg");
+        setTextureName(MOD_ID + ":skill_learn_book");
         setMaxStackSize(1);
 
         // Set has Metadata
