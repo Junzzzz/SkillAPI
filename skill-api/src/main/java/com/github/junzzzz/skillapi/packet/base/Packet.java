@@ -134,7 +134,7 @@ public final class Packet {
         if (proxy != null) {
             CHANNEL.sendTo(proxy, player);
         } else {
-            SkillLog.error("Unknown Error: packet [%s] is not registered", packet.getClass().getName());
+            SkillLog.error("Unknown Error: packet [%s] exists some problems", packet.getClass().getName());
         }
     }
 
@@ -152,7 +152,7 @@ public final class Packet {
         if (proxy != null) {
             CHANNEL.sendToServer(proxy);
         } else {
-            SkillLog.error("Unknown Error: packet [%s] is not registered", packet.getClass().getName());
+            SkillLog.error("Unknown Error: packet [%s] exists some problems", packet.getClass().getName());
         }
     }
 
@@ -161,7 +161,7 @@ public final class Packet {
         if (proxy != null) {
             CHANNEL.sendToDimension(proxy, dimensionId);
         } else {
-            SkillLog.error("Unknown Error: packet [%s] is not registered", packet.getClass().getName());
+            SkillLog.error("Unknown Error: packet [%s] exists some problems", packet.getClass().getName());
         }
     }
 
@@ -170,7 +170,7 @@ public final class Packet {
         if (proxy != null) {
             CHANNEL.sendToAllAround(proxy, point);
         } else {
-            SkillLog.error("Unknown Error: packet [%s] is not registered", packet.getClass().getName());
+            SkillLog.error("Unknown Error: packet [%s] exists some problems", packet.getClass().getName());
         }
     }
 
@@ -179,7 +179,7 @@ public final class Packet {
         if (proxy != null) {
             CHANNEL.sendToAll(proxy);
         } else {
-            SkillLog.error("Unknown Error: packet [%s] is not registered", packet.getClass().getName());
+            SkillLog.error("Unknown Error: packet [%s] exists some problems", packet.getClass().getName());
         }
     }
 
