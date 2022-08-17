@@ -16,23 +16,23 @@ import java.lang.reflect.Type;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CallbackPacketDataType {
+public class ParameterizedDataType {
     private String name;
 
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    private CallbackPacketDataType[] parameterizedTypes;
+    private ParameterizedDataType[] parameterizedTypes;
 
-    public static CallbackPacketDataType get(Type type) {
+    public static ParameterizedDataType get(Type type) {
         if (type instanceof ParameterizedType) {
             ParameterizedType parameterizedType = (ParameterizedType) type;
             Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
-            CallbackPacketDataType[] types = new CallbackPacketDataType[actualTypeArguments.length];
+            ParameterizedDataType[] types = new ParameterizedDataType[actualTypeArguments.length];
             for (int i = 0; i < actualTypeArguments.length; i++) {
                 types[i] = get(actualTypeArguments[i]);
             }
-            return new CallbackPacketDataType(parameterizedType.getRawType().getTypeName(), types);
+            return new ParameterizedDataType(parameterizedType.getRawType().getTypeName(), types);
         } else {
-            return new CallbackPacketDataType(type.getTypeName(), new CallbackPacketDataType[0]);
+            return new ParameterizedDataType(type.getTypeName(), new ParameterizedDataType[0]);
         }
     }
 }

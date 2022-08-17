@@ -25,7 +25,7 @@ public class CallbackResultPacket<T> extends AbstractPacket {
     private T data;
 
     @JsonIgnore
-    private CallbackPacketDataType dataType;
+    private ParameterizedDataType dataType;
 
     @Override
     protected void run(EntityPlayer player, Side from) {

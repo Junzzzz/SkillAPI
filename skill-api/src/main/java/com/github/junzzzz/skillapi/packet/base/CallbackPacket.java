@@ -41,13 +41,13 @@ public abstract class CallbackPacket<T> extends AbstractPacket {
 
     protected abstract T returns(EntityPlayer player, Side from);
 
-    private static CallbackPacketDataType getDataType(CallbackPacket<?> packet) {
+    private static ParameterizedDataType getDataType(CallbackPacket<?> packet) {
         ParameterizedType superclass = (ParameterizedType) packet.getClass().getGenericSuperclass();
         Type[] actualTypeArguments = superclass.getActualTypeArguments();
         if (actualTypeArguments.length != 1) {
             throw new SkillRuntimeException("Unknown Error");
         }
-        return CallbackPacketDataType.get(actualTypeArguments[0]);
+        return ParameterizedDataType.get(actualTypeArguments[0]);
     }
 
     public static class Serializer implements PacketSerializer<CallbackPacket<?>> {
