@@ -83,7 +83,7 @@ task unJar(type: Copy, dependsOn: 'build') {
 task buildAPI(type: Jar, dependsOn: 'unJar') {
     archiveFileName = "[" + minecraft.version + "] SkillAPI-" + version + "." + extension
     from 'build/unjar'
-    include('assets/skillapi/**', 'com/github/junzzzz/skillapi/**')
+    include('assets/skillapi/**', 'io/github/junzzzz/skillapi/**')
     // Mod info
     from('api-info') {
         include('mcmod-api.info', 'pack.mcmeta')
@@ -94,7 +94,7 @@ task buildAPI(type: Jar, dependsOn: 'unJar') {
 task buildPack(type: Jar, dependsOn: 'unJar') {
     archiveFileName = "[" + minecraft.version + "] GenericEffect Pack-" + version + "." + extension
     from 'build/unjar'
-    include('assets/generic-effects/**', 'com/github/junzzzz/genericeffects/**')
+    include('assets/generic-effects/**', 'io/github/junzzzz/genericeffects/**')
     // Mod info
     from('pack-info') {
         include('mcmod-pack.info')
