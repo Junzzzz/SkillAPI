@@ -1,17 +1,17 @@
 [
-{
-  "modid": "skillapi",
-  "name": "Skill API",
-  "description": "",
-  "version": $version,
-  "credits": "",
-  "logoFile": "",
-  "mcversion": $mcversion,
-  "url": "https://github.com/Junzzzz/SkillAPI",
-  "updateUrl": "",
-  "authorList": ["Junzzzz","GotoLink"],
-  "parent":"",
-  "screenshots": [],
-  "dependencies": []
-}
+  {
+    "modid": "skillapi",
+    "name": "Skill API",
+    "description": "",
+    "version": $version,
+    "credits": "",
+    "logoFile": "",
+    "mcversion": $mcversion,
+    "url": "https://github.com/Junzzzz/SkillAPI",
+    "updateUrl": "",
+    "authorList": ["Junzzzz","GotoLink"],
+    "parent":"",
+    "screenshots": [],
+    "dependencies": []
+  }
 ]
