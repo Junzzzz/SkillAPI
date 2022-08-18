@@ -13,7 +13,6 @@ import org.lwjgl.opengl.GL11;
 
 /**
  * @author Jun
- * @date 2020/11/3.
  */
 @SideOnly(Side.CLIENT)
 public abstract class BaseGui extends GenericGui {
@@ -85,6 +84,10 @@ public abstract class BaseGui extends GenericGui {
 
     /**
      * Called when the mouse is clicked.
+     *
+     * @param mouseX Mouse coordinates X
+     * @param mouseY Mouse coordinates Y
+     * @param button Mouse button ID
      */
     protected void mouseClicked(int mouseX, int mouseY, int button) {
         // Left mouse button down

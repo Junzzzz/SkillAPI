@@ -10,13 +10,16 @@ import org.lwjgl.opengl.GL11;
 
 /**
  * @author Jun
- * @date 2021/3/8.
  */
 @SideOnly(Side.CLIENT)
 public final class RenderUtils {
     /**
      * Draws a rectangle with a vertical gradient between the specified colors.
      *
+     * @param left        Rectangle left coordinate
+     * @param top         Rectangle top coordinate
+     * @param right       Rectangle right coordinate
+     * @param bottom      Rectangle bottom coordinate
      * @param colorTop    (RGBA) The color of top
      * @param colorBottom (RGBA) The color of bottom
      */
@@ -135,6 +138,11 @@ public final class RenderUtils {
 
     /**
      * Renders the specified text to the screen, center-aligned.
+     *
+     * @param text  Text to be drawn
+     * @param x     Coordinate X
+     * @param y     Coordinate Y
+     * @param color Text color
      */
     public static void drawCenteredString(String text, int x, int y, int color) {
         drawCenteredString(text, x, y, color, false);
@@ -142,6 +150,12 @@ public final class RenderUtils {
 
     /**
      * Renders the specified text to the screen, center-aligned.
+     *
+     * @param text       Text to be drawn
+     * @param x          Coordinate X
+     * @param y          Coordinate Y
+     * @param color      Text color
+     * @param dropShadow Whether to draw shadows
      */
     public static void drawCenteredString(String text, int x, int y, int color, boolean dropShadow) {
         FontRenderer fontRenderer = GuiApi.minecraft.fontRenderer;

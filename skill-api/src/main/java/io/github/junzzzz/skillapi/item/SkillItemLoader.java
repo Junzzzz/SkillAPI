@@ -7,7 +7,6 @@ import net.minecraft.item.Item;
 
 /**
  * @author Jun
- * @date 2020/8/19.
  */
 public class SkillItemLoader {
     public static final CreativeTabs TAB = new SkillCreativeTabs();

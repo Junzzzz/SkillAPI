@@ -4,7 +4,6 @@ import io.github.junzzzz.skillapi.api.gui.base.GenericListener;
 
 /**
  * @author Jun
- * @date 2021/3/20.
  */
 @FunctionalInterface
 public interface FocusChangedListener extends GenericListener {

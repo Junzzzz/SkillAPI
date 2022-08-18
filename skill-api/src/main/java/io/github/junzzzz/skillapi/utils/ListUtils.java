@@ -5,7 +5,6 @@ import java.util.function.Function;
 
 /**
  * @author Jun
- * @date 2020/2/15.
  */
 public class ListUtils {
     /**
@@ -15,7 +14,7 @@ public class ListUtils {
      * @param getter Value到Key的映射
      * @param <K>    Key
      * @param <V>    Value
-     * @return HashMap<K, V>
+     * @return HashMap
      */
     public static <K, V> Map<K, V> toMap(List<V> list, Function<V, K> getter) {
         Objects.requireNonNull(getter);

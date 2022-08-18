@@ -5,7 +5,6 @@ import java.util.Objects;
 
 /**
  * @author Jun
- * @date 2021/3/22.
  */
 public class Pair<K, V> implements Map.Entry<K, V> {
     private final K key;

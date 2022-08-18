@@ -30,8 +30,7 @@ public class TextFieldComponent extends BaseComponent {
 
     public TextFieldComponent(Layout layout) {
         super(layout);
-        this.textField = new GuiTextField(getFontRenderer(), layout.getX(), layout.getY(), layout.getWidth(),
-                layout.getHeight());
+        this.textField = new GuiTextField(getFontRenderer(), layout.getX(), layout.getY(), layout.getWidth(), layout.getHeight());
         this.textField.setCanLoseFocus(true);
     }
 
@@ -51,8 +50,7 @@ public class TextFieldComponent extends BaseComponent {
         };
         KeyTypedListener keyType = (character, key) -> {
             // Functional key
-            if (character == 1 || character == 3 || character == 22 || character == 24 ||
-                    key == KEY_BACK || key == KEY_HOME || key == KEY_LEFT || key == KEY_RIGHT || key == KEY_END || key == KEY_DELETE) {
+            if (character == 1 || character == 3 || character == 22 || character == 24 || key == KEY_BACK || key == KEY_HOME || key == KEY_LEFT || key == KEY_RIGHT || key == KEY_END || key == KEY_DELETE) {
                 this.textField.textboxKeyTyped(character, key);
 
                 // Call listener
@@ -114,14 +112,12 @@ public class TextFieldComponent extends BaseComponent {
     }
 
     public enum TextFieldType {
-        NORMAL(null),
-        POSITIVE_INTEGER((c, i, t) -> {
+        NORMAL(null), POSITIVE_INTEGER((c, i, t) -> {
             if ('0' <= c && c <= '9') {
                 return Long.parseLong(t.getText() + c) > Integer.MAX_VALUE;
             }
             return true;
-        }),
-        POSITIVE_LONG((c, i, t) -> {
+        }), POSITIVE_LONG((c, i, t) -> {
             if ('0' <= c && c <= '9') {
                 BigInteger number = new BigInteger(t.getText() + c);
 
@@ -156,6 +152,7 @@ public class TextFieldComponent extends BaseComponent {
          *
          * @param eventCharacter Key character
          * @param eventKey       Key ID
+         * @param textField      TextField Component
          * @return Intercept when the return value is {@code true}
          * @see org.lwjgl.input.Keyboard
          */

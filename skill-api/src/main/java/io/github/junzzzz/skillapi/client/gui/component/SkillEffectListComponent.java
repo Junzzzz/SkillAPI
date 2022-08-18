@@ -9,7 +9,6 @@ import java.util.List;
 
 /**
  * @author Jun
- * @date 2021/2/24.
  */
 public final class SkillEffectListComponent extends AbstractScrollingListComponent<String> {
     private ButtonComponent associatedButton;

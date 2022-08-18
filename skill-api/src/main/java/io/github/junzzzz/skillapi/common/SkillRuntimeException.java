@@ -2,7 +2,6 @@ package io.github.junzzzz.skillapi.common;
 
 /**
  * @author Jun
- * @date 2020/8/26.
  */
 public class SkillRuntimeException extends RuntimeException {
     public SkillRuntimeException(Throwable cause) {

@@ -15,6 +15,9 @@ public interface SkillEffect {
 
     /**
      * Will be executed on the server side
+     *
+     * @param player    Skill releaser
+     * @param extraInfo Extra info map
      */
     void unleash(EntityPlayer player, SkillExtraInfo extraInfo);
 
@@ -22,12 +25,17 @@ public interface SkillEffect {
 
     /**
      * Used to perform client side effects
+     *
+     * @param player    Skill releaser
+     * @param extraInfo Extra info map
      */
     @SideOnly(Side.CLIENT)
     void clientUnleash(EntityPlayer player, SkillExtraInfo extraInfo);
 
     /**
      * Fully qualified name
+     *
+     * @return Unlocalized name
      */
     String getUnlocalizedName();
 }

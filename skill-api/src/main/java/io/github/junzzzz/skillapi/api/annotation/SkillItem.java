@@ -12,7 +12,9 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface SkillItem {
     /**
-     * Name
+     * Item name
+     *
+     * @return The name of the registered item
      */
     String value();
 }

@@ -7,7 +7,6 @@ import java.lang.annotation.Target;
 
 /**
  * @author Jun
- * @date 2020/8/25.
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
@@ -16,6 +15,8 @@ public @interface SkillEffect {
 
     /**
      * Weather to search for parameters from parent class
+     *
+     * @return If {@code true}, search fields in parent class
      */
     boolean callSuper() default false;
 

@@ -9,7 +9,6 @@ import java.util.Objects;
 
 /**
  * @author Jun
- * @date 2020/11/20.
  */
 public class ScrollingListComponent<T> extends AbstractScrollingListComponent<T> {
     private final SlotRenderer<T> slotRenderer;

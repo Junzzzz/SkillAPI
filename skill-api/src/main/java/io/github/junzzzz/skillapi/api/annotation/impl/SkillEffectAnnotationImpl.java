@@ -11,7 +11,6 @@ import java.lang.reflect.Modifier;
 
 /**
  * @author Jun
- * @date 2020/9/4.
  */
 @SkillAnnotation
 public final class SkillEffectAnnotationImpl implements SkillAnnotationRegister<SkillEffect> {

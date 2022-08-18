@@ -16,7 +16,6 @@ import net.minecraftforge.event.world.WorldEvent;
  * If you do not need the code to clearly distinguish between the server and the client, please do not inherit this class
  *
  * @author Jun
- * @date 2020/8/20.
  */
 public abstract class AbstractSkillEvent<T extends Event> {
     private boolean onServer;

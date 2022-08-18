@@ -10,6 +10,8 @@ import io.github.junzzzz.skillapi.api.gui.base.LocalListener;
 public interface ComponentUpdateListener extends LocalListener {
     /**
      * Called when the component is updated
+     *
+     * @param component Updated components
      */
     void onUpdate(BaseComponent component);
 }

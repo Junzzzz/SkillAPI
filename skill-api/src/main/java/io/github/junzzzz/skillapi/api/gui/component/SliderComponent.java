@@ -12,7 +12,6 @@ import org.lwjgl.opengl.GL11;
 
 /**
  * @author Jun
- * @date 2020/11/18.
  */
 public class SliderComponent extends BaseComponent {
     private final Layout sliderButton;

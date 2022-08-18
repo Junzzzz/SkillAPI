@@ -53,6 +53,11 @@ public class ReflectionUtils {
 
     /**
      * Find which class the field is in, including super classes
+     *
+     * @param fromClass Start of the searched class
+     * @param name      Field name
+     * @param <T>       Class type
+     * @return Returns {@code null} if not found, otherwise returns the class that has the field
      */
     public static <T> Class<? super T> findClassByFieldName(Class<T> fromClass, String name) {
         Class<? super T> result = fromClass;

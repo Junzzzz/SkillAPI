@@ -14,7 +14,6 @@ import java.lang.reflect.Method;
 
 /**
  * @author Jun
- * @date 2020/8/22.
  */
 public class EventBusHandler {
     private static final EventBus FML_EVENT_BUS;

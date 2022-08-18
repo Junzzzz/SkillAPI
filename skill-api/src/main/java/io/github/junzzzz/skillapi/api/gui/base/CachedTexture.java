@@ -11,7 +11,6 @@ import org.lwjgl.opengl.GL11;
 
 /**
  * @author Jun
- * @date 2021/2/14.
  */
 @SideOnly(Side.CLIENT)
 public class CachedTexture {
@@ -49,7 +48,7 @@ public class CachedTexture {
      */
     public void startDrawTexture() {
         if (delFlag) {
-            throw new RuntimeException("This texture has been deleted, please recreate it！");
+            throw new RuntimeException("This texture has been deleted, please recreate it!");
         }
         this.hasTexture = false;
         if (checkBounds()) {

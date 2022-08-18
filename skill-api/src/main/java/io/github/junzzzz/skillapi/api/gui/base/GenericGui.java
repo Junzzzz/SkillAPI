@@ -13,7 +13,6 @@ import java.util.List;
 
 /**
  * @author Jun
- * @date 2021/3/8.
  */
 @SideOnly(Side.CLIENT)
 public abstract class GenericGui {
@@ -103,6 +102,8 @@ public abstract class GenericGui {
 
     /**
      * The RenderEngine instance used by Minecraft
+     *
+     * @return Minecraft TextureManager
      */
     protected final TextureManager getTextureManager() {
         return GuiApi.minecraft.renderEngine;

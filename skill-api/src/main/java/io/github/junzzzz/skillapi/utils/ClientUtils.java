@@ -24,7 +24,6 @@ import java.util.Set;
 
 /**
  * @author Jun
- * @date 2020/9/26.
  */
 @SideOnly(Side.CLIENT)
 public class ClientUtils {

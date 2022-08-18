@@ -2,7 +2,6 @@ package io.github.junzzzz.skillapi.api.util.function;
 
 /**
  * @author Jun
- * @date 2021/3/9.
  */
 @FunctionalInterface
 public interface EventFunction {

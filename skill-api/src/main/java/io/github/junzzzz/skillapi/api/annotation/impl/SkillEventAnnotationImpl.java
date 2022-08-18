@@ -22,7 +22,6 @@ import java.lang.reflect.Type;
 
 /**
  * @author Jun
- * @date 2020/8/26.
  */
 @SkillAnnotation
 public final class SkillEventAnnotationImpl implements SkillAnnotationRegister<SkillEvent> {
