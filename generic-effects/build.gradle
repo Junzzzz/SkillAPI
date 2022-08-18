@@ -10,7 +10,7 @@ plugins {
 
 apply plugin: 'forge'
 
-version = "0.1-SNAPSHOT"
+version = VERSION
 archivesBaseName = "GenericEffects"
 group = GROUP
 
