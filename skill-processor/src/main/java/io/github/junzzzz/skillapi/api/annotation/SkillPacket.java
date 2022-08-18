@@ -1,4 +1,4 @@
-package skillapi.api.annotation;
+package io.github.junzzzz.skillapi.api.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

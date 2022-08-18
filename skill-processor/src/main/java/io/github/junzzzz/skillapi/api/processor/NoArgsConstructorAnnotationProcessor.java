@@ -1,4 +1,4 @@
-package skillapi.api.processor;
+package io.github.junzzzz.skillapi.api.processor;
 
 import com.google.auto.service.AutoService;
 import com.sun.source.tree.Tree;
@@ -10,7 +10,7 @@ import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.tree.TreeTranslator;
 import com.sun.tools.javac.util.*;
-import skillapi.api.annotation.SkillPacket;
+import io.github.junzzzz.skillapi.api.annotation.SkillPacket;
 
 import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;

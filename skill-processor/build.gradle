@@ -5,7 +5,7 @@ plugins {
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-group 'com.github.junzzzz'
+group 'io.github.junzzzz'
 version '0.1'
 
 dependencies {
