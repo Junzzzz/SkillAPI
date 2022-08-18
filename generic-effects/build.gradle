@@ -1,0 +1,54 @@
+buildscript {
+    dependencies {
+        classpath group: 'com.anatawa12.forge', name: 'ForgeGradle', version: '1.2-1.0.+', changing: true
+    }
+}
+
+plugins {
+    id 'java-library'
+}
+
+apply plugin: 'forge'
+
+version = "0.1-SNAPSHOT"
+archivesBaseName = "GenericEffects"
+group = GROUP
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+minecraft {
+    version = "1.7.10-10.13.4.1558-1.7.10"
+    runDir = "minecraft"
+}
+
+ext {
+    lombokVersion = '1.18.22'
+}
+
+dependencies {
+    compileOnly group: 'org.projectlombok', name: 'lombok', version: lombokVersion
+    annotationProcessor group: 'org.projectlombok', name: 'lombok', version: lombokVersion
+    implementation project(':skill-api')
+}
+
+processResources {
+    // replace stuff in mcmod.info, nothing else
+    from(sourceSets.main.resources.srcDirs) {
+        include 'mcmod.info'
+
+        // replace version and mcversion
+        expand 'version': project.version, 'mcversion': project.minecraft.version
+    }
+
+    // copy everything else, thats not mcmod.info
+    from(sourceSets.main.resources.srcDirs) {
+        include("*.png", "*.lang")
+    }
+}
+
+jar {
+    // Keep the jar as clean as possible
+    includeEmptyDirs = false
+    destinationDirectory = file("$rootDir/build")
+}

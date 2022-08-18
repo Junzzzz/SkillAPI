@@ -1,0 +1,31 @@
+allprojects {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+
+    buildscript {
+        repositories {
+            mavenLocal()
+            maven {
+                name = "forge"
+                url = "https://maven.minecraftforge.net"
+            }
+            mavenCentral()
+            maven {
+                name = "mojang"
+                url = "https://libraries.minecraft.net/"
+            }
+            maven {
+                name = "sonatype-snapshots"
+                url = "https://oss.sonatype.org/content/repositories/snapshots/"
+            }
+        }
+    }
+}
+
+apply plugin: 'base'
+
+clean {
+    delete "${rootDir}/build"
+}

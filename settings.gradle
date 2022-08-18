@@ -1,2 +1,2 @@
 rootProject.name = 'SkillAPI'
-include ':skill-processor',':skill-api'
+include ':skill-processor',':skill-api',':generic-effects'
