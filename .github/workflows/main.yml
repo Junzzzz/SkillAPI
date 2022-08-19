@@ -1,4 +1,4 @@
-name: Gradle Package
+name: Build Project
 
 on:
   push:
@@ -23,7 +23,20 @@ jobs:
         uses: gradle/gradle-build-action@v2
 
       - name: 'Build with Gradle'
-        run: ./gradlew build --stacktrace
+        id: gradle-build
+        run: |
+          ./gradlew build --stacktrace
+          echo ::set-output name=version::$(./gradlew -q getVersion)
+
+      - name: 'Publish snapshot'
+        if: endsWith(${{ steps.gradle-build.outputs.version }}, 'SNAPSHOT')
+        run: ./gradlew publish --stacktrace
+        env:
+          SIGN_ID: ${{ secrets.SIGN_ID }}
+          SIGN_KEY: ${{ secrets.SIGN_KEY }}
+          SIGN_PWD: ${{ secrets.SIGN_PWD }}
+          OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
 
       - name: 'Upload artifacts'
         uses: actions/upload-artifact@v3
