@@ -28,7 +28,7 @@ import java.util.ArrayList;
 public class KnownSkillsGui extends BaseGui {
     public static final ResourceLocation GUI = new ResourceLocation(Application.MOD_ID, "textures/gui/skill-gui.png");
 
-    private final Layout[] skillBarLayouts = new Layout[5];
+    private final Layout[] skillBarLayouts = new Layout[PlayerSkills.MAX_SKILL_BAR];
     private final String[] skillKeys = new String[PlayerSkills.MAX_SKILL_BAR];
     private KnownSkillListComponent skillListComponent;
     private PlayerSkills playerSkills;
@@ -36,6 +36,7 @@ public class KnownSkillsGui extends BaseGui {
     private boolean isDragging = false;
     private int draggingOffsetX;
     private int draggingOffsetY;
+    private int barMargin;
     private AbstractSkill draggingSkill;
 
     @Override
@@ -44,8 +45,10 @@ public class KnownSkillsGui extends BaseGui {
             skillKeys[i] = Keyboard.getKeyName(SkillClient.unleashSkillKey[i].getKeyCode());
         }
 
+        // 16*16 不包括边框
+        barMargin = (108 - 16 * PlayerSkills.MAX_SKILL_BAR) / (PlayerSkills.MAX_SKILL_BAR - 1) + 16;
         for (int i = 0; i < skillBarLayouts.length; i++) {
-            skillBarLayouts[i] = new Layout(width / 2 - 96, height / 2 - 49 + (23 * i), 16, 16);
+            skillBarLayouts[i] = new Layout(width / 2 - 96, height / 2 - 49 + (barMargin * i), 16, 16);
         }
 
         this.playerSkills = PlayerSkills.get(ClientUtils.getPlayer());
@@ -78,6 +81,10 @@ public class KnownSkillsGui extends BaseGui {
         // Frame
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         RenderUtils.drawTexturedModalRect((width - 206) / 2, (height - 134) / 2, 0, 0, 206, 134);
+
+        for (Layout skillBarLayout : skillBarLayouts) {
+            RenderUtils.drawTexturedModalRect(skillBarLayout.getX() - 1, skillBarLayout.getY() - 1, 6, 17, 18, 18);
+        }
 
         // Title
         FontRenderer fontRenderer = getFontRenderer();
@@ -126,13 +133,13 @@ public class KnownSkillsGui extends BaseGui {
         AbstractSkill[] skillBar = playerSkills.getSkillBar();
         for (int i = 0; i < PlayerSkills.MAX_SKILL_BAR; i++) {
             if (skillBar[i] == null) {
-                drawCenteredString(skillKeys[i], width / 2 - 88, height / 2 - 44 + (23 * i), 0xE2E2E9);
+                drawCenteredString(skillKeys[i], width / 2 - 88, height / 2 - 44 + (barMargin * i), 0xE2E2E9);
             } else {
                 ResourceLocation iconResource = skillBar[i].getIconResource();
                 if (iconResource == null) {
                     // Render initials
                     String firstName = skillBar[i].getLocalizedName().substring(0, 1);
-                    drawCenteredString(firstName, width / 2 - 88, height / 2 - 44 + (23 * i), 0xE2E2E9);
+                    drawCenteredString(firstName, width / 2 - 88, height / 2 - 44 + (barMargin * i), 0xE2E2E9);
                     continue;
                 }
                 GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);

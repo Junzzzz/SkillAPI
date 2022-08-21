@@ -5,6 +5,7 @@ import io.github.junzzzz.skillapi.client.gui.KnownSkillsGui;
 import io.github.junzzzz.skillapi.common.Point;
 import io.github.junzzzz.skillapi.skill.AbstractSkill;
 import io.github.junzzzz.skillapi.skill.Cooldown;
+import io.github.junzzzz.skillapi.skill.PlayerSkills;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.util.MathHelper;
@@ -58,7 +59,8 @@ public class SkillHud {
     private static void drawSkillBar(int width, int height) {
         int x = width - 22;
         int y = height / 2 - 51;
-        RenderUtils.drawTexturedModalRect(x, y, 218, 0, 22, 102);
+        RenderUtils.drawRect(GL11.GL_QUADS, x, y, x + 22, y + 2 + (PlayerSkills.MAX_SKILL_BAR * 20), 0xFF000000);
+        RenderUtils.drawTexturedModalRect(x + 1, y + 1, 218, 0, 20, PlayerSkills.MAX_SKILL_BAR * 20);
         Cooldown[] cooldowns = SKILL.getCooldowns();
         AbstractSkill[] skillBar = SKILL.getSkillBar();
         x += 3 + 8;

@@ -18,7 +18,7 @@ import java.util.Set;
  * @author Jun
  */
 public class PlayerSkills implements IExtendedEntityProperties {
-    public static final int MAX_SKILL_BAR = 5;
+    public static final int MAX_SKILL_BAR = 4;
     public static final int MAX_KNOWN_SKILL = 10;
 
     private static final String TAG_KNOWN = "knownSkills";

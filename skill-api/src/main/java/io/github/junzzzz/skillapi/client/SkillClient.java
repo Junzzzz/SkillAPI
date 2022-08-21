@@ -24,15 +24,22 @@ public class SkillClient {
     public static boolean drawHud = false;
 
     public static KeyBinding showSkillGuiKey;
-    public static KeyBinding[] unleashSkillKey = new KeyBinding[5];
+    public static KeyBinding[] unleashSkillKey = new KeyBinding[PlayerSkills.MAX_SKILL_BAR];
 
     private static final String KEY_GUI = "K";
-    private static final String[] KEY_SKILL = {"Z", "X", "C", "V", "B"};
+    private static final String[] KEY_SKILL;
 
     public static final String GROUP_GUI = "key.categories.gui";
     public static final String GROUP_GAMEPLAY = "key.categories.gameplay";
 
     private static final SkillExtraInfo SKILL_EXTRA_INFO = new SkillExtraInfo();
+
+    static {
+        // 给定七个默认值
+        String[] defaultKey = {"Z", "X", "C", "V", "B", "F", "G"};
+        KEY_SKILL = new String[PlayerSkills.MAX_SKILL_BAR];
+        System.arraycopy(defaultKey, 0, KEY_SKILL, 0, KEY_SKILL.length);
+    }
 
     public static void init() {
         showSkillGuiKey = new KeyBinding("key.skillGui", Keyboard.getKeyIndex(KEY_GUI), GROUP_GUI);
